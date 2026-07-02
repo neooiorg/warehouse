@@ -1,9 +1,9 @@
-import NotificationsPage from '@/features/notifications/components/notifications-page';
+import NotificationsListingPage from '@/features/notifications/components/notifications-listing';
 
 export const metadata = {
   title: 'Dashboard: Notifications'
 };
 
 export default function Page() {
-  return <NotificationsPage />;
+  return <NotificationsListingPage />;
 }

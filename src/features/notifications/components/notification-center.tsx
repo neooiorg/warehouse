@@ -1,5 +1,7 @@
 'use client';
 
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { Icons } from '@/components/icons';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -7,23 +9,20 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { NotificationCard } from '@/components/ui/notification-card';
-import { useNotificationStore } from '../utils/store';
-import { useRouter } from 'next/navigation';
+import { notificationsQueryOptions } from '../api/queries';
+import { markNotificationReadMutation, markAllNotificationsReadMutation } from '../api/mutations';
+import { getActionsForSource, sourceActionRoutes } from '../constants/source-actions';
+import type { NotificationSourceType } from '../api/types';
 
 const MAX_VISIBLE = 5;
 
-const actionRoutes: Record<string, string> = {
-  view: '/dashboard/workspaces',
-  'view-product': '/dashboard/product',
-  billing: '/dashboard/billing',
-  open: '/dashboard/kanban',
-  'open-chat': '/dashboard/chat'
-};
-
 export function NotificationCenter() {
-  const { notifications, markAsRead, markAllAsRead, unreadCount } = useNotificationStore();
   const router = useRouter();
-  const count = unreadCount();
+  const { data: notifications = [] } = useQuery(notificationsQueryOptions());
+  const markAsRead = useMutation(markNotificationReadMutation);
+  const markAllAsRead = useMutation(markAllNotificationsReadMutation);
+
+  const unreadCount = notifications.filter((n) => !n.readAt).length;
   const visibleNotifications = notifications.slice(0, MAX_VISIBLE);
 
   return (
@@ -31,9 +30,9 @@ export function NotificationCenter() {
       <PopoverTrigger asChild>
         <Button variant='ghost' size='icon' className='relative h-8 w-8'>
           <Icons.notification className='h-4 w-4' />
-          {count > 0 && (
+          {unreadCount > 0 && (
             <span className='bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-medium'>
-              {count > 9 ? '9+' : count}
+              {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
           <span className='sr-only'>Notifications</span>
@@ -46,17 +45,17 @@ export function NotificationCenter() {
             <Icons.chevronRight className='text-muted-foreground h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5' />
           </Link>
           <div className='flex items-center gap-2'>
-            {count > 0 && (
+            {unreadCount > 0 && (
               <span className='bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs'>
-                {count} new
+                {unreadCount} new
               </span>
             )}
-            {count > 0 && (
+            {unreadCount > 0 && (
               <Button
                 variant='ghost'
                 size='sm'
                 className='text-muted-foreground h-auto px-2 py-1 text-xs'
-                onClick={markAllAsRead}
+                onClick={() => markAllAsRead.mutate()}
               >
                 Mark all as read
               </Button>
@@ -77,15 +76,15 @@ export function NotificationCenter() {
                   key={notification.id}
                   id={notification.id}
                   title={notification.title}
-                  body={notification.body}
-                  status={notification.status}
+                  body={notification.body ?? ''}
+                  status={notification.readAt ? 'read' : 'unread'}
                   createdAt={notification.createdAt}
-                  actions={notification.actions}
-                  onMarkAsRead={markAsRead}
+                  actions={getActionsForSource(notification.sourceType)}
+                  onMarkAsRead={(id) => markAsRead.mutate(id)}
                   onAction={(notifId, actionId) => {
-                    const route = actionRoutes[actionId];
+                    const route = sourceActionRoutes[actionId as NotificationSourceType];
                     if (route) {
-                      markAsRead(notifId);
+                      markAsRead.mutate(notifId);
                       router.push(route);
                     }
                   }}

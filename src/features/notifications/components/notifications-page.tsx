@@ -1,30 +1,28 @@
 'use client';
 
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { Icons } from '@/components/icons';
 import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { NotificationCard } from '@/components/ui/notification-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useRouter } from 'next/navigation';
-import { useNotificationStore } from '../utils/store';
-
-const actionRoutes: Record<string, string> = {
-  view: '/dashboard/workspaces',
-  'view-product': '/dashboard/product',
-  billing: '/dashboard/billing',
-  open: '/dashboard/kanban',
-  'open-chat': '/dashboard/chat'
-};
+import { notificationsQueryOptions } from '../api/queries';
+import { markNotificationReadMutation, markAllNotificationsReadMutation } from '../api/mutations';
+import { getActionsForSource, sourceActionRoutes } from '../constants/source-actions';
+import type { Notification, NotificationSourceType } from '../api/types';
 
 export default function NotificationsPage() {
-  const { notifications, markAsRead, markAllAsRead, unreadCount } = useNotificationStore();
   const router = useRouter();
-  const count = unreadCount();
+  const { data: notifications } = useSuspenseQuery(notificationsQueryOptions());
+  const markAsRead = useMutation(markNotificationReadMutation);
+  const markAllAsRead = useMutation(markAllNotificationsReadMutation);
 
-  const unreadNotifications = notifications.filter((n) => n.status === 'unread');
-  const readNotifications = notifications.filter((n) => n.status === 'read');
+  const unreadCount = notifications.filter((n) => !n.readAt).length;
+  const unreadNotifications = notifications.filter((n) => !n.readAt);
+  const readNotifications = notifications.filter((n) => n.readAt);
 
-  const renderList = (items: typeof notifications) => {
+  const renderList = (items: Notification[]) => {
     if (items.length === 0) {
       return (
         <div className='flex flex-col items-center justify-center py-16'>
@@ -41,15 +39,15 @@ export default function NotificationsPage() {
             key={notification.id}
             id={notification.id}
             title={notification.title}
-            body={notification.body}
-            status={notification.status}
+            body={notification.body ?? ''}
+            status={notification.readAt ? 'read' : 'unread'}
             createdAt={notification.createdAt}
-            actions={notification.actions}
-            onMarkAsRead={markAsRead}
+            actions={getActionsForSource(notification.sourceType)}
+            onMarkAsRead={(id) => markAsRead.mutate(id)}
             onAction={(notifId, actionId) => {
-              const route = actionRoutes[actionId];
+              const route = sourceActionRoutes[actionId as NotificationSourceType];
               if (route) {
-                markAsRead(notifId);
+                markAsRead.mutate(notifId);
                 router.push(route);
               }
             }}
@@ -64,8 +62,8 @@ export default function NotificationsPage() {
       pageTitle='Notifications'
       pageDescription='View and manage all your notifications.'
       pageHeaderAction={
-        count > 0 ? (
-          <Button variant='outline' size='sm' onClick={markAllAsRead}>
+        unreadCount > 0 ? (
+          <Button variant='outline' size='sm' onClick={() => markAllAsRead.mutate()}>
             Mark all as read
           </Button>
         ) : undefined

@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/reslotting",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/fuel-prices",
+      "schedule": "0 5 * * *"
+    }
+  ]
+}
