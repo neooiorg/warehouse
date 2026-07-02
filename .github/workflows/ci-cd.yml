@@ -72,7 +72,7 @@ jobs:
           RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "${DOKPLOY_URL}/api/application.update" \
             -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\"applicationId\":\"${{ env.DOKPLOY_APP_ID }}\",\"sourceType\":\"docker\",\"dockerImage\":\"$IMAGE_TAG\",\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}")
+            -d "{\"applicationId\":\"${{ env.DOKPLOY_APP_ID }}\",\"sourceType\":\"docker\",\"dockerImage\":\"$IMAGE_TAG\",\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GHCR_TOKEN }}\"}")
           echo "Response: $RESPONSE"
           HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2)
           if [ "$HTTP_CODE" != "200" ]; then
