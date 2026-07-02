@@ -69,10 +69,16 @@ jobs:
           DOKPLOY_URL="${{ env.DOKPLOY_URL }}"
           echo "Deploying image: $IMAGE_TAG"
 
-          curl -sf -X POST "${DOKPLOY_URL}/api/application.update" \
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "${DOKPLOY_URL}/api/application.update" \
             -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\"applicationId\":\"${{ env.DOKPLOY_APP_ID }}\",\"sourceType\":\"docker\",\"dockerImage\":\"$IMAGE_TAG\",\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}"
+            -d "{\"applicationId\":\"${{ env.DOKPLOY_APP_ID }}\",\"sourceType\":\"docker\",\"dockerImage\":\"$IMAGE_TAG\",\"username\":\"${{ github.actor }}\",\"password\":\"${{ secrets.GITHUB_TOKEN }}\"}")
+          echo "Response: $RESPONSE"
+          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "API error: HTTP $HTTP_CODE"
+            exit 1
+          fi
 
       - name: Trigger deploy on Dokploy
         run: |
