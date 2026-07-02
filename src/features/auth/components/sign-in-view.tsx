@@ -1,5 +1,4 @@
 import { buttonVariants } from '@/components/ui/button';
-import { GitHubStarsButton } from '@/components/github-stars-button';
 import { cn } from '@/lib/utils';
 import { SignIn as ClerkSignInForm } from '@clerk/nextjs';
 import { Metadata } from 'next';
@@ -49,45 +48,24 @@ export default function SignInViewPage() {
         <div className='text-sidebar-foreground relative z-20 mt-auto'>
           <blockquote className='space-y-2'>
             <p className='text-lg'>
-              &ldquo;This starter template has saved me countless hours of work and helped me
-              deliver projects to my clients faster than ever before.&rdquo;
+              &ldquo;Hệ thống quản lý kho thông minh — theo dõi hàng hóa, nhập xuất kho và truy xuất
+              nguồn gốc trong một nền tảng duy nhất.&rdquo;
             </p>
-            <footer className='text-sidebar-foreground/70 text-sm'>Random Dude</footer>
+            <footer className='text-sidebar-foreground/70 text-sm'>
+              Warehouse Management System
+            </footer>
           </blockquote>
         </div>
       </div>
       <div className='flex h-full items-center justify-center p-4 lg:p-8'>
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
-          {/* github link  */}
-          <GitHubStarsButton
-            owner='kiranism'
-            repo='next-shadcn-dashboard-starter'
-            showRepo
-            variant='outline'
-            size='default'
-          />
-          <ClerkSignInForm
-            initialValues={{
-              emailAddress: 'your_mail+clerk_test@example.com'
-            }}
-          />
-          <div className='text-muted-foreground space-y-2 px-8 text-center text-xs'>
-            <p>
-              This is an{' '}
-              <Link href='/about' className='hover:text-primary underline underline-offset-4'>
-                open-source project
-              </Link>{' '}
-              for demo purposes. Authentication is handled securely by Clerk.
-            </p>
-            <p>
-              <Link
-                href='https://github.com/kiranism/next-shadcn-dashboard-starter'
-                target='_blank'
-                className='hover:text-primary underline underline-offset-4'
-              >
-                View on GitHub
-              </Link>
-            </p>
+          <div className='flex flex-col items-center space-y-1'>
+            <h1 className='text-2xl font-semibold tracking-tight'>Warehouse Management</h1>
+            <p className='text-muted-foreground text-sm'>Đăng nhập để tiếp tục</p>
+          </div>
+          <ClerkSignInForm />
+          <div className='text-muted-foreground px-8 text-center text-xs'>
+            <p>Xác thực được bảo mật bởi Clerk.</p>
           </div>
 
           <p className='text-muted-foreground px-8 text-center text-sm'>
