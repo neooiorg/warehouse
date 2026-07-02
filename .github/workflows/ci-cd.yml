@@ -62,23 +62,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Thông báo Telegram - Build thất bại
-        if: failure()
-        uses: appleboy/telegram-action@v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          format: markdown
-          message: |
-            ❌ *BUILD THẤT BẠI*
-            Quá trình build Docker image gặp lỗi!
-
-            🏷 *Dự án:* `${{ github.repository }}`
-            🌿 *Nhánh:* `${{ github.ref_name }}`
-            👤 *Thực hiện bởi:* `${{ github.actor }}`
-            🕐 *Thời gian:* `${{ github.event.head_commit.timestamp }}`
-            💬 *Commit:* `${{ github.event.head_commit.message }}`
-            🔗 [Xem chi tiết](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   deploy:
     name: Deploy lên Dokploy
@@ -136,38 +119,3 @@ jobs:
             echo "DEPLOY_STATUS=failure" >> $GITHUB_ENV
           fi
 
-      - name: Thông báo Telegram - Deploy thành công
-        if: env.DEPLOY_STATUS == 'success'
-        uses: appleboy/telegram-action@v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          format: markdown
-          message: |
-            ✅ *TRIỂN KHAI THÀNH CÔNG*
-            Ứng dụng đã được cập nhật lên production! 🚀
-
-            🏷 *Dự án:* `${{ github.repository }}`
-            🌿 *Nhánh:* `${{ github.ref_name }}`
-            👤 *Thực hiện bởi:* `${{ github.actor }}`
-            💬 *Commit:* `${{ github.event.head_commit.message }}`
-            🔗 [Xem ứng dụng](https://warehouse-cba59n-6a2aa1-103-72-98-129.sslip.io)
-            📋 [Xem workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-      - name: Thông báo Telegram - Deploy thất bại
-        if: env.DEPLOY_STATUS == 'failure' || failure()
-        uses: appleboy/telegram-action@v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          format: markdown
-          message: |
-            ❌ *TRIỂN KHAI THẤT BẠI*
-            Deploy lên Dokploy gặp lỗi, vui lòng kiểm tra ngay!
-
-            🏷 *Dự án:* `${{ github.repository }}`
-            🌿 *Nhánh:* `${{ github.ref_name }}`
-            👤 *Thực hiện bởi:* `${{ github.actor }}`
-            💬 *Commit:* `${{ github.event.head_commit.message }}`
-            🔗 [Xem logs Dokploy](https://dokploy.neooi.com)
-            📋 [Xem workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
