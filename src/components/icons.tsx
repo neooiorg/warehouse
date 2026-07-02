@@ -4,6 +4,7 @@ import {
   IconPackageImport,
   IconPackageExport,
   IconMapPin,
+  IconTruck,
   IconAlertCircle,
   IconAlertTriangle,
   IconArrowRight,
@@ -223,6 +224,7 @@ export const Icons = {
   inbound: IconPackageImport,
   outbound: IconPackageExport,
   location: IconMapPin,
+  truck: IconTruck,
 
   // Misc
   pizza: IconPizza,
