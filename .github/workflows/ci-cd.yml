@@ -99,7 +99,7 @@ jobs:
               -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
               | grep -o '"applicationStatus":"[^"]*"' | cut -d'"' -f4)
             echo "Attempt $i - Status: $STATUS"
-            if [ "$STATUS" = "running" ]; then
+            if [ "$STATUS" = "running" ] || [ "$STATUS" = "done" ]; then
               echo "Deployment succeeded!"
               exit 0
             elif [ "$STATUS" = "error" ]; then
