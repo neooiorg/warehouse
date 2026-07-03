@@ -1,8 +1,6 @@
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SignUp as ClerkSignUpForm } from '@clerk/nextjs';
-import { GitHubLogoIcon } from '@radix-ui/react-icons';
-import { Icons } from '@/components/icons';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { InteractiveGridPattern } from './interactive-grid';
@@ -12,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Authentication forms built using the components.'
 };
 
-export default function SignUpViewPage({ stars }: { stars: number }) {
+export default function SignUpViewPage() {
   return (
     <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
       <Link
@@ -50,70 +48,39 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
         <div className='text-sidebar-foreground relative z-20 mt-auto'>
           <blockquote className='space-y-2'>
             <p className='text-lg'>
-              &ldquo;This starter template has saved me countless hours of work and helped me
-              deliver projects to my clients faster than ever before.&rdquo;
+              &ldquo;Hệ thống quản lý kho thông minh — theo dõi hàng hóa, nhập xuất kho và truy xuất
+              nguồn gốc trong một nền tảng duy nhất.&rdquo;
             </p>
-            <footer className='text-sidebar-foreground/70 text-sm'>Random Dude</footer>
+            <footer className='text-sidebar-foreground/70 text-sm'>
+              Warehouse Management System
+            </footer>
           </blockquote>
         </div>
       </div>
       <div className='flex h-full items-center justify-center p-4 lg:p-8'>
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
-          {/* github link  */}
-          <Link
-            className={cn('group inline-flex hover:text-yellow-200')}
-            target='_blank'
-            href={'https://github.com/kiranism/next-shadcn-dashboard-starter'}
-          >
-            <div className='flex items-center'>
-              <GitHubLogoIcon className='size-4' />
-              <span className='ml-1 inline'>Star on GitHub</span>{' '}
-            </div>
-            <div className='ml-2 flex items-center gap-1 text-sm md:flex'>
-              <Icons.exclusive
-                className='size-4 text-gray-500 transition-all duration-300 group-hover:text-yellow-300'
-                fill='currentColor'
-              />
-              <span className='font-display font-medium'>{stars}</span>
-            </div>
-          </Link>
-          <ClerkSignUpForm
-            initialValues={{
-              emailAddress: 'your_mail+clerk_test@example.com'
-            }}
-          />
-          <div className='text-muted-foreground space-y-2 px-8 text-center text-xs'>
-            <p>
-              This is an{' '}
-              <Link href='/about' className='hover:text-primary underline underline-offset-4'>
-                open-source project
-              </Link>{' '}
-              for demo purposes. Authentication is handled securely by Clerk.
-            </p>
-            <p>
-              <Link
-                href='https://github.com/kiranism/next-shadcn-dashboard-starter'
-                target='_blank'
-                className='hover:text-primary underline underline-offset-4'
-              >
-                View on GitHub
-              </Link>
-            </p>
+          <div className='flex flex-col items-center space-y-1'>
+            <h1 className='text-2xl font-semibold tracking-tight'>Tạo tài khoản</h1>
+            <p className='text-muted-foreground text-sm'>Đăng ký để bắt đầu sử dụng</p>
+          </div>
+          <ClerkSignUpForm />
+          <div className='text-muted-foreground px-8 text-center text-xs'>
+            <p>Xác thực được bảo mật bởi Clerk.</p>
           </div>
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking continue, you agree to our{' '}
+            Bằng cách tiếp tục, bạn đồng ý với{' '}
             <Link
               href='/terms-of-service'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
+              Điều khoản dịch vụ
             </Link>{' '}
-            and{' '}
+            và{' '}
             <Link
               href='/privacy-policy'
               className='hover:text-primary underline underline-offset-4'
             >
-              Privacy Policy
+              Chính sách bảo mật
             </Link>
             .
           </p>

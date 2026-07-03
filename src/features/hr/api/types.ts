@@ -1,70 +1,28 @@
-import type { employees, workflowTasks, staffingPlans, kpiTemplates } from '@/db/schema';
+import type { staffingPlans, workTasks, employees } from '@/db/schema';
 
-export type Employee = typeof employees.$inferSelect;
-export type WorkflowTask = typeof workflowTasks.$inferSelect;
 export type StaffingPlan = typeof staffingPlans.$inferSelect;
-export type KpiTemplate = typeof kpiTemplates.$inferSelect;
+export type WorkTask = typeof workTasks.$inferSelect;
+export type Employee = typeof employees.$inferSelect;
 
-export type EmployeeFilters = {
-  warehouseId?: string;
-  status?: Employee['status'];
-  role?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-};
-
-export type TurnoverMetrics = {
+export type HrKpiMetrics = {
   totalActive: number;
   totalTerminated: number;
-  turnoverRate: number;
   avgTenureMonths: number;
-  monthlyTrend: { month: string; hired: number; terminated: number }[];
+  turnoverRatePercent: number;
+  headcountTimeline: Array<{ month: string; hired: number; terminated: number; net: number }>;
 };
 
-export type AonNode = {
-  id: string;
-  name: string;
-  estimatedMinutes: number;
-  requiredRole: string | null;
-  dependencies: string[];
-  earliestStart: number;
-  earliestFinish: number;
-  latestStart: number;
-  latestFinish: number;
-  float: number;
-  isCritical: boolean;
-};
-
-export type StaffingResult = {
-  nodes: AonNode[];
-  criticalPath: string[];
-  headcountByRole: Record<string, number>;
-  totalDurationMinutes: number;
-};
-
-export type CreateWorkflowTaskPayload = {
-  name: string;
-  estimatedMinutes: number;
-  requiredRole?: string | null;
-  dependencies?: string[];
-  sortOrder?: number;
-};
-
-export type ComputeStaffingPayload = {
+export type CreatePlanPayload = {
   warehouseId?: string;
-  planDate: string;
-  dailyVolume: number;
-  workHoursPerShift: number;
+  name: string;
+  availableHeadcount: number;
 };
 
-export type UpsertKpiTemplatePayload = {
-  id?: string;
-  role: string;
-  kpiName: string;
-  formula?: string | null;
-  target?: number | null;
-  unit?: string | null;
-  weight?: number;
-  isActive?: boolean;
+export type CreateTaskPayload = {
+  planId: string;
+  name: string;
+  durationHours: number;
+  predecessorIds: string[];
+  requiredHeadcount: number;
+  color?: string;
 };

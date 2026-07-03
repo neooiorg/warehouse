@@ -1,127 +1,138 @@
 'use server';
 
-import { and, eq, desc, asc, count, gte, sum } from 'drizzle-orm';
+import { and, desc, eq, isNull, or } from 'drizzle-orm';
 import { db } from '@/db';
-import { shipmentRequests, fuelPrices, inventoryLots, warehouses } from '@/db/schema';
+import { fuelPrices, deliveryOrders, shipmentPlans, vehicles, warehouses } from '@/db/schema';
 import { requireOrgContext } from '@/lib/auth-context';
-import { haversineKm, estimateHours } from '../utils/route';
-import type {
-  ShipmentRequestFilters,
-  FindSourcePayload,
-  FulfillShipmentPayload,
-  FuelPriceFilters,
-  RouteOption
-} from './types';
+import { optimizeRoute } from '../utils/route-optimizer';
+import type { CreateDeliveryOrderPayload } from './types';
 
-export async function findOptimalSourceWarehouses(payload: FindSourcePayload): Promise<RouteOption[]> {
+// ─── Fuel Prices ─────────────────────────────────────────────────────────────
+
+export async function listFuelPrices(limit = 60) {
   const { orgId } = await requireOrgContext();
-
-  // Aggregate available qty per warehouse for the SKU
-  const stockRows = await db
-    .select({
-      warehouseId: inventoryLots.warehouseId,
-      availableQty: sum(inventoryLots.qty).mapWith(Number)
-    })
-    .from(inventoryLots)
-    .where(
-      and(
-        eq(inventoryLots.orgId, orgId),
-        eq(inventoryLots.skuId, payload.skuId),
-        eq(inventoryLots.status, 'available')
-      )
-    )
-    .groupBy(inventoryLots.warehouseId);
-
-  const warehouseRows = await db
-    .select()
-    .from(warehouses)
-    .where(eq(warehouses.orgId, orgId));
-
-  const whMap = new Map(warehouseRows.map((w) => [w.id, w]));
-
-  const options: RouteOption[] = stockRows
-    .filter((s) => s.warehouseId && (s.availableQty ?? 0) > 0)
-    .map((s) => {
-      const wh = whMap.get(s.warehouseId!);
-      const distanceKm =
-        wh?.lat != null && wh?.lng != null
-          ? haversineKm(wh.lat, wh.lng, payload.destinationLat, payload.destinationLng)
-          : 9999;
-      return {
-        warehouseId: s.warehouseId!,
-        warehouseName: wh?.name ?? 'Unknown',
-        warehouseCode: wh?.code ?? '',
-        availableQty: s.availableQty ?? 0,
-        distanceKm: Math.round(distanceKm * 10) / 10,
-        estimatedHours: Math.round(estimateHours(distanceKm) * 10) / 10
-      };
-    })
-    .sort((a, b) => a.distanceKm - b.distanceKm);
-
-  return options;
-}
-
-export async function getShipmentRequests(filters: ShipmentRequestFilters = {}) {
-  const { orgId } = await requireOrgContext();
-  const { page = 1, limit = 20 } = filters;
-  const conditions = [eq(shipmentRequests.orgId, orgId)];
-  if (filters.status) conditions.push(eq(shipmentRequests.status, filters.status));
-  if (filters.skuId) conditions.push(eq(shipmentRequests.skuId, filters.skuId));
-
-  const [rows, [{ total }]] = await Promise.all([
-    db.select().from(shipmentRequests).where(and(...conditions)).orderBy(desc(shipmentRequests.requestDate)).limit(limit).offset((page - 1) * limit),
-    db.select({ total: count() }).from(shipmentRequests).where(and(...conditions))
-  ]);
-  return { data: rows, total, page, limit, pageCount: Math.ceil(total / limit) };
-}
-
-export async function createShipmentRequest(payload: {
-  skuId: string;
-  qtyRequired: number;
-  destinationLat?: number;
-  destinationLng?: number;
-  destinationAddress?: string;
-  requestDate: string;
-  note?: string;
-}) {
-  const { orgId } = await requireOrgContext();
-  const [row] = await db.insert(shipmentRequests).values({ ...payload, orgId }).returning();
-  return row;
-}
-
-export async function fulfillShipmentRequest(payload: FulfillShipmentPayload) {
-  const { orgId } = await requireOrgContext();
-  const [row] = await db
-    .update(shipmentRequests)
-    .set({ status: 'fulfilled', resolvedWarehouseId: payload.resolvedWarehouseId })
-    .where(and(eq(shipmentRequests.id, payload.requestId), eq(shipmentRequests.orgId, orgId)))
-    .returning();
-  return row;
-}
-
-export async function getFuelPrices(filters: FuelPriceFilters = {}) {
-  const conditions = [];
-  if (filters.region) conditions.push(eq(fuelPrices.region, filters.region));
-  if (filters.fuelType) conditions.push(eq(fuelPrices.fuelType, filters.fuelType));
-
   return db
     .select()
     .from(fuelPrices)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(fuelPrices.effectiveDate));
+    .where(or(isNull(fuelPrices.orgId), eq(fuelPrices.orgId, orgId)))
+    .orderBy(desc(fuelPrices.effectiveDate), desc(fuelPrices.createdAt))
+    .limit(limit);
 }
 
-export async function upsertFuelPrice(data: {
-  region: string;
-  fuelType: 'RON95' | 'RON92' | 'DO' | 'DIESEL';
-  priceVnd: number;
+export async function getLatestFuelPrice(fuelType: 'ron95' | 'ron92' | 'diesel' | 'e5') {
+  const rows = await db
+    .select()
+    .from(fuelPrices)
+    .where(eq(fuelPrices.fuelType, fuelType))
+    .orderBy(desc(fuelPrices.effectiveDate))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+export async function upsertFuelPrice(input: {
+  fuelType: 'ron95' | 'ron92' | 'diesel' | 'e5';
+  pricePerLiter: number;
   effectiveDate: string;
-  source?: string;
 }) {
+  const { orgId } = await requireOrgContext();
   const [row] = await db
     .insert(fuelPrices)
-    .values(data)
-    .onConflictDoNothing()
-    .returning();
+    .values({ ...input, pricePerLiter: String(input.pricePerLiter), orgId, source: 'manual' })
+    .returning({ id: fuelPrices.id });
   return row;
+}
+
+// ─── Delivery Orders ──────────────────────────────────────────────────────────
+
+export async function listDeliveryOrders() {
+  const { orgId } = await requireOrgContext();
+  return db
+    .select()
+    .from(deliveryOrders)
+    .where(eq(deliveryOrders.orgId, orgId))
+    .orderBy(desc(deliveryOrders.createdAt));
+}
+
+export async function createDeliveryOrder(payload: CreateDeliveryOrderPayload) {
+  const { orgId } = await requireOrgContext();
+  const [row] = await db
+    .insert(deliveryOrders)
+    .values({
+      orgId,
+      warehouseId: payload.warehouseId ?? null,
+      destination: payload.destination,
+      destinationLat: payload.destinationLat ?? null,
+      destinationLng: payload.destinationLng ?? null,
+      requiredSkus: (payload.requiredSkus ?? []).map((sku) => ({ skuId: sku, qty: 1 })),
+      preferredDate: payload.preferredDate ?? null
+    })
+    .returning({ id: deliveryOrders.id });
+  return row;
+}
+
+export async function updateDeliveryOrderStatus(
+  id: string,
+  status: 'pending' | 'planned' | 'dispatched' | 'delivered'
+) {
+  const { orgId } = await requireOrgContext();
+  await db
+    .update(deliveryOrders)
+    .set({ status, updatedAt: new Date() })
+    .where(and(eq(deliveryOrders.id, id), eq(deliveryOrders.orgId, orgId)));
+}
+
+// ─── Route Planning ───────────────────────────────────────────────────────────
+
+export async function planRoute(orderId: string) {
+  const { orgId } = await requireOrgContext();
+
+  const [order] = await db
+    .select()
+    .from(deliveryOrders)
+    .where(and(eq(deliveryOrders.id, orderId), eq(deliveryOrders.orgId, orgId)));
+  if (!order) throw new Error('Order not found');
+
+  const [allWarehouses, latestDiesel] = await Promise.all([
+    db.select().from(warehouses).where(eq(warehouses.orgId, orgId)),
+    getLatestFuelPrice('diesel')
+  ]);
+
+  const skuIds = (order.requiredSkus as Array<{ skuId: string }>).map((r) => r.skuId);
+
+  const result = optimizeRoute(
+    allWarehouses.map((w) => ({
+      id: w.id,
+      name: w.name,
+      lat: w.lat ?? 0,
+      lng: w.lng ?? 0
+    })),
+    {
+      destination: order.destination,
+      destinationLat: order.destinationLat ?? 0,
+      destinationLng: order.destinationLng ?? 0,
+      requiredSkus: skuIds
+    },
+    {
+      fuelPricePerLiter: latestDiesel ? Number(latestDiesel.pricePerLiter) : undefined
+    }
+  );
+
+  const [plan] = await db
+    .insert(shipmentPlans)
+    .values({
+      orgId,
+      orderId,
+      routeWarehouseIds: result.stops.map((s) => s.warehouseId),
+      totalDistanceKm: result.totalDistanceKm,
+      estimatedHours: result.estimatedHours,
+      fuelCostEstimate: result.fuelCostVnd ? String(result.fuelCostVnd) : null
+    })
+    .returning({ id: shipmentPlans.id });
+
+  await db
+    .update(deliveryOrders)
+    .set({ status: 'planned', updatedAt: new Date() })
+    .where(eq(deliveryOrders.id, orderId));
+
+  return { planId: plan.id, ...result };
 }

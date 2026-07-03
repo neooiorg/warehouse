@@ -1,23 +1,27 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getTaskLogs, getProductivityScores, getDockSchedules } from './service';
-import type { TaskLogFilters } from './types';
+import { getProductivitySummary, listDockAppointments, listDocks } from './service';
 
 export const productivityKeys = {
   all: ['productivity'] as const,
-  taskLogs: (filters: TaskLogFilters) => [...productivityKeys.all, 'task-logs', filters] as const,
-  scores: (warehouseId?: string, dateFrom?: string, dateTo?: string) =>
-    [...productivityKeys.all, 'scores', warehouseId, dateFrom, dateTo] as const,
-  dockSchedules: (warehouseId?: string) => [...productivityKeys.all, 'dock-schedules', warehouseId] as const
+  summary: (days: number) => [...productivityKeys.all, 'summary', days] as const,
+  dockAppointments: (wId: string) => [...productivityKeys.all, 'dock-appointments', wId] as const,
+  docks: (wId: string) => [...productivityKeys.all, 'docks', wId] as const
 };
 
-export const taskLogsQueryOptions = (filters: TaskLogFilters) =>
-  queryOptions({ queryKey: productivityKeys.taskLogs(filters), queryFn: () => getTaskLogs(filters) });
-
-export const productivityScoresQueryOptions = (warehouseId?: string, dateFrom?: string, dateTo?: string) =>
+export const productivitySummaryOptions = (periodDays = 30) =>
   queryOptions({
-    queryKey: productivityKeys.scores(warehouseId, dateFrom, dateTo),
-    queryFn: () => getProductivityScores(warehouseId, dateFrom, dateTo)
+    queryKey: productivityKeys.summary(periodDays),
+    queryFn: () => getProductivitySummary(periodDays)
   });
 
-export const dockSchedulesQueryOptions = (warehouseId?: string) =>
-  queryOptions({ queryKey: productivityKeys.dockSchedules(warehouseId), queryFn: () => getDockSchedules(warehouseId) });
+export const dockAppointmentsOptions = (warehouseId: string) =>
+  queryOptions({
+    queryKey: productivityKeys.dockAppointments(warehouseId),
+    queryFn: () => listDockAppointments(warehouseId)
+  });
+
+export const docksOptions = (warehouseId: string) =>
+  queryOptions({
+    queryKey: productivityKeys.docks(warehouseId),
+    queryFn: () => listDocks(warehouseId)
+  });

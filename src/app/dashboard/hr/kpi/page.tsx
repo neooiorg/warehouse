@@ -1,27 +1,40 @@
 import { Suspense } from 'react';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { getQueryClient } from '@/lib/query-client';
 import PageContainer from '@/components/layout/page-container';
+import { getQueryClient } from '@/lib/query-client';
+import { hrKpiOptions } from '@/features/hr/api/queries';
+import HrKpiDashboard from '@/features/hr/components/hr-kpi-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
-import { kpiTemplatesQueryOptions } from '@/features/hr/api/queries';
-import { KpiTemplateTable } from '@/features/hr/components/kpi-template-table';
 
-export const metadata = { title: 'Dashboard: Đề xuất KPI' };
+export const metadata = { title: 'Dashboard: KPI Nhân sự' };
 
-export default async function Page() {
-  const qc = getQueryClient();
-  void qc.prefetchQuery(kpiTemplatesQueryOptions());
+function KpiSkeleton() {
+  return (
+    <div className='space-y-6'>
+      <div className='grid grid-cols-2 gap-4 md:grid-cols-4'>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className='h-28 rounded-lg' />
+        ))}
+      </div>
+      <Skeleton className='h-64 rounded-lg' />
+    </div>
+  );
+}
+
+export default async function HrKpiPage() {
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(hrKpiOptions());
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <PageContainer
-        pageTitle='Đề xuất KPI'
-        pageDescription='Thiết lập và quản lý KPI theo vai trò nhân sự. Công thức tính và mục tiêu cho từng chỉ số.'
-      >
-        <Suspense fallback={<Skeleton className='h-96' />}>
-          <KpiTemplateTable />
+    <PageContainer
+      pageTitle='KPI Nhân sự'
+      pageDescription='Tỷ lệ nghỉ việc, gắn bó trung bình và biến động headcount 12 tháng'
+    >
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense fallback={<KpiSkeleton />}>
+          <HrKpiDashboard />
         </Suspense>
-      </PageContainer>
-    </HydrationBoundary>
+      </HydrationBoundary>
+    </PageContainer>
   );
 }

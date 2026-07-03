@@ -1,60 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyCronRequest } from '@/lib/cron-auth';
+import { and, eq, isNotNull } from 'drizzle-orm';
 import { db } from '@/db';
-import { warehouses } from '@/db/schema';
-import { getStorageOptimizationAdvice } from '@/features/inventory/api/service';
+import { warehouses, locations, inventoryLots, slottingRuns } from '@/db/schema';
 import { createNotification } from '@/features/notifications/api/service';
+import { verifyCronRequest } from '@/lib/cron-auth';
+import { runStorageOptimizer } from '@/features/warehouses/utils/storage-optimizer';
 
 export async function GET(request: NextRequest) {
   const authError = verifyCronRequest(request);
   if (authError) return authError;
 
-  const allWarehouses = await db.select({ id: warehouses.id, orgId: warehouses.orgId, name: warehouses.name }).from(warehouses);
-  let totalSuggestions = 0;
+  const allWarehouses = await db
+    .select({ id: warehouses.id, orgId: warehouses.orgId })
+    .from(warehouses);
 
-  for (const wh of allWarehouses) {
-    try {
-      // getStorageOptimizationAdvice requires auth context, so we call the DB logic directly
-      const { computeReslottingSuggestions } = await import('@/features/inventory/utils/reslotting');
-      const { db: dbClient } = await import('@/db');
-      const { inventoryLots, locations, productSkus } = await import('@/db/schema');
-      const { and, eq, desc } = await import('drizzle-orm');
+  let totalMoved = 0;
 
-      const lots = await dbClient
-        .select({
-          id: inventoryLots.id,
-          lotNo: inventoryLots.lotNo,
-          skuId: inventoryLots.skuId,
-          locationId: inventoryLots.locationId,
-          locationCode: locations.code,
-          distanceToDock: locations.distanceToDock,
-          receivedDate: inventoryLots.receivedDate,
-          expiryDate: inventoryLots.expiryDate,
-          qty: inventoryLots.qty,
-          storageClass: productSkus.storageClassLabel,
-          allocationSortField: productSkus.allocationSortField,
-          allocationSortDirection: productSkus.allocationSortDirection
-        })
+  for (const warehouse of allWarehouses) {
+    const [locs, lots] = await Promise.all([
+      db.select().from(locations).where(eq(locations.warehouseId, warehouse.id)),
+      db
+        .select()
         .from(inventoryLots)
-        .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
-        .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
-        .where(and(eq(inventoryLots.orgId, wh.orgId), eq(inventoryLots.warehouseId, wh.id), eq(inventoryLots.status, 'available')));
+        .where(
+          and(eq(inventoryLots.warehouseId, warehouse.id), isNotNull(inventoryLots.locationId))
+        )
+    ]);
 
-      const suggestions = computeReslottingSuggestions(lots as any);
-      totalSuggestions += suggestions.length;
+    if (lots.length === 0) continue;
 
-      if (suggestions.length > 0) {
-        await createNotification(wh.orgId, {
-          warehouseId: wh.id,
+    const recommendations = runStorageOptimizer(
+      lots.map((l) => ({
+        id: l.id,
+        skuId: l.skuId,
+        qty: l.qty,
+        expiryDate: l.expiryDate ?? null,
+        receiveDate: l.createdAt?.toISOString() ?? new Date().toISOString(),
+        currentLocationId: l.locationId ?? null,
+        strategy: 'FEFO' as const
+      })),
+      locs.map((l) => ({
+        id: l.id,
+        level: l.level ?? null,
+        distanceToDock: l.distanceToDock ?? null,
+        capacityPallets: null,
+        zoneId: l.zoneId ?? null
+      }))
+    );
+
+    const highPriorityCount = recommendations.filter((r) => r.priority === 'high').length;
+
+    if (recommendations.length > 0) {
+      await db.insert(slottingRuns).values({
+        orgId: warehouse.orgId,
+        warehouseId: warehouse.id,
+        runAt: new Date(),
+        movedCount: recommendations.length,
+        recommendations: recommendations as any
+      });
+
+      if (highPriorityCount > 0) {
+        await createNotification(warehouse.orgId, {
+          warehouseId: warehouse.id,
           sourceType: 'reslotting',
-          title: `Kho ${wh.name}: ${suggestions.length} đề xuất đảo vị trí`,
-          body: `Có ${suggestions.filter((s) => s.priority === 'high').length} ưu tiên cao cần xử lý để đảm bảo quy tắc FIFO/FEFO/LEFO.`
+          title: `Cần di chuyển ${highPriorityCount} lô hàng sắp hết hạn`,
+          body: `Hệ thống phát hiện ${highPriorityCount} lô hàng ưu tiên cao cần tái sắp xếp vị trí kho.`
         });
       }
-    } catch {
-      // continue to next warehouse
+
+      totalMoved += recommendations.length;
     }
   }
 
-  return NextResponse.json({ status: 'done', totalSuggestions });
+  return NextResponse.json({
+    status: 'ok',
+    totalMoves: totalMoved,
+    warehouses: allWarehouses.length
+  });
 }

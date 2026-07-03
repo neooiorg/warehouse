@@ -1,40 +1,29 @@
-import type { shipmentRequests, fuelPrices } from '@/db/schema';
-
-export type ShipmentRequest = typeof shipmentRequests.$inferSelect;
-export type FuelPrice = typeof fuelPrices.$inferSelect;
-
-export type ShipmentRequestFilters = {
-  status?: ShipmentRequest['status'];
-  skuId?: string;
-  page?: number;
-  limit?: number;
+export type FuelPrice = {
+  id: string;
+  fuelType: 'ron95' | 'ron92' | 'diesel' | 'e5';
+  pricePerLiter: number;
+  effectiveDate: string;
+  source: string | null;
+  orgId: string | null;
 };
 
-export type RouteOption = {
+export type DeliveryOrder = {
+  id: string;
+  orgId: string;
   warehouseId: string;
-  warehouseName: string;
-  warehouseCode: string;
-  availableQty: number;
-  distanceKm: number;
-  estimatedHours: number;
+  destination: string;
+  destinationLat: number | null;
+  destinationLng: number | null;
+  requiredSkus: string[];
+  preferredDate: string | null;
+  status: 'pending' | 'planned' | 'dispatched' | 'delivered';
 };
 
-export type FindSourcePayload = {
-  skuId: string;
-  qtyRequired: number;
-  destinationLat: number;
-  destinationLng: number;
-  destinationAddress?: string;
-};
-
-export type FulfillShipmentPayload = {
-  requestId: string;
-  resolvedWarehouseId: string;
-};
-
-export type FuelPriceFilters = {
-  region?: string;
-  fuelType?: FuelPrice['fuelType'];
-  dateFrom?: string;
-  dateTo?: string;
+export type CreateDeliveryOrderPayload = {
+  warehouseId?: string | null;
+  destination: string;
+  destinationLat?: number | null;
+  destinationLng?: number | null;
+  requiredSkus?: string[];
+  preferredDate?: string | null;
 };

@@ -1,5 +1,10 @@
 import {
   IconAdjustmentsHorizontal,
+  IconBuildingWarehouse,
+  IconPackageImport,
+  IconPackageExport,
+  IconMapPin,
+  IconTruck,
   IconAlertCircle,
   IconAlertTriangle,
   IconArrowRight,
@@ -219,6 +224,13 @@ export const Icons = {
   toastWarning: IconAlertTriangle,
   toastError: IconCircleX,
   toastLoading: IconLoader2,
+
+  // Warehouse
+  warehouse: IconBuildingWarehouse,
+  inbound: IconPackageImport,
+  outbound: IconPackageExport,
+  location: IconMapPin,
+  truck: IconTruck,
 
   // Misc
   pizza: IconPizza,

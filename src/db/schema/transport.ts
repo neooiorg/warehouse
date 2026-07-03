@@ -1,10 +1,26 @@
-import { pgTable, text, uuid, doublePrecision, integer, date, index, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  uuid,
+  doublePrecision,
+  numeric,
+  date,
+  jsonb,
+  index,
+  pgEnum
+} from 'drizzle-orm/pg-core';
 import { timestamps } from './common';
 import { warehouses } from './warehouse';
-import { productSkus } from './inventory';
 
-export const shipmentStatusEnum = pgEnum('shipment_status', ['pending', 'fulfilled', 'cancelled']);
-export const fuelTypeEnum = pgEnum('fuel_type', ['RON95', 'RON92', 'DO', 'DIESEL']);
+export const deliveryOrderStatusEnum = pgEnum('delivery_order_status', [
+  'pending',
+  'planned',
+  'dispatched',
+  'delivered',
+  'cancelled'
+]);
+
+export const fuelTypeEnum = pgEnum('fuel_type', ['ron95', 'ron92', 'diesel', 'e5']);
 
 export const vehicles = pgTable(
   'vehicles',
@@ -26,35 +42,15 @@ export const vehicles = pgTable(
   ]
 );
 
-export const shipmentRequests = pgTable(
-  'shipment_requests',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    orgId: text('org_id').notNull(),
-    skuId: uuid('sku_id').references(() => productSkus.id, { onDelete: 'set null' }),
-    qtyRequired: doublePrecision('qty_required').notNull(),
-    destinationLat: doublePrecision('destination_lat'),
-    destinationLng: doublePrecision('destination_lng'),
-    destinationAddress: text('destination_address'),
-    requestDate: date('request_date').notNull(),
-    status: shipmentStatusEnum('status').notNull().default('pending'),
-    resolvedWarehouseId: uuid('resolved_warehouse_id').references(() => warehouses.id, { onDelete: 'set null' }),
-    note: text('note'),
-    ...timestamps
-  },
-  (table) => [
-    index('shipment_requests_org_id_idx').on(table.orgId),
-    index('shipment_requests_status_idx').on(table.status)
-  ]
-);
-
+// Daily fuel price log (crawled from external source or manually entered)
 export const fuelPrices = pgTable(
   'fuel_prices',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    region: text('region').notNull().default('national'),
+    // null = global/Vietnam-wide price, non-null = org-specific override
+    orgId: text('org_id'),
     fuelType: fuelTypeEnum('fuel_type').notNull(),
-    priceVnd: integer('price_vnd').notNull(),
+    pricePerLiter: numeric('price_per_liter', { precision: 10, scale: 2 }).notNull(),
     effectiveDate: date('effective_date').notNull(),
     source: text('source'),
     ...timestamps
@@ -62,5 +58,54 @@ export const fuelPrices = pgTable(
   (table) => [
     index('fuel_prices_fuel_type_idx').on(table.fuelType),
     index('fuel_prices_effective_date_idx').on(table.effectiveDate)
+  ]
+);
+
+// Outbound delivery requests that need route planning
+export const deliveryOrders = pgTable(
+  'delivery_orders',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull(),
+    warehouseId: uuid('warehouse_id').references(() => warehouses.id, { onDelete: 'set null' }),
+    destination: text('destination').notNull(),
+    destinationLat: doublePrecision('destination_lat'),
+    destinationLng: doublePrecision('destination_lng'),
+    // Array of { skuId, qty }
+    requiredSkus: jsonb('required_skus')
+      .$type<Array<{ skuId: string; qty: number }>>()
+      .notNull()
+      .default([]),
+    preferredDate: date('preferred_date'),
+    status: deliveryOrderStatusEnum('status').notNull().default('pending'),
+    notes: text('notes'),
+    ...timestamps
+  },
+  (table) => [
+    index('delivery_orders_org_id_idx').on(table.orgId),
+    index('delivery_orders_status_idx').on(table.status)
+  ]
+);
+
+// Computed route plan for a delivery order
+export const shipmentPlans = pgTable(
+  'shipment_plans',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull(),
+    orderId: uuid('order_id')
+      .notNull()
+      .references(() => deliveryOrders.id, { onDelete: 'cascade' }),
+    vehicleId: uuid('vehicle_id').references(() => vehicles.id, { onDelete: 'set null' }),
+    // Ordered array of warehouse IDs to pick from before final delivery
+    routeWarehouseIds: jsonb('route_warehouse_ids').$type<string[]>().notNull().default([]),
+    totalDistanceKm: doublePrecision('total_distance_km'),
+    estimatedHours: doublePrecision('estimated_hours'),
+    fuelCostEstimate: numeric('fuel_cost_estimate', { precision: 12, scale: 2 }),
+    ...timestamps
+  },
+  (table) => [
+    index('shipment_plans_org_id_idx').on(table.orgId),
+    index('shipment_plans_order_id_idx').on(table.orderId)
   ]
 );
