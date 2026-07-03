@@ -14,27 +14,27 @@ import { Icons } from '@/components/icons';
 import React from 'react';
 
 const chartData = [
-  { month: 'January', desktop: 342, mobile: 245 },
-  { month: 'February', desktop: 876, mobile: 654 },
-  { month: 'March', desktop: 512, mobile: 387 },
-  { month: 'April', desktop: 629, mobile: 521 },
-  { month: 'May', desktop: 458, mobile: 412 },
-  { month: 'June', desktop: 781, mobile: 598 },
-  { month: 'July', desktop: 394, mobile: 312 },
-  { month: 'August', desktop: 925, mobile: 743 },
-  { month: 'September', desktop: 647, mobile: 489 },
-  { month: 'October', desktop: 532, mobile: 476 },
-  { month: 'November', desktop: 803, mobile: 687 },
-  { month: 'December', desktop: 271, mobile: 198 }
+  { month: 'Tháng 1', desktop: 342, mobile: 245 },
+  { month: 'Tháng 2', desktop: 876, mobile: 654 },
+  { month: 'Tháng 3', desktop: 512, mobile: 387 },
+  { month: 'Tháng 4', desktop: 629, mobile: 521 },
+  { month: 'Tháng 5', desktop: 458, mobile: 412 },
+  { month: 'Tháng 6', desktop: 781, mobile: 598 },
+  { month: 'Tháng 7', desktop: 394, mobile: 312 },
+  { month: 'Tháng 8', desktop: 925, mobile: 743 },
+  { month: 'Tháng 9', desktop: 647, mobile: 489 },
+  { month: 'Tháng 10', desktop: 532, mobile: 476 },
+  { month: 'Tháng 11', desktop: 803, mobile: 687 },
+  { month: 'Tháng 12', desktop: 271, mobile: 198 }
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
+    label: 'Máy tính',
     color: 'var(--chart-1)'
   },
   mobile: {
-    label: 'Mobile',
+    label: 'Di động',
     color: 'var(--chart-2)'
   }
 } satisfies ChartConfig;
@@ -44,13 +44,13 @@ export function AreaGraph() {
     <Card>
       <CardHeader>
         <CardTitle>
-          Dotted Area Chart
+          Biểu đồ vùng
           <Badge variant='outline'>
             <Icons.trendingUp />
             -5.2%
           </Badge>
         </CardTitle>
-        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
+        <CardDescription>Tổng truy cập trong 6 tháng gần nhất</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

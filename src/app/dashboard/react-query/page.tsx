@@ -8,7 +8,7 @@ import { PokemonSkeleton } from '@/features/react-query-demo/components/pokemon-
 import { reactQueryInfoContent } from '@/features/react-query-demo/info-content';
 
 export const metadata = {
-  title: 'Dashboard: React Query'
+  title: 'Quản lý kho: Dữ liệu mẫu'
 };
 
 export default function ReactQueryPage() {
@@ -19,8 +19,8 @@ export default function ReactQueryPage() {
 
   return (
     <PageContainer
-      pageTitle='React Query'
-      pageDescription='Server prefetch + client hydration + suspense query pattern.'
+      pageTitle='Dữ liệu mẫu'
+      pageDescription='Ví dụ tải dữ liệu với React Query, hydrate phía client và Suspense.'
       infoContent={reactQueryInfoContent}
     >
       <HydrationBoundary state={dehydrate(queryClient)}>

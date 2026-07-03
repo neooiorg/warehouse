@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { InteractiveGridPattern } from './interactive-grid';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
+  title: 'Đăng nhập',
+  description: 'Đăng nhập vào hệ thống quản lý kho.'
 };
 
 export default function SignInViewPage() {
@@ -20,7 +20,7 @@ export default function SignInViewPage() {
           'absolute top-4 right-4 hidden md:top-8 md:right-8'
         )}
       >
-        Login
+        Đăng nhập
       </Link>
       <div className='relative hidden h-full flex-col p-10 lg:flex dark:border-r'>
         <div className='absolute inset-0 bg-sidebar' />
@@ -37,7 +37,7 @@ export default function SignInViewPage() {
           >
             <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
           </svg>
-          Logo
+          Quản lý kho
         </div>
         <InteractiveGridPattern
           className={cn(
@@ -51,16 +51,14 @@ export default function SignInViewPage() {
               &ldquo;Hệ thống quản lý kho thông minh — theo dõi hàng hóa, nhập xuất kho và truy xuất
               nguồn gốc trong một nền tảng duy nhất.&rdquo;
             </p>
-            <footer className='text-sidebar-foreground/70 text-sm'>
-              Warehouse Management System
-            </footer>
+            <footer className='text-sidebar-foreground/70 text-sm'>Hệ thống quản lý kho</footer>
           </blockquote>
         </div>
       </div>
       <div className='flex h-full items-center justify-center p-4 lg:p-8'>
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
           <div className='flex flex-col items-center space-y-1'>
-            <h1 className='text-2xl font-semibold tracking-tight'>Warehouse Management</h1>
+            <h1 className='text-2xl font-semibold tracking-tight'>Quản lý kho</h1>
             <p className='text-muted-foreground text-sm'>Đăng nhập để tiếp tục</p>
           </div>
           <ClerkSignInForm />
@@ -69,19 +67,19 @@ export default function SignInViewPage() {
           </div>
 
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking continue, you agree to our{' '}
+            Khi tiếp tục, bạn đồng ý với{' '}
             <Link
               href='/terms-of-service'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
+              Điều khoản dịch vụ
             </Link>{' '}
-            and{' '}
+            và{' '}
             <Link
               href='/privacy-policy'
               className='hover:text-primary underline underline-offset-4'
             >
-              Privacy Policy
+              Chính sách bảo mật
             </Link>
             .
           </p>

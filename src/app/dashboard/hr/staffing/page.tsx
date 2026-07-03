@@ -6,7 +6,7 @@ import { staffingPlanListOptions } from '@/features/hr/api/queries';
 import StaffingPlanner from '@/features/hr/components/staffing-planner';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const metadata = { title: 'Dashboard: Định biên nhân sự' };
+export const metadata = { title: 'Quản lý kho: Định biên nhân sự' };
 
 export default async function HrStaffingPage() {
   const queryClient = getQueryClient();
@@ -15,7 +15,7 @@ export default async function HrStaffingPage() {
   return (
     <PageContainer
       pageTitle='Định biên nhân sự (AON/CPM)'
-      pageDescription='Nhập đầu việc, chạy lịch Critical Path, xuất sơ đồ Gantt và đề xuất KPI'
+      pageDescription='Nhập đầu việc, chạy lịch đường găng, xuất sơ đồ Gantt và đề xuất KPI'
     >
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<Skeleton className='h-96 rounded-lg' />}>

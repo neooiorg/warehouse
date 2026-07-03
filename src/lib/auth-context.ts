@@ -1,14 +1,14 @@
 import { auth } from '@clerk/nextjs/server';
 
 export class UnauthorizedError extends Error {
-  constructor(message = 'Not authenticated') {
+  constructor(message = 'Chưa đăng nhập') {
     super(message);
     this.name = 'UnauthorizedError';
   }
 }
 
 export class NoOrganizationError extends Error {
-  constructor(message = 'No active organization selected') {
+  constructor(message = 'Chưa chọn tổ chức đang hoạt động') {
     super(message);
     this.name = 'NoOrganizationError';
   }

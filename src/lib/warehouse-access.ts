@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { warehouses } from '@/db/schema';
 
 export class WarehouseAccessError extends Error {
-  constructor(message = 'Warehouse not found in this organization') {
+  constructor(message = 'Không tìm thấy kho trong tổ chức hiện tại') {
     super(message);
     this.name = 'WarehouseAccessError';
   }

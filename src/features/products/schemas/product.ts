@@ -6,16 +6,16 @@ const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/web
 export const productSchema = z.object({
   image: z
     .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, 'Max file size is 5MB.')
+    .refine((files) => files?.length == 1, 'Chọn ảnh sản phẩm.')
+    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, 'Dung lượng tối đa là 5MB.')
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
+      'Chỉ nhận file .jpg, .jpeg, .png hoặc .webp.'
     ),
-  name: z.string().min(2, 'Product name must be at least 2 characters.'),
-  category: z.string().min(1, 'Please select a category'),
-  price: z.number({ message: 'Price is required' }),
-  description: z.string().min(10, 'Description must be at least 10 characters.')
+  name: z.string().min(2, 'Tên sản phẩm cần ít nhất 2 ký tự.'),
+  category: z.string().min(1, 'Chọn danh mục'),
+  price: z.number({ message: 'Nhập giá' }),
+  description: z.string().min(10, 'Mô tả cần ít nhất 10 ký tự.')
 });
 
 export type ProductFormValues = {

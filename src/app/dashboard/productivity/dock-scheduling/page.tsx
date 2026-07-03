@@ -3,7 +3,7 @@ import PageContainer from '@/components/layout/page-container';
 import { Skeleton } from '@/components/ui/skeleton';
 import DockSchedulingWrapper from './dock-scheduling-wrapper';
 
-export const metadata = { title: 'Dashboard: Lịch Dock' };
+export const metadata = { title: 'Quản lý kho: Lịch Dock' };
 
 export default async function DockSchedulingPage() {
   return (

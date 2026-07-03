@@ -6,7 +6,7 @@ import { fuelPricesOptions } from '@/features/transport/api/queries';
 import FuelPriceView from '@/features/transport/components/fuel-price-view';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const metadata = { title: 'Dashboard: Giá xăng dầu' };
+export const metadata = { title: 'Quản lý kho: Giá xăng dầu' };
 
 export default async function FuelPricesPage() {
   const queryClient = getQueryClient();

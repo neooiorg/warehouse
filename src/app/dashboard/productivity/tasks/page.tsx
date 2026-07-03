@@ -9,7 +9,7 @@ import { employeeOptionsQuery } from '@/features/master-data/api/queries';
 import { ProductivityScoreTable } from '@/features/productivity/components/productivity-score-table';
 import { TaskLogSheet } from '@/features/productivity/components/task-log-sheet';
 
-export const metadata = { title: 'Dashboard: Năng suất' };
+export const metadata = { title: 'Quản lý kho: Năng suất' };
 
 export default async function Page() {
   const qc = getQueryClient();

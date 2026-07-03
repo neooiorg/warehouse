@@ -1,10 +1,10 @@
 export const CATEGORY_OPTIONS = [
-  { value: 'Electronics', label: 'Electronics' },
-  { value: 'Furniture', label: 'Furniture' },
-  { value: 'Clothing', label: 'Clothing' },
-  { value: 'Toys', label: 'Toys' },
-  { value: 'Groceries', label: 'Groceries' },
-  { value: 'Books', label: 'Books' },
-  { value: 'Jewelry', label: 'Jewelry' },
-  { value: 'Beauty Products', label: 'Beauty Products' }
+  { value: 'Electronics', label: 'Điện tử' },
+  { value: 'Furniture', label: 'Nội thất' },
+  { value: 'Clothing', label: 'Thời trang' },
+  { value: 'Toys', label: 'Đồ chơi' },
+  { value: 'Groceries', label: 'Hàng tiêu dùng' },
+  { value: 'Books', label: 'Sách' },
+  { value: 'Jewelry', label: 'Trang sức' },
+  { value: 'Beauty Products', label: 'Làm đẹp' }
 ];

@@ -50,11 +50,11 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
   const createMutation = useMutation({
     ...createTransferMutation,
     onSuccess: () => {
-      toast.success('Transfer recorded');
+      toast.success('Đã ghi nhận chuyển vị trí');
       onOpenChange(false);
       form.reset();
     },
-    onError: (err: Error) => toast.error(err.message ?? 'Failed to record transfer')
+    onError: (err: Error) => toast.error(err.message ?? 'Không ghi nhận được chuyển vị trí')
   });
 
   const form = useAppForm({
@@ -85,7 +85,7 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
   const warehouseOptions = warehouses.map((w) => ({ value: w.id, label: `${w.code} — ${w.name}` }));
   const lotOptions = lots.map((l) => ({
     value: l.id,
-    label: `${l.lotNo} — ${l.sku} (${l.qty} @ ${l.locationCode ?? 'no location'})`
+    label: `${l.lotNo} — ${l.sku} (${l.qty} tại ${l.locationCode ?? 'chưa có vị trí'})`
   }));
   const locationOptions = locations
     .filter((l) => l.id !== selectedLot?.id)
@@ -96,19 +96,19 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='flex flex-col'>
         <SheetHeader>
-          <SheetTitle>Transfer Stock</SheetTitle>
+          <SheetTitle>Chuyển vị trí tồn kho</SheetTitle>
           <SheetDescription>
-            Move part or all of a lot to a different location within the same warehouse.
+            Chuyển một phần hoặc toàn bộ lô sang vị trí khác trong cùng kho.
           </SheetDescription>
         </SheetHeader>
 
         <div className='flex-1 overflow-auto'>
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <FieldLabel htmlFor='transfer-warehouse'>Warehouse</FieldLabel>
+              <FieldLabel htmlFor='transfer-warehouse'>Kho</FieldLabel>
               <Select value={warehouseId} onValueChange={setWarehouseId}>
                 <SelectTrigger id='transfer-warehouse'>
-                  <SelectValue placeholder='Select warehouse' />
+                  <SelectValue placeholder='Chọn kho' />
                 </SelectTrigger>
                 <SelectContent>
                   {warehouseOptions.map((opt) => (
@@ -124,21 +124,21 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
               <form.Form id='transfer-form' className='space-y-4'>
                 <FormSelectField
                   name='lotId'
-                  label='Lot'
+                  label='Lô'
                   required
                   options={lotOptions}
-                  placeholder={warehouseId ? 'Select lot' : 'Select a warehouse first'}
+                  placeholder={warehouseId ? 'Chọn lô' : 'Chọn kho trước'}
                 />
                 <FormSelectField
                   name='toLocationId'
-                  label='Destination Location'
+                  label='Vị trí đích'
                   required
                   options={locationOptions}
-                  placeholder='Select destination'
+                  placeholder='Chọn vị trí đích'
                 />
                 <FormTextField
                   name='qty'
-                  label={`Quantity${selectedLot ? ` (max ${selectedLot.qty})` : ''}`}
+                  label={`Số lượng${selectedLot ? ` (tối đa ${selectedLot.qty})` : ''}`}
                   required
                   type='number'
                   min={0}
@@ -146,11 +146,11 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
                 />
                 <FormSelectField
                   name='performedBy'
-                  label='Moved By (optional)'
+                  label='Người chuyển (tùy chọn)'
                   options={employeeOptions}
-                  placeholder='Select employee'
+                  placeholder='Chọn nhân viên'
                 />
-                <FormTextField name='note' label='Note (optional)' />
+                <FormTextField name='note' label='Ghi chú (tùy chọn)' />
               </form.Form>
             </form.AppForm>
           </div>
@@ -158,10 +158,10 @@ export function TransferSheet({ open, onOpenChange }: TransferSheetProps) {
 
         <SheetFooter>
           <Button type='button' variant='outline' onClick={() => onOpenChange(false)}>
-            Cancel
+            Hủy
           </Button>
           <Button type='submit' form='transfer-form' isLoading={createMutation.isPending}>
-            <Icons.check /> Record Transfer
+            <Icons.check /> Ghi nhận chuyển
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -175,7 +175,7 @@ export function TransferSheetTrigger() {
   return (
     <>
       <Button variant='outline' onClick={() => setOpen(true)}>
-        <Icons.transfer className='mr-2 h-4 w-4' /> Transfer
+        <Icons.transfer className='mr-2 h-4 w-4' /> Chuyển vị trí
       </Button>
       <TransferSheet open={open} onOpenChange={setOpen} />
     </>

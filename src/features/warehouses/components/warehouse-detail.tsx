@@ -120,7 +120,7 @@ export default function WarehouseDetail({ warehouseId }: Props) {
                   <TableHead>Loại</TableHead>
                   <TableHead>Khu vực</TableHead>
                   <TableHead className='text-center'>Tầng</TableHead>
-                  <TableHead className='text-center'>KL max (kg)</TableHead>
+                  <TableHead className='text-center'>Tải tối đa (kg)</TableHead>
                   <TableHead />
                 </TableRow>
               </TableHeader>

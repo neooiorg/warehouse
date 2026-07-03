@@ -54,7 +54,7 @@ export function OrgSwitcher() {
     try {
       await setActive({ organization: organizationId });
     } catch (error) {
-      console.error('Failed to switch organization:', error);
+      console.error('Không chuyển được tổ chức:', error);
     }
   };
 
@@ -74,8 +74,8 @@ export function OrgSwitcher() {
                   : 'visible max-w-full opacity-100'
               }`}
             >
-              <span className='truncate font-medium'>Loading...</span>
-              <span className='text-muted-foreground truncate text-xs'>Organizations</span>
+              <span className='truncate font-medium'>Đang tải...</span>
+              <span className='text-muted-foreground truncate text-xs'>Tổ chức</span>
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -103,8 +103,8 @@ export function OrgSwitcher() {
                   : 'visible max-w-full opacity-100'
               }`}
             >
-              <span className='truncate font-medium'>Create organization</span>
-              <span className='text-muted-foreground truncate text-xs'>Get started</span>
+              <span className='truncate font-medium'>Tạo tổ chức</span>
+              <span className='text-muted-foreground truncate text-xs'>Bắt đầu</span>
             </div>
             <Icons.chevronsUpDown
               className={`ml-auto transition-all duration-200 ease-in-out ${
@@ -158,7 +158,7 @@ export function OrgSwitcher() {
                 <span className='truncate font-medium'>{displayOrganization.name}</span>
                 <span className='text-muted-foreground truncate text-xs'>
                   {userMemberships.data.find((m) => m.organization.id === displayOrganization.id)
-                    ?.role || 'Organization'}
+                    ?.role || 'Tổ chức'}
                 </span>
               </div>
               <Icons.chevronsUpDown
@@ -176,9 +176,7 @@ export function OrgSwitcher() {
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className='text-muted-foreground text-xs'>
-              Organizations
-            </DropdownMenuLabel>
+            <DropdownMenuLabel className='text-muted-foreground text-xs'>Tổ chức</DropdownMenuLabel>
             {userMemberships.data.map((membership, index) => {
               const isActive = membership.organization.id === orgId;
               return (
@@ -216,7 +214,7 @@ export function OrgSwitcher() {
               <div className='flex size-6 items-center justify-center rounded-md border bg-transparent'>
                 <Icons.add className='size-4' />
               </div>
-              <div className='text-muted-foreground font-medium'>Add organization</div>
+              <div className='text-muted-foreground font-medium'>Thêm tổ chức</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

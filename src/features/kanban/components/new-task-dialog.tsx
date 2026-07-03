@@ -32,23 +32,23 @@ export default function NewTaskDialog() {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant='secondary' size='sm'>
-          + Add New Task
+          + Thêm việc
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Add New Task</DialogTitle>
-          <DialogDescription>What do you want to get done today?</DialogDescription>
+          <DialogTitle>Thêm việc mới</DialogTitle>
+          <DialogDescription>Nhập việc cần xử lý.</DialogDescription>
         </DialogHeader>
         <form id='task-form' className='grid gap-4 py-4' onSubmit={handleSubmit}>
           <div className='grid grid-cols-4 items-center gap-4'>
-            <Input id='title' name='title' placeholder='Task title...' className='col-span-4' />
+            <Input id='title' name='title' placeholder='Tên việc' className='col-span-4' />
           </div>
           <div className='grid grid-cols-4 items-center gap-4'>
             <Textarea
               id='description'
               name='description'
-              placeholder='Description...'
+              placeholder='Mô tả'
               className='col-span-4'
             />
           </div>
@@ -56,7 +56,7 @@ export default function NewTaskDialog() {
         <DialogFooter>
           <DialogTrigger asChild>
             <Button type='submit' size='sm' form='task-form'>
-              Add Task
+              Thêm việc
             </Button>
           </DialogTrigger>
         </DialogFooter>

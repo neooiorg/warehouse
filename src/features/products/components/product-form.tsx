@@ -25,22 +25,22 @@ export default function ProductForm({
   const createMutation = useMutation({
     ...createProductMutation,
     onSuccess: () => {
-      toast.success('Product created successfully');
+      toast.success('Đã tạo sản phẩm');
       router.push('/dashboard/product');
     },
     onError: () => {
-      toast.error('Failed to create product');
+      toast.error('Không thể tạo sản phẩm');
     }
   });
 
   const updateMutation = useMutation({
     ...updateProductMutation,
     onSuccess: () => {
-      toast.success('Product updated successfully');
+      toast.success('Đã cập nhật sản phẩm');
       router.push('/dashboard/product');
     },
     onError: () => {
-      toast.error('Failed to update product');
+      toast.error('Không thể cập nhật sản phẩm');
     }
   });
 
@@ -84,8 +84,8 @@ export default function ProductForm({
           <form.Form className='space-y-8'>
             <FormFileUploadField
               name='image'
-              label='Product Image'
-              description='Upload a product image'
+              label='Ảnh sản phẩm'
+              description='Tải ảnh sản phẩm lên'
               maxSize={5 * 1024 * 1024}
               maxFiles={4}
             />
@@ -93,56 +93,56 @@ export default function ProductForm({
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
               <FormTextField
                 name='name'
-                label='Product Name'
+                label='Tên sản phẩm'
                 required
-                placeholder='Enter product name'
+                placeholder='Nhập tên sản phẩm'
                 validators={{
-                  onBlur: z.string().min(2, 'Product name must be at least 2 characters.')
+                  onBlur: z.string().min(2, 'Tên sản phẩm cần ít nhất 2 ký tự.')
                 }}
               />
 
               <FormSelectField
                 name='category'
-                label='Category'
+                label='Danh mục'
                 required
                 options={categoryOptions}
-                placeholder='Select category'
+                placeholder='Chọn danh mục'
                 validators={{
-                  onBlur: z.string().min(1, 'Please select a category')
+                  onBlur: z.string().min(1, 'Chọn danh mục')
                 }}
               />
 
               <FormTextField
                 name='price'
-                label='Price'
+                label='Giá'
                 required
                 type='number'
                 min={0}
                 step={0.01}
-                placeholder='Enter price'
+                placeholder='Nhập giá'
                 validators={{
-                  onBlur: z.number({ message: 'Price is required' })
+                  onBlur: z.number({ message: 'Nhập giá' })
                 }}
               />
             </div>
 
             <FormTextareaField
               name='description'
-              label='Description'
+              label='Mô tả'
               required
-              placeholder='Enter product description'
+              placeholder='Nhập mô tả sản phẩm'
               maxLength={500}
               rows={4}
               validators={{
-                onBlur: z.string().min(10, 'Description must be at least 10 characters.')
+                onBlur: z.string().min(10, 'Mô tả cần ít nhất 10 ký tự.')
               }}
             />
 
             <div className='flex justify-end gap-2'>
               <Button type='button' variant='outline' onClick={() => router.back()}>
-                Back
+                Quay lại
               </Button>
-              <form.SubmitButton>{isEdit ? 'Update Product' : 'Add Product'}</form.SubmitButton>
+              <form.SubmitButton>{isEdit ? 'Cập nhật' : 'Thêm sản phẩm'}</form.SubmitButton>
             </div>
           </form.Form>
         </form.AppForm>

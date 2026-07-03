@@ -25,11 +25,17 @@ export function DockPageClient() {
   const [forkliftsCount, setForkliftsCount] = useState(2);
   const [minutesPerPallet, setMinutesPerPallet] = useState(5);
   const [vehicles, setVehicles] = useState<VehicleSlot[]>([]);
-  const [result, setResult] = useState<{ assignments: DockAssignment[]; docks: { id: string; code: string }[] } | null>(null);
+  const [result, setResult] = useState<{
+    assignments: DockAssignment[];
+    docks: { id: string; code: string }[];
+  } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   function addVehicle() {
-    setVehicles((v) => [...v, { plateNumber: '', arrivalTime: '08:00', palletCount: 10, direction: 'inbound' }]);
+    setVehicles((v) => [
+      ...v,
+      { plateNumber: '', arrivalTime: '08:00', palletCount: 10, direction: 'inbound' }
+    ]);
   }
 
   function updateVehicle(i: number, patch: Partial<VehicleSlot>) {
@@ -57,12 +63,20 @@ export function DockPageClient() {
   }
 
   async function handleCompute() {
-    const res = await computeMut.mutateAsync({ warehouseId, scheduleDate, forkliftsCount, minutesPerPallet, vehicles });
+    const res = await computeMut.mutateAsync({
+      warehouseId,
+      scheduleDate,
+      forkliftsCount,
+      minutesPerPallet,
+      vehicles
+    });
     setResult({ assignments: res.assignments, docks: res.docks });
   }
 
   // Simple Gantt visualization using divs
-  const allTimes = result?.assignments.flatMap((a) => [timeToMinutes(a.startTime), timeToMinutes(a.endTime)]) ?? [];
+  const allTimes =
+    result?.assignments.flatMap((a) => [timeToMinutes(a.startTime), timeToMinutes(a.endTime)]) ??
+    [];
   const minTime = allTimes.length ? Math.min(...allTimes) : 480;
   const maxTime = allTimes.length ? Math.max(...allTimes) : 1080;
   const range = maxTime - minTime || 60;
@@ -71,26 +85,54 @@ export function DockPageClient() {
     <div className='space-y-6'>
       {/* Config */}
       <Card>
-        <CardHeader><CardTitle className='text-sm'>Thông số lịch dock</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className='text-sm'>Thông số lịch dock</CardTitle>
+        </CardHeader>
         <CardContent className='flex flex-wrap gap-4'>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Kho</label>
-            <select className='rounded-md border px-3 py-2 text-sm' value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)}>
+            <select
+              className='rounded-md border px-3 py-2 text-sm'
+              value={warehouseId}
+              onChange={(e) => setWarehouseId(e.target.value)}
+            >
               <option value=''>-- Chọn kho --</option>
-              {warehouses.map((w) => <option key={w.id} value={w.id}>{w.code} — {w.name}</option>)}
+              {warehouses.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.code} — {w.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Ngày</label>
-            <input type='date' className='rounded-md border px-3 py-2 text-sm' value={scheduleDate} onChange={(e) => setScheduleDate(e.target.value)} />
+            <input
+              type='date'
+              className='rounded-md border px-3 py-2 text-sm'
+              value={scheduleDate}
+              onChange={(e) => setScheduleDate(e.target.value)}
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Số xe nâng</label>
-            <input type='number' min={1} className='w-20 rounded-md border px-3 py-2 text-sm' value={forkliftsCount} onChange={(e) => setForkliftsCount(Number(e.target.value))} />
+            <input
+              type='number'
+              min={1}
+              className='w-20 rounded-md border px-3 py-2 text-sm'
+              value={forkliftsCount}
+              onChange={(e) => setForkliftsCount(Number(e.target.value))}
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Phút/pallet</label>
-            <input type='number' min={1} step={0.5} className='w-24 rounded-md border px-3 py-2 text-sm' value={minutesPerPallet} onChange={(e) => setMinutesPerPallet(Number(e.target.value))} />
+            <input
+              type='number'
+              min={1}
+              step={0.5}
+              className='w-24 rounded-md border px-3 py-2 text-sm'
+              value={minutesPerPallet}
+              onChange={(e) => setMinutesPerPallet(Number(e.target.value))}
+            />
           </div>
         </CardContent>
       </Card>
@@ -100,51 +142,107 @@ export function DockPageClient() {
         <CardHeader className='flex flex-row items-center justify-between'>
           <CardTitle className='text-sm'>Danh sách xe ({vehicles.length})</CardTitle>
           <div className='flex gap-2'>
-            <input ref={fileRef} type='file' accept='.csv' className='hidden' onChange={(e) => e.target.files?.[0] && handleCSV(e.target.files[0])} />
+            <input
+              ref={fileRef}
+              type='file'
+              accept='.csv'
+              className='hidden'
+              onChange={(e) => e.target.files?.[0] && handleCSV(e.target.files[0])}
+            />
             <Button variant='outline' size='sm' onClick={() => fileRef.current?.click()}>
-              <Icons.upload className='mr-1 h-4 w-4' />Import CSV
+              <Icons.upload className='mr-1 h-4 w-4' />
+              Nhập CSV
             </Button>
-            <Button size='sm' onClick={addVehicle}><Icons.add className='mr-1 h-4 w-4' />Thêm xe</Button>
+            <Button size='sm' onClick={addVehicle}>
+              <Icons.add className='mr-1 h-4 w-4' />
+              Thêm xe
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {vehicles.length === 0 && <p className='text-sm text-muted-foreground'>Import CSV hoặc thêm xe thủ công. Cột: PlateNumber, ArrivalTime (HH:MM), PalletCount, Direction (inbound/outbound)</p>}
+          {vehicles.length === 0 && (
+            <p className='text-sm text-muted-foreground'>
+              Nhập CSV hoặc thêm xe thủ công. Cột: Biển số, Giờ đến (HH:MM), Số pallet, Chiều
+              (nhập/xuất)
+            </p>
+          )}
           <div className='space-y-2'>
             {vehicles.map((v, i) => (
-              <div key={i} className='flex flex-wrap items-center gap-2 rounded-md border px-3 py-2'>
-                <input placeholder='Biển số' className='w-28 rounded border px-2 py-1 text-xs' value={v.plateNumber} onChange={(e) => updateVehicle(i, { plateNumber: e.target.value })} />
-                <input type='time' className='rounded border px-2 py-1 text-xs' value={v.arrivalTime} onChange={(e) => updateVehicle(i, { arrivalTime: e.target.value })} />
-                <input type='number' min={1} placeholder='Pallet' className='w-16 rounded border px-2 py-1 text-xs' value={v.palletCount} onChange={(e) => updateVehicle(i, { palletCount: Number(e.target.value) })} />
-                <select className='rounded border px-2 py-1 text-xs' value={v.direction} onChange={(e) => updateVehicle(i, { direction: e.target.value as 'inbound' | 'outbound' })}>
+              <div
+                key={i}
+                className='flex flex-wrap items-center gap-2 rounded-md border px-3 py-2'
+              >
+                <input
+                  placeholder='Biển số'
+                  className='w-28 rounded border px-2 py-1 text-xs'
+                  value={v.plateNumber}
+                  onChange={(e) => updateVehicle(i, { plateNumber: e.target.value })}
+                />
+                <input
+                  type='time'
+                  className='rounded border px-2 py-1 text-xs'
+                  value={v.arrivalTime}
+                  onChange={(e) => updateVehicle(i, { arrivalTime: e.target.value })}
+                />
+                <input
+                  type='number'
+                  min={1}
+                  placeholder='Pallet'
+                  className='w-16 rounded border px-2 py-1 text-xs'
+                  value={v.palletCount}
+                  onChange={(e) => updateVehicle(i, { palletCount: Number(e.target.value) })}
+                />
+                <select
+                  className='rounded border px-2 py-1 text-xs'
+                  value={v.direction}
+                  onChange={(e) =>
+                    updateVehicle(i, { direction: e.target.value as 'inbound' | 'outbound' })
+                  }
+                >
                   <option value='inbound'>Nhập</option>
                   <option value='outbound'>Xuất</option>
                 </select>
-                <Button variant='ghost' size='icon' className='h-6 w-6' onClick={() => removeVehicle(i)}><Icons.close className='h-3 w-3' /></Button>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='h-6 w-6'
+                  onClick={() => removeVehicle(i)}
+                >
+                  <Icons.close className='h-3 w-3' />
+                </Button>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      <Button onClick={handleCompute} disabled={computeMut.isPending || !warehouseId || vehicles.length === 0}>
+      <Button
+        onClick={handleCompute}
+        disabled={computeMut.isPending || !warehouseId || vehicles.length === 0}
+      >
         {computeMut.isPending ? 'Đang tính...' : 'Tính lịch dock'}
       </Button>
 
       {/* Gantt result */}
       {result && result.assignments.length > 0 && (
         <Card>
-          <CardHeader><CardTitle className='text-sm'>Sơ đồ phân bổ cửa dock</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className='text-sm'>Sơ đồ phân bổ cửa dock</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className='space-y-2'>
               {result.docks.map((dock) => {
                 const dockAssignments = result.assignments.filter((a) => a.dockId === dock.id);
                 return (
                   <div key={dock.id} className='flex items-center gap-3'>
-                    <span className='w-20 text-xs font-medium text-muted-foreground'>{dock.code}</span>
+                    <span className='w-20 text-xs font-medium text-muted-foreground'>
+                      {dock.code}
+                    </span>
                     <div className='relative h-8 flex-1 rounded bg-muted'>
                       {dockAssignments.map((a, i) => {
                         const left = ((timeToMinutes(a.startTime) - minTime) / range) * 100;
-                        const width = ((timeToMinutes(a.endTime) - timeToMinutes(a.startTime)) / range) * 100;
+                        const width =
+                          ((timeToMinutes(a.endTime) - timeToMinutes(a.startTime)) / range) * 100;
                         return (
                           <div
                             key={i}
@@ -161,8 +259,12 @@ export function DockPageClient() {
                 );
               })}
               <div className='mt-2 flex gap-3 text-xs text-muted-foreground'>
-                <span className='flex items-center gap-1'><span className='inline-block h-3 w-3 rounded bg-blue-500' /> Nhập</span>
-                <span className='flex items-center gap-1'><span className='inline-block h-3 w-3 rounded bg-orange-500' /> Xuất</span>
+                <span className='flex items-center gap-1'>
+                  <span className='inline-block h-3 w-3 rounded bg-blue-500' /> Nhập
+                </span>
+                <span className='flex items-center gap-1'>
+                  <span className='inline-block h-3 w-3 rounded bg-orange-500' /> Xuất
+                </span>
               </div>
             </div>
           </CardContent>

@@ -18,32 +18,31 @@ export default function BillingPage() {
       accessFallback={
         <div className='flex min-h-[400px] items-center justify-center'>
           <div className='space-y-2 text-center'>
-            <h2 className='text-2xl font-semibold'>No Organization Selected</h2>
+            <h2 className='text-2xl font-semibold'>Chưa chọn tổ chức</h2>
             <p className='text-muted-foreground'>
-              Please select or create an organization to view billing information.
+              Chọn hoặc tạo tổ chức để xem thông tin thanh toán.
             </p>
           </div>
         </div>
       }
       infoContent={billingInfoContent}
-      pageTitle='Billing & Plans'
-      pageDescription={`Manage your subscription and usage limits for ${organization?.name}`}
+      pageTitle='Thanh toán và gói'
+      pageDescription={`Quản lý gói và giới hạn sử dụng của ${organization?.name}`}
     >
       <div className='space-y-6'>
         {/* Info Alert */}
         <Alert>
           <Icons.info className='h-4 w-4' />
           <AlertDescription>
-            Plans and subscriptions are managed through Clerk Billing. Subscribe to a plan to unlock
-            features and higher limits.
+            Clerk Billing quản lý gói và thanh toán. Chọn gói phù hợp để mở giới hạn cao hơn.
           </AlertDescription>
         </Alert>
 
         {/* Clerk Pricing Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Available Plans</CardTitle>
-            <CardDescription>Choose a plan that fits your organization's needs</CardDescription>
+            <CardTitle>Gói hiện có</CardTitle>
+            <CardDescription>Chọn gói phù hợp với tổ chức của bạn</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='mx-auto max-w-4xl'>

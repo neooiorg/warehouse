@@ -61,7 +61,7 @@ export default function TransportPlanner() {
         setRouteResult({ ...result, orderId });
         toast.success('Đã lập tuyến đường');
       } catch (e) {
-        toast.error('Lỗi lập tuyến: ' + (e instanceof Error ? e.message : 'Unknown'));
+        toast.error('Lỗi lập tuyến: ' + (e instanceof Error ? e.message : 'Không rõ lỗi'));
       }
     });
   };

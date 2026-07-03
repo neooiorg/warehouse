@@ -23,28 +23,28 @@ const initialColumns: Record<string, Task[]> = {
   backlog: [
     {
       id: '1',
-      title: 'Migrate to Stripe billing API',
+      title: 'Rà soát tích hợp thanh toán',
       priority: 'high',
       assignee: 'Sarah Chen',
       dueDate: '2026-04-08'
     },
     {
       id: '2',
-      title: 'Add CSV export to reports',
+      title: 'Thêm xuất CSV cho báo cáo',
       priority: 'medium',
       assignee: 'Marcus Rivera',
       dueDate: '2026-04-12'
     },
     {
       id: '3',
-      title: 'Update onboarding flow copy',
+      title: 'Cập nhật nội dung hướng dẫn ban đầu',
       priority: 'low',
       assignee: 'Priya Sharma',
       dueDate: '2026-04-15'
     },
     {
       id: '9',
-      title: 'Audit RBAC permissions',
+      title: 'Kiểm tra phân quyền RBAC',
       priority: 'medium',
       assignee: 'Jordan Kim',
       dueDate: '2026-04-10'
@@ -53,21 +53,21 @@ const initialColumns: Record<string, Task[]> = {
   inProgress: [
     {
       id: '4',
-      title: 'Refactor notification service',
+      title: 'Tách lại dịch vụ thông báo',
       priority: 'high',
       assignee: 'Alex Turner',
       dueDate: '2026-04-03'
     },
     {
       id: '5',
-      title: 'Build team invitation flow',
+      title: 'Hoàn thiện luồng mời thành viên',
       priority: 'medium',
       assignee: 'Emily Nakamura',
       dueDate: '2026-04-06'
     },
     {
       id: '10',
-      title: 'Fix timezone handling in scheduler',
+      title: 'Sửa xử lý múi giờ trong lịch',
       priority: 'high',
       assignee: 'Sarah Chen',
       dueDate: '2026-04-04'
@@ -76,21 +76,21 @@ const initialColumns: Record<string, Task[]> = {
   done: [
     {
       id: '6',
-      title: 'SSO integration with Okta',
+      title: 'Tích hợp SSO',
       priority: 'high',
       assignee: 'Jordan Kim',
       dueDate: '2026-03-22'
     },
     {
       id: '7',
-      title: 'Dashboard analytics charts',
+      title: 'Biểu đồ phân tích tổng quan',
       priority: 'medium',
       assignee: 'Marcus Rivera',
       dueDate: '2026-03-20'
     },
     {
       id: '8',
-      title: 'Webhook retry mechanism',
+      title: 'Cơ chế thử lại webhook',
       priority: 'low',
       assignee: 'Alex Turner',
       dueDate: '2026-03-18'

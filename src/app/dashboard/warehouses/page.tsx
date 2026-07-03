@@ -6,7 +6,7 @@ import { warehouseListOptions } from '@/features/warehouses/api/queries';
 import WarehouseListing from '@/features/warehouses/components/warehouse-listing';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 
-export const metadata = { title: 'Dashboard: Kho hàng' };
+export const metadata = { title: 'Quản lý kho: Kho hàng' };
 
 export default async function Page() {
   const queryClient = getQueryClient();

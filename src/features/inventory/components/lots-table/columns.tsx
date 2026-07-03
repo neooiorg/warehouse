@@ -20,7 +20,7 @@ export const columns: ColumnDef<LotWithDetails>[] = [
     id: 'lotNo',
     accessorKey: 'lotNo',
     header: ({ column }: { column: Column<LotWithDetails, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Lot No.' />
+      <DataTableColumnHeader column={column} title='Mã lô' />
     )
   },
   {
@@ -37,43 +37,49 @@ export const columns: ColumnDef<LotWithDetails>[] = [
   {
     id: 'warehouseCode',
     accessorKey: 'warehouseCode',
-    header: 'Warehouse'
+    header: 'Kho'
   },
   {
     id: 'locationCode',
     accessorKey: 'locationCode',
-    header: 'Location',
+    header: 'Vị trí',
     cell: ({ cell }) => cell.getValue<string | null>() ?? '—'
   },
   {
     id: 'qty',
     accessorKey: 'qty',
     header: ({ column }: { column: Column<LotWithDetails, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Qty' />
+      <DataTableColumnHeader column={column} title='SL' />
     )
   },
   {
     id: 'receivedDate',
     accessorKey: 'receivedDate',
     header: ({ column }: { column: Column<LotWithDetails, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Received' />
+      <DataTableColumnHeader column={column} title='Ngày nhận' />
     )
   },
   {
     id: 'expiryDate',
     accessorKey: 'expiryDate',
-    header: 'Expiry',
+    header: 'Hạn dùng',
     cell: ({ cell }) => cell.getValue<string | null>() ?? '—'
   },
   {
     id: 'status',
     accessorKey: 'status',
-    header: 'Status',
+    header: 'Trạng thái',
     cell: ({ cell }) => {
       const status = cell.getValue<LotWithDetails['status']>();
       return (
-        <Badge variant={STATUS_VARIANT[status]} className='capitalize'>
-          {status}
+        <Badge variant={STATUS_VARIANT[status]}>
+          {status === 'available'
+            ? 'Có thể xuất'
+            : status === 'reserved'
+              ? 'Đã giữ'
+              : status === 'depleted'
+                ? 'Đã hết'
+                : 'Hỏng'}
         </Badge>
       );
     }

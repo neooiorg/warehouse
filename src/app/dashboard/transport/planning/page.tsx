@@ -6,7 +6,7 @@ import { deliveryOrdersOptions } from '@/features/transport/api/queries';
 import TransportPlanner from '@/features/transport/components/transport-planner';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const metadata = { title: 'Dashboard: Lập kế hoạch vận chuyển' };
+export const metadata = { title: 'Quản lý kho: Lập kế hoạch vận chuyển' };
 
 export default async function TransportPlanningPage() {
   const queryClient = getQueryClient();

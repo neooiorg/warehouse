@@ -47,10 +47,10 @@ type DialogFormValues = {
 // ---------------------------------------------------------------------------
 
 const categoryOptions = [
-  { value: 'beauty', label: 'Beauty Products' },
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'home', label: 'Home & Garden' },
-  { value: 'sports', label: 'Sports & Outdoors' }
+  { value: 'beauty', label: 'Làm đẹp' },
+  { value: 'electronics', label: 'Điện tử' },
+  { value: 'home', label: 'Nhà cửa & sân vườn' },
+  { value: 'sports', label: 'Thể thao & dã ngoại' }
 ];
 
 // ---------------------------------------------------------------------------
@@ -68,8 +68,8 @@ function SheetFormSection() {
       description: ''
     } as SheetFormValues,
     onSubmit: ({ value }) => {
-      toast.success('Product created successfully!', {
-        description: `${value.name} has been added.`
+      toast.success('Đã tạo sản phẩm', {
+        description: `${value.name} đã được thêm.`
       });
       setOpen(false);
       form.reset();
@@ -81,11 +81,10 @@ function SheetFormSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sheet Form</CardTitle>
+        <CardTitle>Biểu mẫu dạng sheet</CardTitle>
         <CardDescription>
-          A product creation form inside a Sheet. The submit button lives in the SheetFooter,
-          outside the form element, connected via the HTML{' '}
-          <code className='bg-muted rounded px-1 text-sm'>form</code> attribute.
+          Biểu mẫu tạo sản phẩm trong Sheet. Nút lưu nằm ở SheetFooter và liên kết với form bằng
+          thuộc tính HTML <code className='bg-muted rounded px-1 text-sm'>form</code>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -93,62 +92,60 @@ function SheetFormSection() {
           <SheetTrigger asChild>
             <Button>
               <Icons.add className='mr-2 h-4 w-4' />
-              Add Product
+              Thêm sản phẩm
             </Button>
           </SheetTrigger>
           <SheetContent className='flex flex-col'>
             <SheetHeader>
-              <SheetTitle>New Product</SheetTitle>
-              <SheetDescription>
-                Fill in the details below to create a new product.
-              </SheetDescription>
+              <SheetTitle>Sản phẩm mới</SheetTitle>
+              <SheetDescription>Nhập thông tin cần thiết để tạo sản phẩm.</SheetDescription>
             </SheetHeader>
 
             <form.AppForm>
               <form.Form id='sheet-form-id' className='space-y-4 p-0 md:p-0'>
                 <FormTextField
                   name='name'
-                  label='Product Name'
+                  label='Tên sản phẩm'
                   required
-                  placeholder='Enter product name'
+                  placeholder='Nhập tên sản phẩm'
                   validators={{
-                    onBlur: z.string().min(2, 'Product name must be at least 2 characters')
+                    onBlur: z.string().min(2, 'Tên sản phẩm cần ít nhất 2 ký tự')
                   }}
                 />
 
                 <FormSelectField
                   name='category'
-                  label='Category'
+                  label='Danh mục'
                   required
                   options={categoryOptions}
-                  placeholder='Select a category'
+                  placeholder='Chọn danh mục'
                   validators={{
-                    onBlur: z.string().min(1, 'Please select a category')
+                    onBlur: z.string().min(1, 'Chọn danh mục')
                   }}
                 />
 
                 <FormTextField
                   name='price'
-                  label='Price'
+                  label='Giá'
                   required
                   type='number'
                   min={0}
                   step='0.01'
                   placeholder='0.00'
                   validators={{
-                    onBlur: z.number().min(0.01, 'Price must be greater than 0')
+                    onBlur: z.number().min(0.01, 'Giá phải lớn hơn 0')
                   }}
                 />
 
                 <FormTextareaField
                   name='description'
-                  label='Description'
+                  label='Mô tả'
                   required
-                  placeholder='Enter product description'
+                  placeholder='Nhập mô tả sản phẩm'
                   maxLength={500}
                   rows={4}
                   validators={{
-                    onBlur: z.string().min(10, 'Description must be at least 10 characters')
+                    onBlur: z.string().min(10, 'Mô tả cần ít nhất 10 ký tự')
                   }}
                 />
               </form.Form>
@@ -156,10 +153,10 @@ function SheetFormSection() {
 
             <SheetFooter className='pt-4'>
               <Button type='button' variant='outline' onClick={() => setOpen(false)}>
-                Cancel
+                Hủy
               </Button>
               <Button type='submit' form='sheet-form-id'>
-                Create Product
+                Tạo sản phẩm
               </Button>
             </SheetFooter>
           </SheetContent>
@@ -182,8 +179,8 @@ function DialogFormSection() {
       feedback: ''
     } as DialogFormValues,
     onSubmit: ({ value }) => {
-      toast.success('Feedback submitted!', {
-        description: `Rating: ${value.rating}/10. Thank you!`
+      toast.success('Đã gửi phản hồi', {
+        description: `Điểm: ${value.rating}/10. Cảm ơn bạn.`
       });
       setOpen(false);
       form.reset();
@@ -195,11 +192,11 @@ function DialogFormSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Dialog Form</CardTitle>
+        <CardTitle>Biểu mẫu dạng dialog</CardTitle>
         <CardDescription>
-          A quick feedback form inside a Dialog. Uses composed field components from{' '}
-          <code className='bg-muted rounded px-1 text-sm'>useFormFields</code> with the submit
-          button in the DialogFooter.
+          Biểu mẫu phản hồi nhanh trong Dialog. Dùng các trường lấy từ{' '}
+          <code className='bg-muted rounded px-1 text-sm'>useFormFields</code> và nút gửi trong
+          DialogFooter.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -207,21 +204,21 @@ function DialogFormSection() {
           <DialogTrigger asChild>
             <Button variant='outline'>
               <Icons.send className='mr-2 h-4 w-4' />
-              Send Feedback
+              Gửi phản hồi
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Quick Feedback</DialogTitle>
-              <DialogDescription>Rate your experience and leave a comment.</DialogDescription>
+              <DialogTitle>Phản hồi nhanh</DialogTitle>
+              <DialogDescription>Chấm điểm trải nghiệm và để lại nhận xét.</DialogDescription>
             </DialogHeader>
 
             <form.AppForm>
               <form.Form id='dialog-form-id' className='space-y-4 py-2'>
                 <FormSliderField
                   name='rating'
-                  label='Rating'
-                  description='Rate your experience (0-10)'
+                  label='Điểm'
+                  description='Chấm điểm trải nghiệm từ 0 đến 10'
                   min={0}
                   max={10}
                   step={1}
@@ -229,13 +226,13 @@ function DialogFormSection() {
 
                 <FormTextareaField
                   name='feedback'
-                  label='Feedback'
+                  label='Phản hồi'
                   required
-                  placeholder='Tell us what you think...'
+                  placeholder='Nhập nhận xét của bạn...'
                   maxLength={300}
                   rows={3}
                   validators={{
-                    onBlur: z.string().min(5, 'Feedback must be at least 5 characters')
+                    onBlur: z.string().min(5, 'Phản hồi cần ít nhất 5 ký tự')
                   }}
                 />
               </form.Form>
@@ -243,10 +240,10 @@ function DialogFormSection() {
 
             <DialogFooter>
               <Button type='button' variant='outline' onClick={() => setOpen(false)}>
-                Cancel
+                Hủy
               </Button>
               <Button type='submit' form='dialog-form-id'>
-                Submit Feedback
+                Gửi phản hồi
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -264,43 +261,41 @@ function ToastDemoSection() {
   return (
     <Card className='md:col-span-2'>
       <CardHeader>
-        <CardTitle>Toast Notifications</CardTitle>
-        <CardDescription>
-          Trigger different toast variants to preview notification styles.
-        </CardDescription>
+        <CardTitle>Toast thông báo</CardTitle>
+        <CardDescription>Bấm từng nút để xem các kiểu toast.</CardDescription>
       </CardHeader>
       <CardContent className='flex flex-wrap gap-2'>
-        <Button variant='outline' onClick={() => toast('Default toast notification')}>
-          Default
+        <Button variant='outline' onClick={() => toast('Thông báo mặc định')}>
+          Mặc định
         </Button>
-        <Button variant='outline' onClick={() => toast.success('Action completed successfully!')}>
+        <Button variant='outline' onClick={() => toast.success('Thao tác đã hoàn tất')}>
           <Icons.circleCheck className='mr-2 h-4 w-4' />
-          Success
+          Thành công
         </Button>
-        <Button variant='outline' onClick={() => toast.error('Something went wrong.')}>
+        <Button variant='outline' onClick={() => toast.error('Đã có lỗi xảy ra.')}>
           <Icons.circleX className='mr-2 h-4 w-4' />
-          Error
+          Lỗi
         </Button>
-        <Button variant='outline' onClick={() => toast.warning('Please review before continuing.')}>
+        <Button variant='outline' onClick={() => toast.warning('Kiểm tra lại trước khi tiếp tục.')}>
           <Icons.warning className='mr-2 h-4 w-4' />
-          Warning
+          Cảnh báo
         </Button>
-        <Button variant='outline' onClick={() => toast.info('Here is some useful information.')}>
+        <Button variant='outline' onClick={() => toast.info('Có thông tin cần lưu ý.')}>
           <Icons.info className='mr-2 h-4 w-4' />
-          Info
+          Thông tin
         </Button>
         <Button
           variant='outline'
           onClick={() =>
             toast.promise(new Promise((resolve) => setTimeout(resolve, 2000)), {
-              loading: 'Loading...',
-              success: 'Data loaded!',
-              error: 'Failed to load.'
+              loading: 'Đang tải...',
+              success: 'Đã tải dữ liệu',
+              error: 'Không tải được dữ liệu'
             })
           }
         >
           <Icons.spinner className='mr-2 h-4 w-4' />
-          Promise
+          Tác vụ chờ
         </Button>
       </CardContent>
     </Card>

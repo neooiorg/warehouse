@@ -12,7 +12,7 @@ import {
 import WarehouseDetail from '@/features/warehouses/components/warehouse-detail';
 import { getWarehouse } from '@/features/warehouses/api/service';
 
-export const metadata = { title: 'Dashboard: Chi tiết kho' };
+export const metadata = { title: 'Quản lý kho: Chi tiết kho' };
 
 type Props = { params: Promise<{ id: string }> };
 

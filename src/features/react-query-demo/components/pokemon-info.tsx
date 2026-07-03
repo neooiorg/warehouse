@@ -26,10 +26,10 @@ export function PokemonInfo() {
       {/* Pokemon selector */}
       <Card>
         <CardHeader>
-          <CardTitle>Pick a Pokemon</CardTitle>
+          <CardTitle>Chọn Pokemon</CardTitle>
           <CardDescription>
-            Each selection triggers <code>useSuspenseQuery</code> — cached results are instant, new
-            fetches show the Suspense fallback.
+            Mỗi lựa chọn gọi <code>useSuspenseQuery</code>. Dữ liệu đã cache hiển thị ngay, dữ liệu
+            mới dùng fallback của Suspense.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,7 +62,7 @@ export function PokemonInfo() {
             </div>
           </div>
           <CardDescription>
-            Height: {data.height / 10}m &middot; Weight: {data.weight / 10}kg
+            Cao: {data.height / 10}m &middot; Nặng: {data.weight / 10}kg
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,7 +90,7 @@ export function PokemonInfo() {
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground text-xs'>
-            Data from PokeAPI &middot; Prefetched on server, hydrated on client
+            Dữ liệu từ PokeAPI &middot; Prefetch ở server, hydrate ở client
           </p>
         </CardFooter>
       </Card>

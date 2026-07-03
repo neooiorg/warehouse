@@ -1,9 +1,9 @@
 import * as z from 'zod';
 
 export const outboundShipmentSchema = z.object({
-  warehouseId: z.string().min(1, 'Please select a warehouse'),
-  skuId: z.string().min(1, 'Please select a SKU'),
-  qty: z.number({ message: 'Quantity is required' }).positive('Quantity must be greater than 0'),
+  warehouseId: z.string().min(1, 'Chọn kho'),
+  skuId: z.string().min(1, 'Chọn SKU'),
+  qty: z.number({ message: 'Nhập số lượng' }).positive('Số lượng phải lớn hơn 0'),
   performedBy: z.string().optional(),
   note: z.string().optional()
 });

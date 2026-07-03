@@ -1,7 +1,7 @@
 import IconsViewPage from '@/features/elements/components/icons-view-page';
 
 export const metadata = {
-  title: 'Dashboard : Icons'
+  title: 'Quản lý kho: Biểu tượng'
 };
 
 export default function page() {

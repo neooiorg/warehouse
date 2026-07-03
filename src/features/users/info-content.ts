@@ -1,40 +1,40 @@
 import type { InfobarContent } from '@/components/ui/infobar';
 
 export const usersInfoContent: InfobarContent = {
-  title: 'Users — React Query + nuqs Pattern',
+  title: 'Người dùng và React Query',
   sections: [
     {
-      title: 'Overview',
+      title: 'Tổng quan',
       description:
-        'This page demonstrates client-side data fetching with React Query combined with nuqs URL search params — as an alternative to the Products page which uses server-side RSC fetching. Both patterns use the same DataTable, useDataTable hook, and nuqs URL state.',
+        'Trang này dùng React Query cùng nuqs để đồng bộ phân trang, tìm kiếm và lọc với URL.',
       links: [
         {
-          title: 'TanStack Query SSR Docs',
+          title: 'Tài liệu TanStack Query SSR',
           url: 'https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr'
         }
       ]
     },
     {
-      title: 'Server Prefetch + Client Hydration',
+      title: 'Prefetch và hydrate',
       description:
-        'The server component reads search params via searchParamsCache, builds filters, and calls queryClient.prefetchQuery(). The dehydrated state is passed to HydrationBoundary so the client starts with cached data. The client component reads the same search params via useQueryState and calls useSuspenseQuery with matching filters.',
+        'Server đọc search params, tạo bộ lọc và prefetch query. Client nhận cache qua HydrationBoundary rồi dùng useSuspenseQuery với cùng bộ lọc.',
       links: []
     },
     {
-      title: 'URL State with nuqs',
+      title: 'URL state với nuqs',
       description:
-        'Pagination, search, and role filters are synced to the URL via nuqs. The useDataTable hook manages the TanStack Table state and debounces filter changes before updating the URL. When the URL changes, React Query automatically refetches because the query key includes the filters.',
+        'Bảng ghi phân trang, tìm kiếm và lọc vai trò vào URL. Khi URL đổi, query key đổi và React Query tự lấy dữ liệu mới.',
       links: [
         {
-          title: 'nuqs Documentation',
+          title: 'Tài liệu nuqs',
           url: 'https://nuqs.47ng.com'
         }
       ]
     },
     {
-      title: 'Products vs Users Pattern',
+      title: 'Khi dùng mẫu này',
       description:
-        'Products: searchParams → RSC fetch → pass data as props to client table. Users: searchParams → server prefetch → HydrationBoundary → client useSuspenseQuery. The Users pattern enables background refetching, cache sharing across components, and optimistic mutations.',
+        'Mẫu này hợp với bảng cần cache, refetch nền và chia sẻ trạng thái giữa nhiều component.',
       links: []
     }
   ]

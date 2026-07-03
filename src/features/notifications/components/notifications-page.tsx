@@ -27,7 +27,7 @@ export default function NotificationsPage() {
       return (
         <div className='flex flex-col items-center justify-center py-16'>
           <Icons.notification className='text-muted-foreground/40 mb-3 h-10 w-10' />
-          <p className='text-muted-foreground text-sm'>No notifications</p>
+          <p className='text-muted-foreground text-sm'>Chưa có thông báo</p>
         </div>
       );
     }
@@ -59,21 +59,21 @@ export default function NotificationsPage() {
 
   return (
     <PageContainer
-      pageTitle='Notifications'
-      pageDescription='View and manage all your notifications.'
+      pageTitle='Thông báo'
+      pageDescription='Theo dõi cảnh báo và việc cần xử lý.'
       pageHeaderAction={
         unreadCount > 0 ? (
           <Button variant='outline' size='sm' onClick={() => markAllAsRead.mutate()}>
-            Mark all as read
+            Đánh dấu đã đọc
           </Button>
         ) : undefined
       }
     >
       <Tabs defaultValue='all'>
         <TabsList>
-          <TabsTrigger value='all'>All ({notifications.length})</TabsTrigger>
-          <TabsTrigger value='unread'>Unread ({unreadNotifications.length})</TabsTrigger>
-          <TabsTrigger value='read'>Read ({readNotifications.length})</TabsTrigger>
+          <TabsTrigger value='all'>Tất cả ({notifications.length})</TabsTrigger>
+          <TabsTrigger value='unread'>Chưa đọc ({unreadNotifications.length})</TabsTrigger>
+          <TabsTrigger value='read'>Đã đọc ({readNotifications.length})</TabsTrigger>
         </TabsList>
         <TabsContent value='all' className='mt-4'>
           {renderList(notifications)}

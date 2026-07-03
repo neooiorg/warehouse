@@ -35,11 +35,11 @@ export function OutboundShipmentSheet({ open, onOpenChange }: OutboundShipmentSh
   const createMutation = useMutation({
     ...createOutboundShipmentMutation,
     onSuccess: () => {
-      toast.success('Outbound shipment recorded');
+      toast.success('Đã ghi nhận xuất kho');
       onOpenChange(false);
       form.reset();
     },
-    onError: (err: Error) => toast.error(err.message ?? 'Failed to record outbound shipment')
+    onError: (err: Error) => toast.error(err.message ?? 'Không ghi nhận được xuất kho')
   });
 
   const form = useAppForm({
@@ -72,10 +72,9 @@ export function OutboundShipmentSheet({ open, onOpenChange }: OutboundShipmentSh
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='flex flex-col'>
         <SheetHeader>
-          <SheetTitle>Record Outbound Shipment</SheetTitle>
+          <SheetTitle>Ghi nhận xuất kho</SheetTitle>
           <SheetDescription>
-            Lots are picked automatically using each SKU's configured allocation rule
-            (FIFO/FEFO/LEFO).
+            Hệ thống tự chọn lô theo quy tắc của từng SKU: FIFO, FEFO hoặc LEFO.
           </SheetDescription>
         </SheetHeader>
 
@@ -84,36 +83,36 @@ export function OutboundShipmentSheet({ open, onOpenChange }: OutboundShipmentSh
             <form.Form id='outbound-shipment-form' className='space-y-4'>
               <FormSelectField
                 name='warehouseId'
-                label='Warehouse'
+                label='Kho'
                 required
                 options={warehouseOptions}
-                placeholder='Select warehouse'
+                placeholder='Chọn kho'
               />
               <FormSelectField
                 name='skuId'
                 label='SKU'
                 required
                 options={skuOptions}
-                placeholder='Select SKU'
+                placeholder='Chọn SKU'
               />
-              <FormTextField name='qty' label='Quantity' required type='number' min={0} step={1} />
+              <FormTextField name='qty' label='Số lượng' required type='number' min={0} step={1} />
               <FormSelectField
                 name='performedBy'
-                label='Shipped By (optional)'
+                label='Người xuất (tùy chọn)'
                 options={employeeOptions}
-                placeholder='Select employee'
+                placeholder='Chọn nhân viên'
               />
-              <FormTextField name='note' label='Note (optional)' />
+              <FormTextField name='note' label='Ghi chú (tùy chọn)' />
             </form.Form>
           </form.AppForm>
         </div>
 
         <SheetFooter>
           <Button type='button' variant='outline' onClick={() => onOpenChange(false)}>
-            Cancel
+            Hủy
           </Button>
           <Button type='submit' form='outbound-shipment-form' isLoading={createMutation.isPending}>
-            <Icons.check /> Record Shipment
+            <Icons.check /> Ghi nhận xuất
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -127,7 +126,7 @@ export function OutboundShipmentSheetTrigger() {
   return (
     <>
       <Button variant='outline' onClick={() => setOpen(true)}>
-        <Icons.arrowRight className='mr-2 h-4 w-4' /> Outbound Shipment
+        <Icons.arrowRight className='mr-2 h-4 w-4' /> Xuất kho
       </Button>
       <OutboundShipmentSheet open={open} onOpenChange={setOpen} />
     </>

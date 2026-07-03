@@ -58,9 +58,9 @@ const countryStateMap: Record<string, { value: string; label: string }[]> = {
 };
 
 const countryOptions = [
-  { value: 'us', label: 'United States' },
-  { value: 'uk', label: 'United Kingdom' },
-  { value: 'au', label: 'Australia' }
+  { value: 'us', label: 'Mỹ' },
+  { value: 'uk', label: 'Vương quốc Anh' },
+  { value: 'au', label: 'Úc' }
 ];
 
 // ---------------------------------------------------------------------------
@@ -79,13 +79,13 @@ const advancedSchema = z.object({
   members: z
     .array(
       z.object({
-        name: z.string().min(1, 'Member name is required'),
-        role: z.string().min(1, 'Role is required')
+        name: z.string().min(1, 'Nhập tên thành viên'),
+        role: z.string().min(1, 'Nhập vai trò')
       })
     )
-    .min(1, 'Add at least one member'),
-  country: z.string().min(1, 'Select a country'),
-  state: z.string().min(1, 'Select a state')
+    .min(1, 'Thêm ít nhất một thành viên'),
+  country: z.string().min(1, 'Chọn quốc gia'),
+  state: z.string().min(1, 'Chọn tỉnh hoặc vùng')
 });
 
 // ---------------------------------------------------------------------------
@@ -111,7 +111,7 @@ export default function AdvancedFormPatterns() {
       onSubmit: advancedSchema
     },
     onSubmit: () => {
-      toast.success('Team registered successfully!');
+      toast.success('Đã đăng ký nhóm');
     },
     onSubmitInvalid: () => {
       scrollToFirstError();
@@ -127,10 +127,10 @@ export default function AdvancedFormPatterns() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-2xl font-bold'>Team Registration</CardTitle>
+        <CardTitle className='text-2xl font-bold'>Đăng ký nhóm</CardTitle>
         <p className='text-muted-foreground'>
-          Demonstrates async validation, linked fields, nested objects, dynamic arrays, listeners,
-          form-level errors, and scroll-to-first-error.
+          Ví dụ validation bất đồng bộ, field phụ thuộc, object lồng nhau, mảng động và lỗi cấp
+          form.
         </p>
       </CardHeader>
       <CardContent>
@@ -141,24 +141,26 @@ export default function AdvancedFormPatterns() {
 
             {/* ─── Section 1: Account ─── */}
             <div className='space-y-1'>
-              <h3 className='text-lg font-semibold'>Account</h3>
-              <p className='text-muted-foreground text-sm'>Async validation, linked fields</p>
+              <h3 className='text-lg font-semibold'>Tài khoản</h3>
+              <p className='text-muted-foreground text-sm'>
+                Kiểm tra bất đồng bộ, trường phụ thuộc
+              </p>
             </div>
 
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               {/* Username — async validation (spinner built into FormTextField) */}
               <FormTextField
                 name='username'
-                label='Username'
+                label='Tên đăng nhập'
                 required
-                placeholder='Choose a username'
+                placeholder='Chọn tên đăng nhập'
                 validators={{
-                  onBlur: z.string().min(3, 'Username must be at least 3 characters'),
+                  onBlur: z.string().min(3, 'Tên đăng nhập cần ít nhất 3 ký tự'),
                   onChangeAsync: async ({ value }: { value: string }) => {
                     if (!value || value.length < 3) return undefined;
                     await new Promise((r) => setTimeout(r, 500));
                     if (value === 'admin' || value === 'test') {
-                      return 'Username is taken';
+                      return 'Tên đăng nhập đã được dùng';
                     }
                     return undefined;
                   },
@@ -172,21 +174,21 @@ export default function AdvancedFormPatterns() {
                 label='Email'
                 required
                 type='email'
-                placeholder='you@example.com'
+                placeholder='ban@example.com'
                 validators={{
-                  onBlur: z.string().email('Invalid email')
+                  onBlur: z.string().email('Email không hợp lệ')
                 }}
               />
 
               {/* Password */}
               <FormTextField
                 name='password'
-                label='Password'
+                label='Mật khẩu'
                 required
                 type='password'
-                placeholder='Min 8 characters'
+                placeholder='Tối thiểu 8 ký tự'
                 validators={{
-                  onBlur: z.string().min(8, 'Must be at least 8 characters')
+                  onBlur: z.string().min(8, 'Cần ít nhất 8 ký tự')
                 }}
               />
 
@@ -197,18 +199,18 @@ export default function AdvancedFormPatterns() {
                   onChangeListenTo: ['password'],
                   onChange: ({ value, fieldApi }) => {
                     const password = fieldApi.form.getFieldValue('password');
-                    if (value !== password) return 'Passwords do not match';
+                    if (value !== password) return 'Mật khẩu không khớp';
                     return undefined;
                   },
-                  onBlur: z.string().min(1, 'Please confirm your password')
+                  onBlur: z.string().min(1, 'Xác nhận mật khẩu')
                 }}
               >
                 {(field) => (
                   <field.TextField
-                    label='Confirm Password'
+                    label='Xác nhận mật khẩu'
                     required
                     type='password'
-                    placeholder='Confirm password'
+                    placeholder='Nhập lại mật khẩu'
                   />
                 )}
               </form.AppField>
@@ -218,32 +220,35 @@ export default function AdvancedFormPatterns() {
 
             {/* ─── Section 2: Team Info (nested objects) ─── */}
             <div className='space-y-1'>
-              <h3 className='text-lg font-semibold'>Team Info</h3>
+              <h3 className='text-lg font-semibold'>Thông tin nhóm</h3>
               <p className='text-muted-foreground text-sm'>
-                Nested objects with dot-notation paths
+                Dữ liệu lồng nhau với đường dẫn dấu chấm
               </p>
             </div>
 
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <FormTextField
                 name='team.name'
-                label='Team Name'
+                label='Tên nhóm'
                 required
-                placeholder='e.g. Alpha Squad'
+                placeholder='Ví dụ: Ca vận hành A'
                 validators={{
-                  onBlur: z.string().min(2, 'Team name must be at least 2 characters')
+                  onBlur: z.string().min(2, 'Tên nhóm cần ít nhất 2 ký tự')
                 }}
               />
               <FormTextField
                 name='team.size'
-                label='Team Size'
+                label='Quy mô nhóm'
                 required
                 type='number'
                 min={1}
                 max={100}
                 placeholder='1-100'
                 validators={{
-                  onBlur: z.number().min(1, 'At least 1 member').max(100, 'Max 100 members')
+                  onBlur: z
+                    .number()
+                    .min(1, 'Ít nhất 1 thành viên')
+                    .max(100, 'Tối đa 100 thành viên')
                 }}
               />
             </div>
@@ -252,8 +257,10 @@ export default function AdvancedFormPatterns() {
 
             {/* ─── Section 3: Members (dynamic array rows) ─── */}
             <div className='space-y-1'>
-              <h3 className='text-lg font-semibold'>Members</h3>
-              <p className='text-muted-foreground text-sm'>Dynamic array rows with add / remove</p>
+              <h3 className='text-lg font-semibold'>Thành viên</h3>
+              <p className='text-muted-foreground text-sm'>
+                Thêm hoặc xóa thành viên trong danh sách
+              </p>
             </div>
 
             <form.AppField name='members' mode='array'>
@@ -264,14 +271,14 @@ export default function AdvancedFormPatterns() {
                       <form.AppField
                         name={`members[${i}].name`}
                         validators={{
-                          onBlur: z.string().min(1, 'Member name is required')
+                          onBlur: z.string().min(1, 'Nhập tên thành viên')
                         }}
                       >
                         {(subField) => (
                           <subField.FieldSet className='flex-1'>
                             <subField.Field>
                               <Input
-                                placeholder='Member name'
+                                placeholder='Tên thành viên'
                                 value={subField.state.value}
                                 onChange={(e) => subField.handleChange(e.target.value)}
                                 onBlur={subField.handleBlur}
@@ -284,14 +291,14 @@ export default function AdvancedFormPatterns() {
                       <form.AppField
                         name={`members[${i}].role`}
                         validators={{
-                          onBlur: z.string().min(1, 'Role is required')
+                          onBlur: z.string().min(1, 'Nhập vai trò')
                         }}
                       >
                         {(subField) => (
                           <subField.FieldSet className='flex-1'>
                             <subField.Field>
                               <Input
-                                placeholder='Role'
+                                placeholder='Vai trò'
                                 value={subField.state.value}
                                 onChange={(e) => subField.handleChange(e.target.value)}
                                 onBlur={subField.handleBlur}
@@ -317,7 +324,7 @@ export default function AdvancedFormPatterns() {
                     size='sm'
                     onClick={() => field.pushValue({ name: '', role: '' })}
                   >
-                    <Icons.add className='mr-2 h-4 w-4' /> Add Member
+                    <Icons.add className='mr-2 h-4 w-4' /> Thêm thành viên
                   </Button>
                   {field.state.value.length > 0 && (
                     <div className='flex flex-wrap gap-1'>
@@ -339,21 +346,21 @@ export default function AdvancedFormPatterns() {
 
             {/* ─── Section 4: Preferences (listeners / side effects) ─── */}
             <div className='space-y-1'>
-              <h3 className='text-lg font-semibold'>Preferences</h3>
+              <h3 className='text-lg font-semibold'>Tùy chọn</h3>
               <p className='text-muted-foreground text-sm'>
-                Listener side effects — country resets state
+                Đổi quốc gia sẽ đặt lại tỉnh hoặc vùng
               </p>
             </div>
 
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <FormSelectField
                 name='country'
-                label='Country'
+                label='Quốc gia'
                 required
                 options={countryOptions}
-                placeholder='Select a country'
+                placeholder='Chọn quốc gia'
                 validators={{
-                  onBlur: z.string().min(1, 'Select a country')
+                  onBlur: z.string().min(1, 'Chọn quốc gia')
                 }}
                 listeners={{
                   onChange: ({ fieldApi }) => {
@@ -363,12 +370,12 @@ export default function AdvancedFormPatterns() {
               />
               <FormSelectField
                 name='state'
-                label='State / Region'
+                label='Tỉnh / vùng'
                 required
                 options={stateOptions}
-                placeholder={selectedCountry ? 'Select state' : 'Select a country first'}
+                placeholder={selectedCountry ? 'Chọn tỉnh hoặc vùng' : 'Chọn quốc gia trước'}
                 validators={{
-                  onBlur: z.string().min(1, 'Please select a state')
+                  onBlur: z.string().min(1, 'Chọn tỉnh hoặc vùng')
                 }}
               />
             </div>
@@ -383,9 +390,9 @@ export default function AdvancedFormPatterns() {
                 onClick={() => form.reset()}
                 className='flex-1'
               >
-                Reset
+                Đặt lại
               </Button>
-              <form.SubmitButton className='flex-1'>Register Team</form.SubmitButton>
+              <form.SubmitButton className='flex-1'>Đăng ký nhóm</form.SubmitButton>
             </div>
           </form.Form>
         </form.AppForm>

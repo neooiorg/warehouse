@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { productSkuOptionsQuery } from '@/features/master-data/api/queries';
 import { TransportOptimizerClient } from '@/features/transport/components/transport-optimizer-client';
 
-export const metadata = { title: 'Dashboard: Tìm kho nguồn' };
+export const metadata = { title: 'Quản lý kho: Tìm kho nguồn' };
 
 export default async function Page() {
   const qc = getQueryClient();

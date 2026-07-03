@@ -16,10 +16,10 @@ import { Separator } from '@/components/ui/separator';
 // --- Schema ---
 
 const productFormSchema = z.object({
-  name: z.string().min(2, 'Product name must be at least 2 characters'),
-  category: z.string().min(1, 'Please select a category'),
-  price: z.number().min(0.01, 'Price must be greater than 0'),
-  description: z.string().min(10, 'Description must be at least 10 characters')
+  name: z.string().min(2, 'Tên sản phẩm cần ít nhất 2 ký tự'),
+  category: z.string().min(1, 'Chọn danh mục'),
+  price: z.number().min(0.01, 'Giá phải lớn hơn 0'),
+  description: z.string().min(10, 'Mô tả cần ít nhất 10 ký tự')
 });
 
 const stepSchemas = [
@@ -34,10 +34,10 @@ const stepSchemas = [
 // --- Step Groups ---
 
 const categoryOptions = [
-  { value: 'beauty', label: 'Beauty Products' },
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'home', label: 'Home & Garden' },
-  { value: 'sports', label: 'Sports & Outdoors' }
+  { value: 'beauty', label: 'Làm đẹp' },
+  { value: 'electronics', label: 'Điện tử' },
+  { value: 'home', label: 'Nhà cửa & sân vườn' },
+  { value: 'sports', label: 'Thể thao & dã ngoại' }
 ];
 
 const Step1Group = withFieldGroup({
@@ -49,22 +49,22 @@ const Step1Group = withFieldGroup({
   render: function Step1Render({ group }) {
     return (
       <div className='space-y-4'>
-        <h3 className='text-lg font-semibold'>Basic Info</h3>
-        <FieldDescription>Enter the product name, category, and price.</FieldDescription>
+        <h3 className='text-lg font-semibold'>Thông tin cơ bản</h3>
+        <FieldDescription>Nhập tên sản phẩm, danh mục và giá.</FieldDescription>
 
         <group.AppField name='name'>
           {(field) => (
-            <field.TextField label='Product Name' required placeholder='Enter product name' />
+            <field.TextField label='Tên sản phẩm' required placeholder='Nhập tên sản phẩm' />
           )}
         </group.AppField>
 
         <group.AppField name='category'>
           {(field) => (
             <field.SelectField
-              label='Category'
+              label='Danh mục'
               required
               options={categoryOptions}
-              placeholder='Select category'
+              placeholder='Chọn danh mục'
             />
           )}
         </group.AppField>
@@ -72,12 +72,12 @@ const Step1Group = withFieldGroup({
         <group.AppField name='price'>
           {(field) => (
             <field.TextField
-              label='Price'
+              label='Giá'
               required
               type='number'
               min={0}
               step={0.01}
-              placeholder='Enter price'
+              placeholder='Nhập giá'
             />
           )}
         </group.AppField>
@@ -93,15 +93,15 @@ const Step2Group = withFieldGroup({
   render: function Step2Render({ group }) {
     return (
       <div className='space-y-4'>
-        <h3 className='text-lg font-semibold'>Details</h3>
-        <FieldDescription>Add a detailed product description.</FieldDescription>
+        <h3 className='text-lg font-semibold'>Chi tiết</h3>
+        <FieldDescription>Thêm mô tả ngắn cho sản phẩm.</FieldDescription>
 
         <group.AppField name='description'>
           {(field) => (
             <field.TextareaField
-              label='Description'
+              label='Mô tả'
               required
-              placeholder='Enter product description'
+              placeholder='Nhập mô tả sản phẩm'
               maxLength={500}
               rows={5}
             />
@@ -117,8 +117,8 @@ const Step3Group = withFieldGroup({
   render: function Step3Render() {
     return (
       <div className='space-y-4'>
-        <h3 className='text-lg font-semibold'>Review & Submit</h3>
-        <FieldDescription>Review the details below before submitting.</FieldDescription>
+        <h3 className='text-lg font-semibold'>Kiểm tra</h3>
+        <FieldDescription>Xem lại thông tin trước khi lưu.</FieldDescription>
       </div>
     );
   }
@@ -141,19 +141,19 @@ function ReviewSummary({
       <Separator />
       <div className='grid gap-3'>
         <div>
-          <p className='text-muted-foreground text-xs font-medium uppercase'>Name</p>
+          <p className='text-muted-foreground text-xs font-medium uppercase'>Tên</p>
           <p className='text-sm'>{values.name || '—'}</p>
         </div>
         <div>
-          <p className='text-muted-foreground text-xs font-medium uppercase'>Category</p>
+          <p className='text-muted-foreground text-xs font-medium uppercase'>Danh mục</p>
           <p className='text-sm capitalize'>{values.category || '—'}</p>
         </div>
         <div>
-          <p className='text-muted-foreground text-xs font-medium uppercase'>Price</p>
+          <p className='text-muted-foreground text-xs font-medium uppercase'>Giá</p>
           <p className='text-sm'>{values.price != null ? `$${values.price}` : '—'}</p>
         </div>
         <div>
-          <p className='text-muted-foreground text-xs font-medium uppercase'>Description</p>
+          <p className='text-muted-foreground text-xs font-medium uppercase'>Mô tả</p>
           <p className='text-sm'>{values.description || '—'}</p>
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function MultiStepProductForm() {
       onDynamicAsyncDebounceMs: 500
     },
     onSubmit: () => {
-      toast.success('Product created successfully!');
+      toast.success('Đã tạo sản phẩm');
     }
   });
 
@@ -223,7 +223,7 @@ export default function MultiStepProductForm() {
         <div className='flex flex-col gap-2 pt-3'>
           <div className='flex flex-col items-center justify-start gap-1'>
             <span className='text-muted-foreground text-sm'>
-              Step {currentStep} of {Object.keys(groups).length}
+              Bước {currentStep} / {Object.keys(groups).length}
             </span>
             <Progress value={(currentStep / Object.keys(groups).length) * 100} />
           </div>
@@ -245,7 +245,7 @@ export default function MultiStepProductForm() {
             <form.StepButton
               label={
                 <>
-                  <Icons.chevronLeft /> Previous
+                  <Icons.chevronLeft /> Trước
                 </>
               }
               disabled={isFirstStep}
@@ -265,10 +265,10 @@ export default function MultiStepProductForm() {
                     variant='outline'
                     size='sm'
                   >
-                    Reset
+                    Đặt lại
                   </Button>
                 )}
-                <form.SubmitButton>Submit</form.SubmitButton>
+                <form.SubmitButton>Lưu</form.SubmitButton>
               </div>
             ) : (
               <div className='flex w-full items-center justify-end gap-3 pt-3'>
@@ -280,13 +280,13 @@ export default function MultiStepProductForm() {
                     variant='outline'
                     size='sm'
                   >
-                    Reset
+                    Đặt lại
                   </Button>
                 )}
                 <form.StepButton
                   label={
                     <>
-                      Next <Icons.chevronRight />
+                      Tiếp <Icons.chevronRight />
                     </>
                   }
                   handleMovement={handleNext}

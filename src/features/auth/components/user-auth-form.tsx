@@ -8,7 +8,7 @@ import * as z from 'zod';
 import GithubSignInButton from './github-auth-button';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
+  email: z.string().email({ message: 'Nhập email hợp lệ' })
 });
 
 export default function UserAuthForm() {
@@ -23,7 +23,7 @@ export default function UserAuthForm() {
     },
     onSubmit: () => {
       startTransition(() => {
-        toast.success('Signed In Successfully!');
+        toast.success('Đăng nhập thành công');
       });
     }
   });
@@ -44,7 +44,7 @@ export default function UserAuthForm() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder='Enter your email...'
+                    placeholder='Nhập email'
                     disabled={loading}
                     aria-invalid={field.state.meta.isTouched && !field.state.meta.isValid}
                   />
@@ -54,7 +54,7 @@ export default function UserAuthForm() {
             )}
           />
           <Button disabled={loading} className='mt-2 ml-auto w-full' type='submit'>
-            Continue With Email
+            Tiếp tục bằng email
           </Button>
         </form.Form>
       </form.AppForm>
@@ -63,7 +63,7 @@ export default function UserAuthForm() {
           <span className='w-full border-t' />
         </div>
         <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-background text-muted-foreground px-2'>Or continue with</span>
+          <span className='bg-background text-muted-foreground px-2'>Hoặc tiếp tục với</span>
         </div>
       </div>
       <GithubSignInButton />

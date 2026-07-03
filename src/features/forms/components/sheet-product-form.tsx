@@ -25,10 +25,10 @@ import { Icons } from '@/components/icons';
 import { useState } from 'react';
 
 const productSchema = z.object({
-  name: z.string().min(2, 'Product name must be at least 2 characters'),
-  category: z.string().min(1, 'Please select a category'),
-  price: z.number().min(0.01, 'Price must be greater than 0'),
-  description: z.string().min(10, 'Description must be at least 10 characters')
+  name: z.string().min(2, 'Tên sản phẩm cần ít nhất 2 ký tự'),
+  category: z.string().min(1, 'Chọn danh mục'),
+  price: z.number().min(0.01, 'Giá phải lớn hơn 0'),
+  description: z.string().min(10, 'Mô tả cần ít nhất 10 ký tự')
 });
 
 export default function SheetProductForm() {
@@ -46,7 +46,7 @@ export default function SheetProductForm() {
       onSubmit: productSchema as any
     },
     onSubmit: () => {
-      alert('Product created successfully!');
+      alert('Đã tạo sản phẩm');
       setOpen(false);
       form.reset();
     }
@@ -57,13 +57,13 @@ export default function SheetProductForm() {
       <SheetTrigger asChild>
         <Button>
           <Icons.add className='mr-2 h-4 w-4' />
-          Add Product
+          Thêm sản phẩm
         </Button>
       </SheetTrigger>
       <SheetContent className='flex flex-col'>
         <SheetHeader>
-          <SheetTitle>New Product</SheetTitle>
-          <SheetDescription>Fill in the details to create a new product.</SheetDescription>
+          <SheetTitle>Sản phẩm mới</SheetTitle>
+          <SheetDescription>Nhập thông tin cần thiết để tạo sản phẩm.</SheetDescription>
         </SheetHeader>
 
         <div className='flex-1 overflow-auto'>
@@ -76,14 +76,14 @@ export default function SheetProductForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Product Name *</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Tên sản phẩm *</field.FieldLabel>
                         <Input
                           id={field.name}
                           name={field.name}
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder='Enter product name'
+                          placeholder='Nhập tên sản phẩm'
                           aria-invalid={isInvalid}
                         />
                       </field.Field>
@@ -100,20 +100,20 @@ export default function SheetProductForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Category *</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Danh mục *</field.FieldLabel>
                         <Select
                           name={field.name}
                           value={field.state.value}
                           onValueChange={field.handleChange}
                         >
                           <SelectTrigger id={field.name} aria-invalid={isInvalid}>
-                            <SelectValue placeholder='Select category' />
+                            <SelectValue placeholder='Chọn danh mục' />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='beauty'>Beauty Products</SelectItem>
-                            <SelectItem value='electronics'>Electronics</SelectItem>
-                            <SelectItem value='home'>Home & Garden</SelectItem>
-                            <SelectItem value='sports'>Sports & Outdoors</SelectItem>
+                            <SelectItem value='beauty'>Làm đẹp</SelectItem>
+                            <SelectItem value='electronics'>Điện tử</SelectItem>
+                            <SelectItem value='home'>Nhà cửa & sân vườn</SelectItem>
+                            <SelectItem value='sports'>Thể thao & dã ngoại</SelectItem>
                           </SelectContent>
                         </Select>
                       </field.Field>
@@ -130,7 +130,7 @@ export default function SheetProductForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Price *</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Giá *</field.FieldLabel>
                         <Input
                           id={field.name}
                           name={field.name}
@@ -143,7 +143,7 @@ export default function SheetProductForm() {
                             const v = e.target.value;
                             field.handleChange(v === '' ? undefined : parseFloat(v));
                           }}
-                          placeholder='Enter price'
+                          placeholder='Nhập giá'
                           aria-invalid={isInvalid}
                         />
                       </field.Field>
@@ -160,14 +160,14 @@ export default function SheetProductForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Description *</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Mô tả *</field.FieldLabel>
                         <Textarea
                           id={field.name}
                           name={field.name}
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder='Enter product description'
+                          placeholder='Nhập mô tả sản phẩm'
                           maxLength={500}
                           rows={4}
                           aria-invalid={isInvalid}
@@ -187,10 +187,10 @@ export default function SheetProductForm() {
 
         <SheetFooter>
           <Button type='button' variant='outline' onClick={() => setOpen(false)}>
-            Cancel
+            Hủy
           </Button>
           <Button type='submit' form='sheet-product-form'>
-            Create Product
+            Tạo sản phẩm
           </Button>
         </SheetFooter>
       </SheetContent>

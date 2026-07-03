@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { InteractiveGridPattern } from './interactive-grid';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
+  title: 'Đăng ký',
+  description: 'Tạo tài khoản để dùng hệ thống quản lý kho.'
 };
 
 export default function SignUpViewPage() {
@@ -20,7 +20,7 @@ export default function SignUpViewPage() {
           'absolute top-4 right-4 hidden md:top-8 md:right-8'
         )}
       >
-        Sign Up
+        Đăng ký
       </Link>
       <div className='relative hidden h-full flex-col p-10 lg:flex dark:border-r'>
         <div className='absolute inset-0 bg-sidebar' />
@@ -37,7 +37,7 @@ export default function SignUpViewPage() {
           >
             <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
           </svg>
-          Logo
+          Quản lý kho
         </div>
         <InteractiveGridPattern
           className={cn(
@@ -51,9 +51,7 @@ export default function SignUpViewPage() {
               &ldquo;Hệ thống quản lý kho thông minh — theo dõi hàng hóa, nhập xuất kho và truy xuất
               nguồn gốc trong một nền tảng duy nhất.&rdquo;
             </p>
-            <footer className='text-sidebar-foreground/70 text-sm'>
-              Warehouse Management System
-            </footer>
+            <footer className='text-sidebar-foreground/70 text-sm'>Hệ thống quản lý kho</footer>
           </blockquote>
         </div>
       </div>

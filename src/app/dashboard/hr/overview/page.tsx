@@ -7,7 +7,7 @@ import { TurnoverKpiCards } from '@/features/hr/components/turnover-kpi-cards';
 import { TurnoverTrendChart } from '@/features/hr/components/turnover-trend-chart';
 import { turnoverMetricsQueryOptions } from '@/features/hr/api/queries';
 
-export const metadata = { title: 'Dashboard: HR Overview' };
+export const metadata = { title: 'Quản lý kho: Tổng quan nhân sự' };
 
 export default async function Page() {
   const qc = getQueryClient();
@@ -20,7 +20,15 @@ export default async function Page() {
         pageDescription='Theo dõi biến động nhân sự, tỷ lệ nghỉ việc và thời gian gắn bó trung bình.'
       >
         <div className='space-y-6'>
-          <Suspense fallback={<div className='grid gap-4 md:grid-cols-4'>{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className='h-28' />)}</div>}>
+          <Suspense
+            fallback={
+              <div className='grid gap-4 md:grid-cols-4'>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} className='h-28' />
+                ))}
+              </div>
+            }
+          >
             <TurnoverKpiCards />
           </Suspense>
           <Suspense fallback={<Skeleton className='h-72' />}>

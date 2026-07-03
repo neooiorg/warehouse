@@ -5,7 +5,7 @@ export const navGroups: NavGroup[] = [
     label: 'Tổng quan',
     items: [
       {
-        title: 'Dashboard',
+        title: 'Tổng quan',
         url: '/dashboard/overview',
         icon: 'dashboard',
         isActive: false,
@@ -44,7 +44,7 @@ export const navGroups: NavGroup[] = [
         ]
       },
       {
-        title: 'Dock Scheduling',
+        title: 'Lịch dock',
         url: '/dashboard/productivity/dock-scheduling',
         icon: 'truck',
         isActive: false,

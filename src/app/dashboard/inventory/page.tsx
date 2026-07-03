@@ -5,7 +5,7 @@ import { searchParamsCache } from '@/lib/searchparams';
 import { SearchParams } from 'nuqs/server';
 
 export const metadata = {
-  title: 'Dashboard: Inventory'
+  title: 'Quản lý kho: Tồn kho'
 };
 
 type pageProps = {
@@ -18,8 +18,8 @@ export default async function Page(props: pageProps) {
 
   return (
     <PageContainer
-      pageTitle='Inventory'
-      pageDescription='Current lots, and inbound / outbound / transfer recording.'
+      pageTitle='Tồn kho'
+      pageDescription='Theo dõi lot hiện có và ghi nhận nhập, xuất, chuyển vị trí.'
       pageHeaderAction={<InventoryActions />}
     >
       <InventoryListingPage />

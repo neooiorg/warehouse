@@ -33,25 +33,23 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
         <div className='flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6'>
           <Alert variant='destructive' className='border-none'>
             <Icons.alertCircle className='h-4 w-4' />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>Không tải được dữ liệu</AlertTitle>
             <AlertDescription className='mt-2'>
-              Failed to load statistics: {error.message}
+              Không tải được thống kê: {error.message}
             </AlertDescription>
           </Alert>
         </div>
       </CardHeader>
       <CardContent className='flex h-[316px] items-center justify-center p-6'>
         <div className='text-center'>
-          <p className='text-muted-foreground mb-4 text-sm'>
-            Unable to display statistics at this time
-          </p>
+          <p className='text-muted-foreground mb-4 text-sm'>Hiện chưa thể hiển thị thống kê</p>
           <Button
             onClick={() => reload()}
             variant='outline'
             className='min-w-[120px]'
             disabled={isPending}
           >
-            Try again
+            Thử lại
           </Button>
         </div>
       </CardContent>

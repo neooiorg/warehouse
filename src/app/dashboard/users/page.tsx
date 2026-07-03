@@ -6,7 +6,7 @@ import { usersInfoContent } from '@/features/users/info-content';
 import { UserFormSheetTrigger } from '@/features/users/components/user-form-sheet';
 
 export const metadata = {
-  title: 'Dashboard: Users'
+  title: 'Quản lý kho: Người dùng'
 };
 
 type PageProps = {
@@ -19,8 +19,8 @@ export default async function UsersPage(props: PageProps) {
 
   return (
     <PageContainer
-      pageTitle='Users'
-      pageDescription='Manage users (React Query + nuqs table pattern.)'
+      pageTitle='Người dùng'
+      pageDescription='Quản lý tài khoản, vai trò và trạng thái truy cập.'
       infoContent={usersInfoContent}
       pageHeaderAction={<UserFormSheetTrigger />}
     >

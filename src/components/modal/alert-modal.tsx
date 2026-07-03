@@ -23,17 +23,17 @@ export function AlertModal({ isOpen, onClose, onConfirm, loading }: AlertModalPr
 
   return (
     <Modal
-      title='Are you sure?'
-      description='This action cannot be undone.'
+      title='Xác nhận thao tác'
+      description='Thao tác này không thể hoàn tác.'
       isOpen={isOpen}
       onClose={onClose}
     >
       <div className='flex w-full items-center justify-end space-x-2 pt-6'>
         <Button disabled={loading} variant='outline' onClick={onClose}>
-          Cancel
+          Hủy
         </Button>
         <Button disabled={loading} variant='destructive' onClick={onConfirm}>
-          Continue
+          Tiếp tục
         </Button>
       </div>
     </Modal>

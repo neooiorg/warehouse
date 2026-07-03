@@ -2,126 +2,126 @@ import type { Conversation } from './types';
 
 export const initialConversations: Conversation[] = [
   {
-    id: 'billing-issue',
-    name: 'Alex from Support',
-    title: 'Billing Issue #4821',
+    id: 'dock-delay',
+    name: 'Minh từ vận hành',
+    title: 'Xe nhập trễ tại dock 03',
     status: 'online',
     unread: 2,
-    initials: 'AS',
+    initials: 'MV',
     messages: [
       {
-        id: 'billing-1',
+        id: 'dock-1',
         sender: 'contact',
-        author: 'Alex',
-        text: "Hi there! I can see you were charged twice for the Pro plan this month. I've already initiated a refund for the duplicate charge.",
+        author: 'Minh',
+        text: 'Xe 51C-248.19 vừa báo trễ 20 phút. Mình đã giữ dock 03 và chuyển một xe xuất sang dock 02.',
         timestamp: '10:02'
       },
       {
-        id: 'billing-2',
+        id: 'dock-2',
         sender: 'user',
-        author: 'You',
-        text: 'Thanks for catching that. How long will the refund take to process?',
+        author: 'Bạn',
+        text: 'Ổn. Kiểm tra giúp mình lô lạnh có bị ảnh hưởng không.',
         timestamp: '10:05'
       },
       {
-        id: 'billing-3',
+        id: 'dock-3',
         sender: 'contact',
-        author: 'Alex',
-        text: 'Typically 3-5 business days depending on your bank. You should see a pending credit within 24 hours though. Is there anything else I can help with?',
+        author: 'Minh',
+        text: 'Không ảnh hưởng. Lô lạnh vẫn vào đúng khung 10:40, nhân sự bốc dỡ đã được giữ lại.',
         timestamp: '10:08'
       }
     ],
     quickReplies: [
-      "That's perfect, thank you!",
-      'Can I get a receipt for the refund?',
-      'I also have a question about upgrading.'
+      'Cập nhật lại lịch dock giúp mình.',
+      'Gửi danh sách xe bị ảnh hưởng.',
+      'Báo bảo vệ mở cổng khi xe đến.'
     ],
     autoReplies: [
-      "You're welcome! I've also applied a 10% discount on your next billing cycle as an apology for the inconvenience.",
-      'Absolutely — I just emailed the refund confirmation to your registered address.',
-      "Of course! I'd be happy to walk you through the available plans."
+      'Đã cập nhật lịch dock và gửi cho đội kho.',
+      'Mình vừa gửi danh sách 3 xe bị đổi dock.',
+      'Đã báo bảo vệ. Khi xe tới sẽ cho vào thẳng khu chờ.'
     ]
   },
   {
-    id: 'api-integration',
-    name: 'Priya from Engineering',
-    title: 'API Integration Help',
+    id: 'inventory-check',
+    name: 'Lan từ kiểm kê',
+    title: 'Chênh lệch tồn SKU WH-1042',
     status: 'online',
     unread: 0,
-    initials: 'PE',
+    initials: 'LK',
     messages: [
       {
-        id: 'api-1',
+        id: 'inventory-1',
         sender: 'user',
-        author: 'You',
-        text: "I'm getting a 429 rate limit error when calling the /api/products endpoint. We're only making about 50 requests per minute.",
+        author: 'Bạn',
+        text: 'Tồn hệ thống của SKU WH-1042 đang lệch 12 thùng so với đếm thực tế.',
         timestamp: '09:15'
       },
       {
-        id: 'api-2',
+        id: 'inventory-2',
         sender: 'contact',
-        author: 'Priya',
-        text: "I checked your API key — it's on the Starter tier which has a 30 req/min limit. You'll need the Growth plan for 200 req/min. Would you like me to upgrade it?",
+        author: 'Lan',
+        text: 'Mình đã kiểm tra giao dịch. Có một phiếu xuất ghi nhận thiếu bước xác nhận vị trí.',
         timestamp: '09:18'
       },
       {
-        id: 'api-3',
+        id: 'inventory-3',
         sender: 'user',
-        author: 'You',
-        text: 'Yes please. Also, is there a way to implement retry logic that respects the Retry-After header?',
+        author: 'Bạn',
+        text: 'Khóa lô đó lại trước, đừng cho pick tiếp tới khi đối soát xong.',
         timestamp: '09:22'
       },
       {
-        id: 'api-4',
+        id: 'inventory-4',
         sender: 'contact',
-        author: 'Priya',
-        text: "Great question — our SDK handles this automatically if you enable `autoRetry: true` in the config. I'll send you a code snippet.",
+        author: 'Lan',
+        text: 'Đã khóa lot LOT-2026-0142 và ghi chú cho ca chiều.',
         timestamp: '09:25'
       }
     ],
     quickReplies: [
-      'That would be very helpful.',
-      'Can you also share the rate limit docs?',
-      "We're also seeing timeouts on the webhook endpoint."
+      'Mở biên bản điều chỉnh tồn.',
+      'Gửi mình lịch sử giao dịch.',
+      'Kiểm tra thêm vị trí kế bên.'
     ],
     autoReplies: [
-      "Here's the code snippet — just add `autoRetry: true` and `maxRetries: 3` to your client config.",
-      "Sure! I've shared the rate limiting guide in your inbox. It covers burst limits too.",
-      "Let me check the webhook logs for your account. Can you share the endpoint URL you're using?"
+      'Biên bản đã tạo, đang chờ trưởng ca duyệt.',
+      'Mình vừa gửi lịch sử giao dịch của lot vào email.',
+      'Vị trí kế bên không có lệch. Chỉ có LOT-2026-0142 cần xử lý.'
     ]
   },
   {
-    id: 'account-access',
-    name: 'Jordan from Security',
-    title: 'Account Access Request',
+    id: 'security-session',
+    name: 'Huy từ bảo mật',
+    title: 'Phiên đăng nhập bất thường',
     status: 'offline',
     unread: 1,
-    initials: 'JS',
+    initials: 'HB',
     messages: [
       {
-        id: 'access-1',
+        id: 'security-1',
         sender: 'contact',
-        author: 'Jordan',
-        text: "We noticed a login attempt from an unrecognized device in São Paulo. Was this you? We've temporarily locked the session as a precaution.",
-        timestamp: 'Yesterday'
+        author: 'Huy',
+        text: 'Hệ thống phát hiện một phiên đăng nhập mới từ thiết bị lạ. Mình đã tạm khóa phiên đó.',
+        timestamp: 'Hôm qua'
       },
       {
-        id: 'access-2',
+        id: 'security-2',
         sender: 'user',
-        author: 'You',
-        text: "No, that wasn't me. I'm based in New York. Can you revoke that session and enable 2FA on my account?",
-        timestamp: 'Yesterday'
+        author: 'Bạn',
+        text: 'Không phải mình. Thu hồi phiên đó và bật xác thực hai lớp cho tài khoản giúp mình.',
+        timestamp: 'Hôm qua'
       }
     ],
     quickReplies: [
-      'Can I also see a list of all active sessions?',
-      'Please reset my password as well.',
-      'Has any data been accessed from that session?'
+      'Gửi danh sách phiên đang hoạt động.',
+      'Đặt lại mật khẩu cho mình.',
+      'Phiên đó có truy cập dữ liệu không?'
     ],
     autoReplies: [
-      "I've revoked all sessions except your current one and enabled 2FA. You'll get an email with the setup QR code.",
-      "Done — you'll receive a password reset link shortly. Make sure to use a unique password.",
-      'No data was accessed — the session was blocked before any API calls were made. Your account is secure.'
+      'Đã thu hồi các phiên lạ. Mình đã gửi hướng dẫn bật xác thực hai lớp.',
+      'Đã gửi liên kết đặt lại mật khẩu tới email chính.',
+      'Không có dữ liệu nào bị truy cập. Phiên bị chặn trước khi gọi API.'
     ]
   }
 ];

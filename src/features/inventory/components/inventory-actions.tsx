@@ -14,7 +14,7 @@ export function InventoryActions() {
         href='/dashboard/inventory/traceability'
         className={buttonVariants({ variant: 'ghost' })}
       >
-        <Icons.search className='mr-2 h-4 w-4' /> Traceability
+        <Icons.search className='mr-2 h-4 w-4' /> Truy xuất
       </Link>
       <InboundReceiptSheetTrigger />
       <OutboundShipmentSheetTrigger />

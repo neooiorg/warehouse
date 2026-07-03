@@ -27,8 +27,10 @@ export function StaffingResultPanel({ result }: { result: StaffingResult | null 
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center gap-2 text-sm'>
-            Sơ đồ Gantt — AON Network
-            <Badge variant='destructive' className='text-xs'>Đỏ = Critical Path</Badge>
+            Sơ đồ Gantt - mạng AON
+            <Badge variant='destructive' className='text-xs'>
+              Đỏ = đường găng
+            </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>

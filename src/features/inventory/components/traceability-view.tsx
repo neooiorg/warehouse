@@ -38,7 +38,7 @@ function LotTraceability() {
         <div className='relative'>
           <Icons.search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
           <Input
-            placeholder='Search by lot number or SKU'
+            placeholder='Tìm theo mã lô hoặc SKU'
             className='pl-9'
             value={search}
             onChange={(e) => {
@@ -61,13 +61,13 @@ function LotTraceability() {
                 {lot.lotNo} — {lot.sku}
               </div>
               <div className='text-muted-foreground text-xs'>
-                {lot.skuName} · qty {lot.qty} · {lot.locationCode ?? 'no location'} ·{' '}
+                {lot.skuName} · SL {lot.qty} · {lot.locationCode ?? 'chưa có vị trí'} ·{' '}
                 {lot.warehouseCode}
               </div>
             </button>
           ))}
           {search.length > 1 && (lotResults?.data.length ?? 0) === 0 && (
-            <p className='text-muted-foreground py-4 text-center text-sm'>No lots found.</p>
+            <p className='text-muted-foreground py-4 text-center text-sm'>Không tìm thấy lô.</p>
           )}
         </div>
       </div>
@@ -78,7 +78,7 @@ function LotTraceability() {
             <TransactionTimeline transactions={history?.data ?? []} />
           ) : (
             <p className='text-muted-foreground py-8 text-center text-sm'>
-              Select a lot to view its full movement history.
+              Chọn một lô để xem toàn bộ lịch sử di chuyển.
             </p>
           )}
         </CardContent>
@@ -103,7 +103,7 @@ function LocationTraceability() {
     <div className='grid gap-4 md:grid-cols-2'>
       <div className='space-y-3'>
         <div className='space-y-2'>
-          <FieldLabel htmlFor='trace-warehouse'>Warehouse</FieldLabel>
+          <FieldLabel htmlFor='trace-warehouse'>Kho</FieldLabel>
           <Select
             value={warehouseId}
             onValueChange={(value) => {
@@ -112,7 +112,7 @@ function LocationTraceability() {
             }}
           >
             <SelectTrigger id='trace-warehouse'>
-              <SelectValue placeholder='Select warehouse' />
+              <SelectValue placeholder='Chọn kho' />
             </SelectTrigger>
             <SelectContent>
               {warehouses.map((w) => (
@@ -124,12 +124,10 @@ function LocationTraceability() {
           </Select>
         </div>
         <div className='space-y-2'>
-          <FieldLabel htmlFor='trace-location'>Location</FieldLabel>
+          <FieldLabel htmlFor='trace-location'>Vị trí</FieldLabel>
           <Select value={locationId} onValueChange={setLocationId}>
             <SelectTrigger id='trace-location'>
-              <SelectValue
-                placeholder={warehouseId ? 'Select location' : 'Select a warehouse first'}
-              />
+              <SelectValue placeholder={warehouseId ? 'Chọn vị trí' : 'Chọn kho trước'} />
             </SelectTrigger>
             <SelectContent>
               {locations.map((l) => (
@@ -148,7 +146,7 @@ function LocationTraceability() {
             <TransactionTimeline transactions={history?.data ?? []} />
           ) : (
             <p className='text-muted-foreground py-8 text-center text-sm'>
-              Select a location to view everything that has moved in or out of it.
+              Chọn vị trí để xem toàn bộ hàng đã nhập hoặc xuất khỏi vị trí này.
             </p>
           )}
         </CardContent>
@@ -161,8 +159,8 @@ export function TraceabilityView() {
   return (
     <Tabs defaultValue='lot'>
       <TabsList>
-        <TabsTrigger value='lot'>By Lot</TabsTrigger>
-        <TabsTrigger value='location'>By Location</TabsTrigger>
+        <TabsTrigger value='lot'>Theo lô</TabsTrigger>
+        <TabsTrigger value='location'>Theo vị trí</TabsTrigger>
       </TabsList>
       <TabsContent value='lot' className='mt-4'>
         <LotTraceability />

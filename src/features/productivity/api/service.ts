@@ -59,7 +59,7 @@ export async function getProductivitySummary(periodDays = 30): Promise<Productiv
     .filter((r) => r.employeeId)
     .map((r) => ({
       employeeId: r.employeeId!,
-      employeeName: empMap[r.employeeId!] ?? 'Unknown',
+      employeeName: empMap[r.employeeId!] ?? 'Không rõ',
       role: null,
       transactionCount: r.transactionCount,
       tasksCompleted: r.transactionCount,
@@ -131,7 +131,7 @@ export async function getProductivityScores(warehouseId?: string): Promise<Emplo
       grouped.get(row.employeeId) ??
       ({
         employeeId: row.employeeId,
-        employeeName: employee?.fullName ?? 'Unknown',
+        employeeName: employee?.fullName ?? 'Không rõ',
         role: employee?.role ?? null,
         transactionCount: 0,
         tasksCompleted: 0,

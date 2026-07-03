@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { warehouseOptionsQuery } from '@/features/master-data/api/queries';
 import { DockPageClient } from '@/features/productivity/components/dock-page-client';
 
-export const metadata = { title: 'Dashboard: Lịch cửa Dock' };
+export const metadata = { title: 'Quản lý kho: Lịch cửa Dock' };
 
 export default async function Page() {
   const qc = getQueryClient();

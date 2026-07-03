@@ -68,7 +68,7 @@ export default function StaffingPlanner() {
               />
             </div>
             <div className='space-y-1'>
-              <Label className='text-xs'>Số nhân sự available: {headcount}</Label>
+              <Label className='text-xs'>Số nhân sự sẵn sàng: {headcount}</Label>
               <Slider
                 min={1}
                 max={50}
@@ -220,12 +220,12 @@ function ActivePlanEditor({ planId }: { planId: string }) {
         <div>
           <h3 className='font-semibold'>{plan.name}</h3>
           <p className='text-muted-foreground text-sm'>
-            {plan.availableHeadcount} nhân sự · {tasks.length} tasks
+            {plan.availableHeadcount} nhân sự · {tasks.length} đầu việc
           </p>
         </div>
         <div className='flex gap-2'>
           <Button size='sm' variant='outline' onClick={() => setShowKpi(!showKpi)}>
-            KPI Proposals
+            Đề xuất KPI
           </Button>
           <Button size='sm' onClick={handleRunSchedule} disabled={isPending || tasks.length === 0}>
             <Icons.trendingUp className='mr-1 h-4 w-4' />

@@ -149,7 +149,7 @@ export default function LocationFormSheet({ warehouseId, zones, location, childr
             <form.Field name='capacityWeight'>
               {(field) => (
                 <div className='space-y-1'>
-                  <Label>KL max (kg)</Label>
+                  <Label>Tải tối đa (kg)</Label>
                   <Input
                     type='number'
                     value={field.state.value ?? ''}

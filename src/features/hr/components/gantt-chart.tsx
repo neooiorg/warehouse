@@ -16,7 +16,7 @@ export function GanttChart({ nodes, criticalPath }: { nodes: AonNode[]; critical
     <div className='w-full overflow-x-auto rounded-lg border'>
       <div className='min-w-[720px]'>
         <div className='grid grid-cols-[220px_1fr] border-b bg-muted/40 text-xs text-muted-foreground'>
-          <div className='border-r px-3 py-2 font-medium'>Dau viec</div>
+          <div className='border-r px-3 py-2 font-medium'>Đầu việc</div>
           <div className='relative flex h-9 items-end px-3 pb-2'>
             {ticks.map((tick) => (
               <span

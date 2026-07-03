@@ -28,7 +28,7 @@ export default function HrKpiDashboard() {
           </CardHeader>
           <CardContent>
             <p className='text-3xl font-bold'>{data.totalActive}</p>
-            <p className='text-muted-foreground text-xs'>nhân viên active</p>
+            <p className='text-muted-foreground text-xs'>nhân viên đang làm</p>
           </CardContent>
         </Card>
 
@@ -40,7 +40,7 @@ export default function HrKpiDashboard() {
           </CardHeader>
           <CardContent>
             <p className='text-3xl font-bold'>{data.totalTerminated}</p>
-            <p className='text-muted-foreground text-xs'>nhân viên terminated</p>
+            <p className='text-muted-foreground text-xs'>nhân viên đã nghỉ</p>
           </CardContent>
         </Card>
 

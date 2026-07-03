@@ -99,7 +99,7 @@ export async function planRoute(orderId: string) {
     .select()
     .from(deliveryOrders)
     .where(and(eq(deliveryOrders.id, orderId), eq(deliveryOrders.orgId, orgId)));
-  if (!order) throw new Error('Order not found');
+  if (!order) throw new Error('Không tìm thấy đơn vận chuyển');
 
   const [allWarehouses, latestDiesel] = await Promise.all([
     db.select().from(warehouses).where(eq(warehouses.orgId, orgId)),

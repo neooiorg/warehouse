@@ -36,37 +36,37 @@ import { cn } from '@/lib/utils';
 
 // Schema (form-level safety net — onSubmit catches anything field-level missed)
 const demoFormSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.email('Invalid email address'),
-  age: z.number().min(18, 'Must be at least 18 years old'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  phone: z.string().min(10, 'Phone must be at least 10 digits'),
-  website: z.string().url('Invalid URL').or(z.literal('')),
-  bio: z.string().min(10, 'Bio must be at least 10 characters'),
-  country: z.string().min(1, 'Please select a country'),
-  framework: z.string().min(1, 'Please select a framework'),
-  interests: z.array(z.string()).min(1, 'Select at least one interest'),
-  gender: z.string().min(1, 'Please select gender'),
+  name: z.string().min(2, 'Tên cần ít nhất 2 ký tự'),
+  email: z.email('Email không hợp lệ'),
+  age: z.number().min(18, 'Tuổi phải từ 18 trở lên'),
+  password: z.string().min(8, 'Mật khẩu cần ít nhất 8 ký tự'),
+  phone: z.string().min(10, 'Số điện thoại cần ít nhất 10 chữ số'),
+  website: z.string().url('URL không hợp lệ').or(z.literal('')),
+  bio: z.string().min(10, 'Giới thiệu cần ít nhất 10 ký tự'),
+  country: z.string().min(1, 'Chọn quốc gia'),
+  framework: z.string().min(1, 'Chọn framework'),
+  interests: z.array(z.string()).min(1, 'Chọn ít nhất một sở thích'),
+  gender: z.string().min(1, 'Chọn giới tính'),
   newsletter: z.boolean(),
   rating: z.number().min(0).max(10),
   birthDate: z.date().optional(),
   dateRange: z.any().optional(),
   eventTime: z.string().optional(),
   favoriteColor: z.string().optional(),
-  otp: z.string().min(6, 'Please enter 6 digits'),
+  otp: z.string().min(6, 'Nhập đủ 6 chữ số'),
   formatting: z.array(z.string()).optional(),
-  tags: z.array(z.string()).min(1, 'Add at least one tag'),
-  terms: z.boolean().refine((val) => val === true, 'You must accept the terms'),
+  tags: z.array(z.string()).min(1, 'Thêm ít nhất một thẻ'),
+  terms: z.boolean().refine((val) => val === true, 'Bạn cần đồng ý điều khoản'),
   avatar: z.array(z.any()).optional()
 });
 
 const countryOptions = [
-  { value: 'us', label: 'United States' },
+  { value: 'us', label: 'Mỹ' },
   { value: 'ca', label: 'Canada' },
-  { value: 'uk', label: 'United Kingdom' },
-  { value: 'au', label: 'Australia' },
-  { value: 'de', label: 'Germany' },
-  { value: 'fr', label: 'France' }
+  { value: 'uk', label: 'Vương quốc Anh' },
+  { value: 'au', label: 'Úc' },
+  { value: 'de', label: 'Đức' },
+  { value: 'fr', label: 'Pháp' }
 ];
 
 const frameworkOptions = [
@@ -79,19 +79,19 @@ const frameworkOptions = [
 ];
 
 const interestOptions = [
-  { value: 'technology', label: 'Technology' },
-  { value: 'sports', label: 'Sports' },
-  { value: 'music', label: 'Music' },
-  { value: 'travel', label: 'Travel' },
-  { value: 'cooking', label: 'Cooking' },
-  { value: 'reading', label: 'Reading' }
+  { value: 'technology', label: 'Công nghệ' },
+  { value: 'sports', label: 'Thể thao' },
+  { value: 'music', label: 'Âm nhạc' },
+  { value: 'travel', label: 'Du lịch' },
+  { value: 'cooking', label: 'Nấu ăn' },
+  { value: 'reading', label: 'Đọc sách' }
 ];
 
 const genderOptions = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'other', label: 'Other' },
-  { value: 'prefer-not-to-say', label: 'Prefer not to say' }
+  { value: 'male', label: 'Nam' },
+  { value: 'female', label: 'Nữ' },
+  { value: 'other', label: 'Khác' },
+  { value: 'prefer-not-to-say', label: 'Không muốn trả lời' }
 ];
 
 // ─── Custom field components (no pre-built field component exists) ───
@@ -123,15 +123,15 @@ function ComboboxField({
           aria-invalid={isTouched && !isValid}
           onBlur={onBlur}
         >
-          {selected?.label ?? 'Search frameworks...'}
+          {selected?.label ?? 'Tìm framework...'}
           <Icons.chevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[--radix-popover-trigger-width] p-0'>
         <Command>
-          <CommandInput placeholder='Search...' />
+          <CommandInput placeholder='Tìm kiếm...' />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>Không tìm thấy framework.</CommandEmpty>
             <CommandGroup>
               {frameworkOptions.map((opt) => (
                 <CommandItem
@@ -190,10 +190,10 @@ function TagsField({
               addTag();
             }
           }}
-          placeholder='Type and press Enter...'
+          placeholder='Nhập rồi bấm Enter...'
         />
         <Button type='button' variant='secondary' onClick={addTag}>
-          Add
+          Thêm
         </Button>
       </div>
       {values.length > 0 && (
@@ -285,7 +285,7 @@ export default function DemoForm() {
       onSubmit: demoFormSchema
     },
     onSubmit: () => {
-      alert('Form submitted successfully!');
+      alert('Đã gửi form');
     }
   });
 
@@ -305,25 +305,25 @@ export default function DemoForm() {
     <div className='grid grid-cols-1 gap-6 xl:grid-cols-[1fr_320px]'>
       <Card>
         <CardHeader>
-          <CardTitle className='text-2xl font-bold'>All Form Inputs Demo</CardTitle>
+          <CardTitle className='text-2xl font-bold'>Demo các loại input</CardTitle>
           <p className='text-muted-foreground'>
-            Every possible form input — built with TanStack Form + shadcn/ui
+            Các kiểu input phổ biến, dựng bằng TanStack Form và shadcn/ui
           </p>
         </CardHeader>
         <CardContent>
           <form.AppForm>
             <form.Form className='space-y-6'>
               {/* ─── TEXT INPUTS (flat pattern + field-level onBlur validation) ─── */}
-              <SectionTitle>Text Inputs</SectionTitle>
+              <SectionTitle>Trường văn bản</SectionTitle>
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <FormTextField
                   name='name'
-                  label='Full Name'
+                  label='Họ và tên'
                   required
-                  placeholder='John Doe'
+                  placeholder='Nguyễn Văn A'
                   validators={{
-                    onBlur: z.string().min(2, 'Name must be at least 2 characters')
+                    onBlur: z.string().min(2, 'Tên cần ít nhất 2 ký tự')
                   }}
                 />
                 {/* Async validation: simulated server-side email check */}
@@ -332,15 +332,15 @@ export default function DemoForm() {
                   label='Email'
                   required
                   type='email'
-                  placeholder='john@example.com'
+                  placeholder='ban@example.com'
                   validators={{
-                    onBlur: z.string().email('Invalid email address'),
+                    onBlur: z.string().email('Email không hợp lệ'),
                     onChangeAsync: async ({ value }: { value: string }) => {
                       if (!value || value.length < 3) return undefined;
                       // Simulated server check — replace with real API call
                       await new Promise((r) => setTimeout(r, 500));
                       if (value === 'taken@example.com') {
-                        return 'This email is already registered';
+                        return 'Email này đã được đăng ký';
                       }
                       return undefined;
                     },
@@ -349,39 +349,39 @@ export default function DemoForm() {
                 />
                 <FormTextField
                   name='password'
-                  label='Password'
+                  label='Mật khẩu'
                   required
                   type='password'
-                  placeholder='Min 8 characters'
+                  placeholder='Tối thiểu 8 ký tự'
                   validators={{
-                    onBlur: z.string().min(8, 'Password must be at least 8 characters')
+                    onBlur: z.string().min(8, 'Mật khẩu cần ít nhất 8 ký tự')
                   }}
                 />
                 <FormTextField
                   name='age'
-                  label='Age'
+                  label='Tuổi'
                   required
                   type='number'
                   min={18}
                   max={100}
                   placeholder='18'
                   validators={{
-                    onBlur: z.number().min(18, 'Must be at least 18 years old')
+                    onBlur: z.number().min(18, 'Tuổi phải từ 18 trở lên')
                   }}
                 />
                 <FormTextField
                   name='phone'
-                  label='Phone'
+                  label='Điện thoại'
                   required
                   type='tel'
                   placeholder='+1 (555) 000-0000'
                   validators={{
-                    onBlur: z.string().min(10, 'Phone must be at least 10 digits')
+                    onBlur: z.string().min(10, 'Số điện thoại cần ít nhất 10 chữ số')
                   }}
                 />
                 <FormTextField
                   name='website'
-                  label='Website'
+                  label='Trang web'
                   type='url'
                   placeholder='https://example.com'
                 />
@@ -390,29 +390,29 @@ export default function DemoForm() {
               {/* ─── TEXTAREA (flat pattern + onBlur validation) ─── */}
               <FormTextareaField
                 name='bio'
-                label='Bio'
+                label='Giới thiệu'
                 required
-                placeholder='Tell us about yourself...'
+                placeholder='Viết vài dòng giới thiệu...'
                 maxLength={500}
                 rows={4}
                 validators={{
-                  onBlur: z.string().min(10, 'Bio must be at least 10 characters')
+                  onBlur: z.string().min(10, 'Giới thiệu cần ít nhất 10 ký tự')
                 }}
               />
 
               {/* ─── SELECT & COMBOBOX ─── */}
-              <SectionTitle>Select & Combobox</SectionTitle>
+              <SectionTitle>Chọn dữ liệu</SectionTitle>
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 {/* Listener: logs country changes (replace with dependent field reset) */}
                 <FormSelectField
                   name='country'
-                  label='Country'
+                  label='Quốc gia'
                   required
                   options={countryOptions}
-                  placeholder='Select your country'
+                  placeholder='Chọn quốc gia'
                   validators={{
-                    onBlur: z.string().min(1, 'Please select a country')
+                    onBlur: z.string().min(1, 'Chọn quốc gia')
                   }}
                   listeners={{
                     onChange: ({ value }) => {
@@ -439,7 +439,7 @@ export default function DemoForm() {
                           isTouched={field.state.meta.isTouched}
                           isValid={field.state.meta.isValid}
                         />
-                        <FieldDescription>Searchable dropdown</FieldDescription>
+                        <FieldDescription>Danh sách có tìm kiếm</FieldDescription>
                       </field.Field>
                       <field.FieldError />
                     </field.FieldSet>
@@ -448,7 +448,7 @@ export default function DemoForm() {
               </div>
 
               {/* ─── CHECKBOX & RADIO ─── */}
-              <SectionTitle>Checkbox & Radio</SectionTitle>
+              <SectionTitle>Hộp chọn và radio</SectionTitle>
 
               {/* Checkbox Group — array mode, needs AppField */}
               <form.AppField
@@ -458,8 +458,8 @@ export default function DemoForm() {
                   const values: string[] = field.state.value || [];
                   return (
                     <field.FieldSet>
-                      <field.FieldLabel>Interests *</field.FieldLabel>
-                      <FieldDescription>Select all that apply</FieldDescription>
+                      <field.FieldLabel>Sở thích *</field.FieldLabel>
+                      <FieldDescription>Chọn các mục phù hợp</FieldDescription>
                       <div className='grid grid-cols-2 gap-3 md:grid-cols-3'>
                         {interestOptions.map((opt) => (
                           <div key={opt.value} className='flex items-center space-x-2'>
@@ -497,22 +497,22 @@ export default function DemoForm() {
               {/* Radio Group (flat pattern + onBlur validation) */}
               <FormRadioGroupField
                 name='gender'
-                label='Gender'
+                label='Giới tính'
                 required
                 options={genderOptions}
                 validators={{
-                  onBlur: z.string().min(1, 'Please select gender')
+                  onBlur: z.string().min(1, 'Chọn giới tính')
                 }}
               />
 
               {/* ─── TOGGLE & SWITCH ─── */}
-              <SectionTitle>Toggle & Switch</SectionTitle>
+              <SectionTitle>Bật tắt</SectionTitle>
 
               {/* Switch (flat pattern) */}
               <FormSwitchField
                 name='newsletter'
-                label='Subscribe to Newsletter'
-                description='Receive updates about new features and products'
+                label='Đăng ký nhận bản tin'
+                description='Nhận cập nhật về tính năng và sản phẩm'
               />
 
               {/* Toggle Group — array mode, needs AppField */}
@@ -524,24 +524,24 @@ export default function DemoForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel>Text Formatting</field.FieldLabel>
+                        <field.FieldLabel>Định dạng văn bản</field.FieldLabel>
                         <ToggleGroup
                           type='multiple'
                           variant='outline'
                           value={values}
                           onValueChange={(val) => field.form.setFieldValue('formatting', val)}
                         >
-                          <ToggleGroupItem value='bold' aria-label='Bold'>
+                          <ToggleGroupItem value='bold' aria-label='Đậm'>
                             <Icons.bold className='h-4 w-4' />
                           </ToggleGroupItem>
-                          <ToggleGroupItem value='italic' aria-label='Italic'>
+                          <ToggleGroupItem value='italic' aria-label='Nghiêng'>
                             <Icons.italic className='h-4 w-4' />
                           </ToggleGroupItem>
-                          <ToggleGroupItem value='underline' aria-label='Underline'>
+                          <ToggleGroupItem value='underline' aria-label='Gạch chân'>
                             <Icons.underline className='h-4 w-4' />
                           </ToggleGroupItem>
                         </ToggleGroup>
-                        <FieldDescription>Multi-select toggle group</FieldDescription>
+                        <FieldDescription>Nhóm toggle chọn nhiều mục</FieldDescription>
                       </field.Field>
                     </field.FieldSet>
                   );
@@ -561,7 +561,7 @@ export default function DemoForm() {
                       />
                       <field.FieldContent>
                         <field.FieldLabel className='space-y-1 leading-none'>
-                          I agree to the Terms and Conditions *
+                          Tôi đồng ý với điều khoản *
                         </field.FieldLabel>
                         <field.FieldError />
                       </field.FieldContent>
@@ -571,19 +571,19 @@ export default function DemoForm() {
               />
 
               {/* ─── SLIDER (flat pattern) ─── */}
-              <SectionTitle>Slider</SectionTitle>
+              <SectionTitle>Thanh trượt</SectionTitle>
 
               <FormSliderField
                 name='rating'
-                label='Overall Rating'
-                description='Rate your experience (0-10)'
+                label='Điểm tổng thể'
+                description='Chấm điểm trải nghiệm từ 0 đến 10'
                 min={0}
                 max={10}
                 step={0.5}
               />
 
               {/* ─── DATE & TIME (custom, need AppField) ─── */}
-              <SectionTitle>Date & Time</SectionTitle>
+              <SectionTitle>Ngày và giờ</SectionTitle>
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 {/* Date Picker */}
@@ -592,7 +592,7 @@ export default function DemoForm() {
                   children={(field) => (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel>Birth Date</field.FieldLabel>
+                        <field.FieldLabel>Ngày sinh</field.FieldLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -606,7 +606,7 @@ export default function DemoForm() {
                               {field.state.value ? (
                                 format(field.state.value, 'PPP')
                               ) : (
-                                <span>Pick a date</span>
+                                <span>Chọn ngày</span>
                               )}
                             </Button>
                           </PopoverTrigger>
@@ -631,7 +631,7 @@ export default function DemoForm() {
                   children={(field) => (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Event Time</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Giờ sự kiện</field.FieldLabel>
                         <Input
                           id={field.name}
                           type='time'
@@ -653,7 +653,7 @@ export default function DemoForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel>Date Range</field.FieldLabel>
+                        <field.FieldLabel>Khoảng ngày</field.FieldLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -674,7 +674,7 @@ export default function DemoForm() {
                                   format(range.from, 'LLL dd, y')
                                 )
                               ) : (
-                                <span>Pick a date range</span>
+                                <span>Chọn khoảng ngày</span>
                               )}
                             </Button>
                           </PopoverTrigger>
@@ -695,7 +695,7 @@ export default function DemoForm() {
               />
 
               {/* ─── SPECIAL INPUTS (custom, need AppField) ─── */}
-              <SectionTitle>Special Inputs</SectionTitle>
+              <SectionTitle>Trường đặc biệt</SectionTitle>
 
               <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 {/* OTP Input */}
@@ -704,7 +704,7 @@ export default function DemoForm() {
                   children={(field) => (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel>Verification Code *</field.FieldLabel>
+                        <field.FieldLabel>Mã xác minh *</field.FieldLabel>
                         <InputOTP
                           maxLength={6}
                           value={field.state.value}
@@ -722,7 +722,7 @@ export default function DemoForm() {
                             <InputOTPSlot index={5} />
                           </InputOTPGroup>
                         </InputOTP>
-                        <FieldDescription>6-digit OTP input</FieldDescription>
+                        <FieldDescription>Nhập mã OTP 6 chữ số</FieldDescription>
                       </field.Field>
                       <field.FieldError />
                     </field.FieldSet>
@@ -735,7 +735,7 @@ export default function DemoForm() {
                   children={(field) => (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel htmlFor={field.name}>Favorite Color</field.FieldLabel>
+                        <field.FieldLabel htmlFor={field.name}>Màu yêu thích</field.FieldLabel>
                         <div className='flex items-center gap-3'>
                           <input
                             id={field.name}
@@ -751,7 +751,7 @@ export default function DemoForm() {
                             placeholder='#000000'
                           />
                         </div>
-                        <FieldDescription>Native color picker with hex</FieldDescription>
+                        <FieldDescription>Bộ chọn màu kèm mã hex</FieldDescription>
                       </field.Field>
                     </field.FieldSet>
                   )}
@@ -767,13 +767,13 @@ export default function DemoForm() {
                   return (
                     <field.FieldSet>
                       <field.Field>
-                        <field.FieldLabel>Tags *</field.FieldLabel>
+                        <field.FieldLabel>Thẻ *</field.FieldLabel>
                         <TagsField
                           values={values}
                           onPush={(val) => field.pushValue(val)}
                           onRemove={(idx) => field.removeValue(idx)}
                         />
-                        <FieldDescription>Press Enter or click Add to create tags</FieldDescription>
+                        <FieldDescription>Bấm Enter hoặc nút Thêm để tạo thẻ</FieldDescription>
                       </field.Field>
                       <field.FieldError />
                     </field.FieldSet>
@@ -782,12 +782,12 @@ export default function DemoForm() {
               />
 
               {/* ─── FILE UPLOAD (flat pattern) ─── */}
-              <SectionTitle>File Upload</SectionTitle>
+              <SectionTitle>Tải tệp</SectionTitle>
 
               <FormFileUploadField
                 name='avatar'
-                label='Profile Picture'
-                description='Drag & drop or click to upload (max 5MB)'
+                label='Ảnh hồ sơ'
+                description='Kéo thả hoặc bấm để tải lên, tối đa 5MB'
                 maxSize={5000000}
                 maxFiles={1}
               />
@@ -801,9 +801,9 @@ export default function DemoForm() {
                   onClick={() => form.reset()}
                   className='flex-1'
                 >
-                  Reset
+                  Đặt lại
                 </Button>
-                <form.SubmitButton className='flex-1'>Submit Form</form.SubmitButton>
+                <form.SubmitButton className='flex-1'>Gửi form</form.SubmitButton>
               </div>
             </form.Form>
           </form.AppForm>
@@ -814,7 +814,7 @@ export default function DemoForm() {
       <div className='xl:sticky xl:top-16 xl:self-start'>
         <Card>
           <CardHeader>
-            <CardTitle>Form Data Preview</CardTitle>
+            <CardTitle>Dữ liệu form</CardTitle>
           </CardHeader>
           <CardContent>
             <pre className='bg-muted max-h-[calc(100vh-8rem)] overflow-auto rounded-lg p-4 text-xs'>

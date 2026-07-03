@@ -5,8 +5,8 @@ import NewTaskDialog from './new-task-dialog';
 export default function KanbanViewPage() {
   return (
     <PageContainer
-      pageTitle='Kanban'
-      pageDescription='Manage tasks with drag and drop'
+      pageTitle='Bảng công việc'
+      pageDescription='Kéo thả để theo dõi tiến độ.'
       pageHeaderAction={<NewTaskDialog />}
     >
       <KanbanBoard />

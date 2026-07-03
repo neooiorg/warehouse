@@ -1,78 +1,46 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About'
+  title: 'Giới thiệu'
 };
 
 export default function AboutPage() {
   return (
     <div className='min-h-screen px-4 py-12 sm:px-6 lg:px-8'>
       <div className='mx-auto max-w-3xl'>
-        {/* Header */}
         <div className='mb-12 text-center'>
-          <h1 className='text-foreground text-3xl font-bold tracking-tight sm:text-4xl'>About</h1>
-          <p className='text-muted-foreground mt-4 text-lg'>Learn more about this project</p>
-        </div>
-
-        {/* Content Sections */}
-        <div className='space-y-8'>
-          {/* Open Source Section */}
-          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
-            <h2 className='text-foreground mb-4 text-xl font-semibold'>Open-Source Project</h2>
-            <p className='text-muted-foreground text-lg leading-relaxed'>
-              This is an open-source Next.js admin dashboard starter built with modern web
-              technologies. It provides a solid foundation for building powerful admin interfaces
-              and dashboards. The source code is freely available for developers to use, modify, and
-              distribute.
-            </p>
-          </section>
-
-          {/* Demo Purpose Section */}
-          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
-            <h2 className='text-foreground mb-4 text-xl font-semibold'>Demo Purpose</h2>
-            <p className='text-muted-foreground text-lg leading-relaxed'>
-              This application serves as a demo for demonstration purposes. It showcases the
-              features, components, and capabilities of the admin dashboard starter. Feel free to
-              explore the interface, test the functionality, and evaluate if it meets your project
-              requirements.
-            </p>
-          </section>
-
-          {/* Auth Section */}
-          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
-            <h2 className='text-foreground mb-4 text-xl font-semibold'>Authentication by Clerk</h2>
-            <p className='text-muted-foreground text-lg leading-relaxed'>
-              Authentication for this application is securely handled by{' '}
-              <a
-                href='https://clerk.com'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='text-primary font-medium hover:underline'
-              >
-                Clerk
-              </a>
-              , a modern authentication and user management platform. Clerk provides secure sign-in,
-              session management, and user data protection out of the box.
-            </p>
-          </section>
-
-          {/* Data Privacy Section */}
-          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
-            <h2 className='text-foreground mb-4 text-xl font-semibold'>Data Privacy</h2>
-            <p className='text-muted-foreground text-lg leading-relaxed'>
-              We take your privacy seriously. No personal data is misused, shared, or sold to third
-              parties. Any information collected during your use of this demo application is used
-              solely for the purpose of providing the demonstration experience and is handled in
-              accordance with best practices for data protection.
-            </p>
-          </section>
-        </div>
-
-        {/* Footer Note */}
-        <div className='mt-12 text-center'>
-          <p className='text-muted-foreground text-sm'>
-            Built with Next.js, Tailwind CSS, and shadcn/ui
+          <h1 className='text-foreground text-3xl font-bold tracking-tight sm:text-4xl'>
+            Giới thiệu
+          </h1>
+          <p className='text-muted-foreground mt-4 text-lg'>
+            Bảng điều khiển cho vận hành kho, nhân sự và vận chuyển.
           </p>
+        </div>
+
+        <div className='space-y-8'>
+          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
+            <h2 className='text-foreground mb-4 text-xl font-semibold'>Mục đích</h2>
+            <p className='text-muted-foreground text-lg leading-relaxed'>
+              Ứng dụng gom các màn hình quản lý kho vào một nơi: nhập xuất hàng, truy xuất lô, lịch
+              dock, năng suất nhân viên, định biên và vận chuyển.
+            </p>
+          </section>
+
+          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
+            <h2 className='text-foreground mb-4 text-xl font-semibold'>Xác thực</h2>
+            <p className='text-muted-foreground text-lg leading-relaxed'>
+              Clerk xử lý đăng nhập, phiên làm việc và hồ sơ người dùng. Ứng dụng chỉ dùng dữ liệu
+              cần thiết để phân quyền và hiển thị đúng không gian làm việc.
+            </p>
+          </section>
+
+          <section className='bg-card rounded-2xl border p-8 shadow-sm'>
+            <h2 className='text-foreground mb-4 text-xl font-semibold'>Dữ liệu</h2>
+            <p className='text-muted-foreground text-lg leading-relaxed'>
+              Không nhập dữ liệu nhạy cảm khi chạy bản demo. Dữ liệu có thể được xóa hoặc đặt lại
+              trong quá trình kiểm thử.
+            </p>
+          </section>
         </div>
       </div>
     </div>

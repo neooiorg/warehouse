@@ -6,7 +6,7 @@ import { hrKpiOptions } from '@/features/hr/api/queries';
 import HrKpiDashboard from '@/features/hr/components/hr-kpi-dashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const metadata = { title: 'Dashboard: KPI Nhân sự' };
+export const metadata = { title: 'Quản lý kho: KPI nhân sự' };
 
 function KpiSkeleton() {
   return (

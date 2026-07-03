@@ -223,7 +223,7 @@ export async function createOutboundShipment(
     .where(eq(productSkus.id, payload.skuId))
     .limit(1);
   if (!sku || sku.orgId !== orgId) {
-    throw new Error('SKU not found in this organization');
+    throw new Error('Không tìm thấy SKU trong tổ chức hiện tại');
   }
 
   const candidateLots = await db
@@ -245,7 +245,7 @@ export async function createOutboundShipment(
 
   if (result.shortfallQty > 0) {
     throw new Error(
-      `Insufficient stock: requested ${payload.qty}, only ${result.fulfilledQty} available across current lots`
+      `Không đủ tồn kho: cần ${payload.qty}, hiện chỉ có ${result.fulfilledQty} trong các lot khả dụng`
     );
   }
 
@@ -289,10 +289,10 @@ export async function createTransfer(payload: TransferPayload): Promise<{ lotId:
     .where(eq(inventoryLots.id, payload.lotId))
     .limit(1);
   if (!lot || lot.orgId !== orgId) {
-    throw new Error('Lot not found in this organization');
+    throw new Error('Không tìm thấy lô trong tổ chức hiện tại');
   }
   if (payload.qty <= 0 || payload.qty > lot.qty) {
-    throw new Error(`Transfer quantity must be between 1 and ${lot.qty}`);
+    throw new Error(`Số lượng chuyển phải nằm trong khoảng 1 đến ${lot.qty}`);
   }
 
   const fromLocationId = lot.locationId;
@@ -390,7 +390,11 @@ export async function searchLotHistory(query: string, warehouseId?: string) {
   const term = `%${query}%`;
   const conditions = [
     eq(inventoryLots.orgId, orgId),
-    or(ilike(inventoryLots.lotNo, term), ilike(productSkus.sku, term), ilike(productSkus.name, term))!
+    or(
+      ilike(inventoryLots.lotNo, term),
+      ilike(productSkus.sku, term),
+      ilike(productSkus.name, term)
+    )!
   ];
   if (warehouseId) conditions.push(eq(inventoryLots.warehouseId, warehouseId));
 

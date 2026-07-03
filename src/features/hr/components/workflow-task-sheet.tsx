@@ -3,20 +3,12 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Icons } from '@/components/icons';
 import { createWorkflowTaskMutation, updateWorkflowTaskMutation } from '../api/mutations';
 import type { WorkflowTask } from '../api/types';
 
-type Props =
-  | { mode: 'create'; task?: never }
-  | { mode: 'edit'; task: WorkflowTask };
+type Props = { mode: 'create'; task?: never } | { mode: 'edit'; task: WorkflowTask };
 
 export function WorkflowTaskSheet({ mode, task }: Props) {
   const [open, setOpen] = useState(false);
@@ -59,21 +51,48 @@ export function WorkflowTaskSheet({ mode, task }: Props) {
         <form onSubmit={handleSubmit} className='mt-4 space-y-4'>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Tên đầu việc</label>
-            <input className='rounded-md border px-3 py-2 text-sm' required value={name} onChange={(e) => setName(e.target.value)} />
+            <input
+              className='rounded-md border px-3 py-2 text-sm'
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Thời gian ước tính (phút)</label>
-            <input type='number' min={1} className='rounded-md border px-3 py-2 text-sm' required value={estimatedMinutes} onChange={(e) => setEstimatedMinutes(Number(e.target.value))} />
+            <input
+              type='number'
+              min={1}
+              className='rounded-md border px-3 py-2 text-sm'
+              required
+              value={estimatedMinutes}
+              onChange={(e) => setEstimatedMinutes(Number(e.target.value))}
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Vai trò yêu cầu</label>
-            <input className='rounded-md border px-3 py-2 text-sm' placeholder='Picker, Forklift Operator...' value={requiredRole} onChange={(e) => setRequiredRole(e.target.value)} />
+            <input
+              className='rounded-md border px-3 py-2 text-sm'
+              placeholder='Nhân viên pick, lái xe nâng...'
+              value={requiredRole}
+              onChange={(e) => setRequiredRole(e.target.value)}
+            />
           </div>
           <div className='flex flex-col gap-1'>
             <label className='text-sm font-medium'>Thứ tự hiển thị</label>
-            <input type='number' min={0} className='rounded-md border px-3 py-2 text-sm' value={sortOrder} onChange={(e) => setSortOrder(Number(e.target.value))} />
+            <input
+              type='number'
+              min={0}
+              className='rounded-md border px-3 py-2 text-sm'
+              value={sortOrder}
+              onChange={(e) => setSortOrder(Number(e.target.value))}
+            />
           </div>
-          <Button type='submit' className='w-full' disabled={createMut.isPending || updateMut.isPending}>
+          <Button
+            type='submit'
+            className='w-full'
+            disabled={createMut.isPending || updateMut.isPending}
+          >
             {mode === 'create' ? 'Tạo' : 'Lưu'}
           </Button>
         </form>

@@ -1,43 +1,43 @@
 import type { InfobarContent } from '@/components/ui/infobar';
 
 export const reactQueryInfoContent: InfobarContent = {
-  title: 'React Query Pattern',
+  title: 'Mẫu dùng React Query',
   sections: [
     {
-      title: 'Server Prefetch',
+      title: 'Prefetch trên server',
       description:
-        'Data is prefetched on the server using getQueryClient().prefetchQuery(). The dehydrated state is passed to HydrationBoundary so the client starts with cached data — no loading spinners on first load.',
+        'Dữ liệu được prefetch bằng getQueryClient().prefetchQuery(). State đã dehydrate được truyền vào HydrationBoundary để client mở trang bằng cache sẵn có.',
       links: [
         {
-          title: 'TanStack Query SSR Docs',
+          title: 'Tài liệu TanStack Query SSR',
           url: 'https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr'
         }
       ]
     },
     {
-      title: 'Query Options',
+      title: 'Query options',
       description:
-        'Query keys and fetch functions are defined in a shared queryOptions() object. This is reused across server prefetch and client hooks, keeping them in sync.',
+        'Query key và hàm fetch được đặt trong queryOptions() dùng chung. Server prefetch và hook client dùng cùng cấu hình này.',
       links: [
         {
-          title: 'queryOptions API',
+          title: 'API queryOptions',
           url: 'https://tanstack.com/query/latest/docs/framework/react/reference/queryOptions'
         }
       ]
     },
     {
-      title: 'Suspense Query',
+      title: 'Suspense query',
       description:
-        'The client uses useSuspenseQuery() which integrates with React Suspense. Combined with server prefetch, data is available immediately — Suspense only shows the fallback on subsequent navigations if the cache is stale.',
+        'Client dùng useSuspenseQuery() để đi cùng React Suspense. Khi cache còn mới, dữ liệu hiển thị ngay.',
       links: []
     },
     {
-      title: 'Optimistic Mutations',
+      title: 'Optimistic mutation',
       description:
-        'Mutations use onMutate to optimistically update the cache before the request completes. On error, the previous state is rolled back. On settle, the query is invalidated to refetch fresh data.',
+        'Mutation có thể cập nhật cache trước bằng onMutate. Nếu lỗi, state cũ được khôi phục; khi hoàn tất, query được invalidate để lấy dữ liệu mới.',
       links: [
         {
-          title: 'Optimistic Updates Guide',
+          title: 'Hướng dẫn optimistic update',
           url: 'https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates'
         }
       ]

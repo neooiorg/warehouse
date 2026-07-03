@@ -9,7 +9,7 @@ export default function KpiProposalTable({ proposals }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-base'>KPI Proposals từ lịch định biên</CardTitle>
+        <CardTitle className='text-base'>Đề xuất KPI từ lịch định biên</CardTitle>
       </CardHeader>
       <CardContent>
         <div className='space-y-2'>

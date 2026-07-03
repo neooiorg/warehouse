@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { warehouseOptionsQuery } from '@/features/master-data/api/queries';
 import { StorageOptimizeClient } from '@/features/inventory/components/storage-optimize-client';
 
-export const metadata = { title: 'Dashboard: Tối ưu kho' };
+export const metadata = { title: 'Quản lý kho: Tối ưu kho' };
 
 export default async function Page() {
   const qc = getQueryClient();

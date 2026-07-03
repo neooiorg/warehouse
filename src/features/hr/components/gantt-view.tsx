@@ -35,7 +35,7 @@ export default function GanttView({ result, onExportExcel, onExportPdf }: Props)
         <div className='flex gap-2 text-sm'>
           <Badge variant='destructive'>Đường găng: {result.criticalPathHours.toFixed(1)}h</Badge>
           <Badge variant='secondary'>Tổng: {result.totalDurationHours.toFixed(1)}h</Badge>
-          <Badge variant='outline'>Peak: {result.requiredHeadcount} người</Badge>
+          <Badge variant='outline'>Cao điểm: {result.requiredHeadcount} người</Badge>
         </div>
         <div className='flex gap-2'>
           {onExportExcel && (
@@ -153,11 +153,11 @@ export default function GanttView({ result, onExportExcel, onExportPdf }: Props)
       <div className='flex gap-4 text-xs text-zinc-400'>
         <span>
           <span className='inline-block h-3 w-3 rounded bg-red-500 mr-1' />
-          Task đường găng
+          Đầu việc đường găng
         </span>
         <span>
           <span className='inline-block h-3 w-3 rounded bg-indigo-500 mr-1' />
-          Task thường
+          Đầu việc thường
         </span>
         <span>
           <span className='inline-block h-3 w-3 rounded bg-yellow-400 mr-1' />

@@ -139,6 +139,7 @@ jobs:
     name: Telegram notification
     runs-on: ubuntu-latest
     needs:
+      - migrate
       - build-and-push
       - deploy
     if: always()
@@ -149,6 +150,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_THREAD_ID: ${{ secrets.TELEGRAM_THREAD_ID }}
+          MIGRATE_RESULT: ${{ needs.migrate.result }}
           BUILD_RESULT: ${{ needs.build-and-push.result }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
           REPO: ${{ github.repository }}
@@ -162,9 +164,15 @@ jobs:
             exit 0
           fi
 
+          API_TOKEN="$TELEGRAM_BOT_TOKEN"
+          API_TOKEN="${API_TOKEN#https://api.telegram.org/bot}"
+          API_TOKEN="${API_TOKEN#http://api.telegram.org/bot}"
+          API_TOKEN="${API_TOKEN#bot}"
+          API_TOKEN="${API_TOKEN%/sendMessage}"
+
           STATUS="success"
           MARK="[OK]"
-          if [ "$BUILD_RESULT" != "success" ] || [ "$DEPLOY_RESULT" != "success" ]; then
+          if [ "$MIGRATE_RESULT" != "success" ] || [ "$BUILD_RESULT" != "success" ] || [ "$DEPLOY_RESULT" != "success" ]; then
             STATUS="failed"
             MARK="[FAIL]"
           fi
@@ -176,6 +184,7 @@ jobs:
             "Branch: $BRANCH" \
             "Commit: $COMMIT" \
             "Actor: $ACTOR" \
+            "Migrate: $MIGRATE_RESULT" \
             "Build: $BUILD_RESULT" \
             "Deploy: $DEPLOY_RESULT" \
             "Run: $RUN_URL")
@@ -189,5 +198,11 @@ jobs:
             TELEGRAM_ARGS+=(-d "message_thread_id=$TELEGRAM_THREAD_ID")
           fi
 
-          curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            "${TELEGRAM_ARGS[@]}"
+          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" -X POST "https://api.telegram.org/bot${API_TOKEN}/sendMessage" \
+            "${TELEGRAM_ARGS[@]}" || true)
+          echo "$RESPONSE"
+
+          HTTP_CODE=$(echo "$RESPONSE" | awk -F: '/HTTP_STATUS/ {print $2}')
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Telegram notification failed with HTTP $HTTP_CODE. Check TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID secrets."
+          fi

@@ -13,21 +13,21 @@ import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
 
 const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 }
+  { month: 'Tháng 1', desktop: 186, mobile: 80 },
+  { month: 'Tháng 2', desktop: 305, mobile: 200 },
+  { month: 'Tháng 3', desktop: 237, mobile: 120 },
+  { month: 'Tháng 4', desktop: 73, mobile: 190 },
+  { month: 'Tháng 5', desktop: 209, mobile: 130 },
+  { month: 'Tháng 6', desktop: 214, mobile: 140 }
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
+    label: 'Máy tính',
     color: 'var(--chart-1)'
   },
   mobile: {
-    label: 'Mobile',
+    label: 'Di động',
     color: 'var(--chart-2)'
   }
 } satisfies ChartConfig;
@@ -37,13 +37,13 @@ export function BarGraph() {
     <Card>
       <CardHeader>
         <CardTitle>
-          Bar Chart - Multiple
+          Biểu đồ cột
           <Badge variant='outline'>
             <Icons.trendingDown />
             -5.2%
           </Badge>
         </CardTitle>
-        <CardDescription>January - June 2025</CardDescription>
+        <CardDescription>Tháng 1 - tháng 6 năm 2025</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

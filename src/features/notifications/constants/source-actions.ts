@@ -13,11 +13,11 @@ export const sourceActionRoutes: Record<NotificationSourceType, string> = {
 };
 
 export const sourceActionLabels: Record<NotificationSourceType, string> = {
-  reslotting: 'View suggestions',
-  fuel_price: 'View pricing',
-  staffing: 'View staffing',
-  transportation: 'View shipment',
-  system: 'View'
+  reslotting: 'Xem đề xuất',
+  fuel_price: 'Xem giá',
+  staffing: 'Xem định biên',
+  transportation: 'Xem vận chuyển',
+  system: 'Xem'
 };
 
 export function getActionsForSource(sourceType: NotificationSourceType): NotificationAction[] {

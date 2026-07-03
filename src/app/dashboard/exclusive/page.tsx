@@ -19,14 +19,13 @@ export default function ExclusivePage() {
             <Alert>
               <Icons.lock className='h-5 w-5 text-yellow-600' />
               <AlertDescription>
-                <div className='mb-1 text-lg font-semibold'>Pro Plan Required</div>
+                <div className='mb-1 text-lg font-semibold'>Cần gói Pro</div>
                 <div className='text-muted-foreground'>
-                  This page is only available to organizations on the{' '}
-                  <span className='font-semibold'>Pro</span> plan.
+                  Trang này chỉ mở cho tổ chức dùng gói <span className='font-semibold'>Pro</span>.
                   <br />
-                  Upgrade your subscription in&nbsp;
+                  Nâng cấp tại&nbsp;
                   <Link className='underline' href='/dashboard/billing'>
-                    Billing &amp; Plans
+                    Thanh toán và gói
                   </Link>
                   .
                 </div>
@@ -39,22 +38,20 @@ export default function ExclusivePage() {
           <div>
             <h1 className='flex items-center gap-2 text-3xl font-bold tracking-tight'>
               <Icons.badgeCheck className='h-7 w-7 text-green-600' />
-              Exclusive Area
+              Khu vực Pro
             </h1>
             <p className='text-muted-foreground'>
-              Welcome, <span className='font-semibold'>{organization?.name}</span>! This page
-              contains exclusive features for Pro plan organizations.
+              Xin chào <span className='font-semibold'>{organization?.name}</span>. Các tính năng
+              trong trang này dành cho tổ chức dùng gói Pro.
             </p>
           </div>
           <Card>
             <CardHeader>
-              <CardTitle>Thank You for Checking Out the Exclusive Page</CardTitle>
-              <CardDescription>
-                This means you belong to an organization subscribed to the Pro plan.
-              </CardDescription>
+              <CardTitle>Tính năng Pro đã sẵn sàng</CardTitle>
+              <CardDescription>Tổ chức của bạn đang dùng gói Pro.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className='text-lg'>Have a wonderful day!</div>
+              <div className='text-lg'>Bạn có thể dùng các công cụ nâng cao tại đây.</div>
             </CardContent>
           </Card>
         </div>

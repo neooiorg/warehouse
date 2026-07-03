@@ -2,7 +2,7 @@ import PageContainer from '@/components/layout/page-container';
 import FormsShowcasePage from '@/features/forms/components/forms-showcase-page';
 
 export const metadata = {
-  title: 'Dashboard: Multi-Step Form'
+  title: 'Quản lý kho: Form nhiều bước'
 };
 
 export default function Page() {

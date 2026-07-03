@@ -9,7 +9,11 @@ export function ProductivityScoreTable({ warehouseId }: { warehouseId?: string }
   const { data } = useSuspenseQuery(productivityScoresQueryOptions(warehouseId));
 
   if (data.length === 0) {
-    return <p className='text-sm text-muted-foreground'>Chưa có dữ liệu năng suất. Hãy ghi nhận đầu việc trước.</p>;
+    return (
+      <p className='text-sm text-muted-foreground'>
+        Chưa có dữ liệu năng suất. Hãy ghi nhận đầu việc trước.
+      </p>
+    );
   }
 
   return (
@@ -21,8 +25,8 @@ export function ProductivityScoreTable({ warehouseId }: { warehouseId?: string }
             <th className='px-4 py-2 text-left font-medium'>Nhân viên</th>
             <th className='px-4 py-2 text-left font-medium'>Vai trò</th>
             <th className='px-4 py-2 text-right font-medium'>Số đầu việc</th>
-            <th className='px-4 py-2 text-right font-medium'>Tổng qty</th>
-            <th className='px-4 py-2 text-right font-medium'>Qty/giờ</th>
+            <th className='px-4 py-2 text-right font-medium'>Tổng SL</th>
+            <th className='px-4 py-2 text-right font-medium'>SL/giờ</th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +35,11 @@ export function ProductivityScoreTable({ warehouseId }: { warehouseId?: string }
               <td className='px-4 py-2 text-muted-foreground'>{i + 1}</td>
               <td className='px-4 py-2 font-medium'>{row.employeeName}</td>
               <td className='px-4 py-2'>
-                {row.role && <Badge variant='secondary' className='text-xs'>{row.role}</Badge>}
+                {row.role && (
+                  <Badge variant='secondary' className='text-xs'>
+                    {row.role}
+                  </Badge>
+                )}
               </td>
               <td className='px-4 py-2 text-right'>{row.tasksCompleted}</td>
               <td className='px-4 py-2 text-right'>{row.totalQty.toFixed(0)}</td>

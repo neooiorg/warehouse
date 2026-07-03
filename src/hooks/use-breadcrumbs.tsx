@@ -8,18 +8,17 @@ type BreadcrumbItem = {
   link: string;
 };
 
-// This allows to add custom title as well
+// Custom breadcrumb labels for dashboard routes.
 const routeMapping: Record<string, BreadcrumbItem[]> = {
-  '/dashboard': [{ title: 'Dashboard', link: '/dashboard' }],
+  '/dashboard': [{ title: 'Tổng quan', link: '/dashboard' }],
   '/dashboard/employee': [
-    { title: 'Dashboard', link: '/dashboard' },
-    { title: 'Employee', link: '/dashboard/employee' }
+    { title: 'Tổng quan', link: '/dashboard' },
+    { title: 'Nhân viên', link: '/dashboard/employee' }
   ],
   '/dashboard/product': [
-    { title: 'Dashboard', link: '/dashboard' },
-    { title: 'Product', link: '/dashboard/product' }
+    { title: 'Tổng quan', link: '/dashboard' },
+    { title: 'Sản phẩm', link: '/dashboard/product' }
   ]
-  // Add more custom mappings as needed
 };
 
 export function useBreadcrumbs() {

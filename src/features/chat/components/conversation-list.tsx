@@ -35,22 +35,21 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
     <div className='border-border/40 bg-background/75 hidden h-full flex-col gap-4 overflow-hidden rounded-2xl border p-3 backdrop-blur lg:col-start-1 lg:col-end-2 lg:flex lg:rounded-3xl lg:p-4'>
       <div className='flex items-center justify-between gap-3'>
         <div>
-          <p className='text-foreground text-sm font-semibold'>Messenger</p>
+          <p className='text-foreground text-sm font-semibold'>Tin nhắn</p>
           <p className='text-muted-foreground text-xs'>
-            {conversations.length} active conversation
-            {conversations.length === 1 ? '' : 's'}
+            {conversations.length} cuộc trò chuyện đang mở
           </p>
         </div>
         <Badge
           variant='outline'
           className='bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary border-border/50 rounded-full border px-3 py-1 text-[0.7rem] tracking-[0.24em] uppercase'
         >
-          Live
+          Trực tiếp
         </Badge>
       </div>
 
       <label htmlFor='messenger-search' className='sr-only'>
-        Search conversations
+        Tìm cuộc trò chuyện
       </label>
       <div className='relative'>
         <Icons.search
@@ -62,18 +61,20 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
           type='search'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder='Search conversations'
+          placeholder='Tìm cuộc trò chuyện'
           className='border-border/40 bg-background/60 text-foreground placeholder:text-muted-foreground/70 focus-visible:ring-primary/40 w-full rounded-2xl pl-10 text-sm focus-visible:ring-2'
         />
       </div>
 
       <div
         className='flex-1 space-y-2 overflow-y-auto pr-1'
-        aria-label='Conversation list'
+        aria-label='Danh sách cuộc trò chuyện'
         role='list'
       >
         {filtered.length === 0 ? (
-          <p className='text-muted-foreground py-8 text-center text-xs'>No conversations found</p>
+          <p className='text-muted-foreground py-8 text-center text-xs'>
+            Không tìm thấy cuộc trò chuyện
+          </p>
         ) : null}
         {filtered.map((conversation) => {
           const isActive = conversation.id === selectedId;
@@ -103,7 +104,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
                     'border-background absolute right-0 bottom-0 inline-flex h-3 w-3 rounded-full border-2',
                     statusDotColor[conversation.status]
                   )}
-                  aria-label={conversation.status === 'online' ? 'Online' : 'Offline'}
+                  aria-label={conversation.status === 'online' ? 'Đang hoạt động' : 'Ngoại tuyến'}
                 />
               </div>
               <div className='min-w-0 flex-1 space-y-1'>
@@ -123,7 +124,7 @@ export function ConversationList({ conversations, selectedId, onSelect }: Conver
                     {lastMessage.author}: {lastMessage.text}
                   </p>
                 ) : (
-                  <p className='text-muted-foreground text-xs'>No messages yet</p>
+                  <p className='text-muted-foreground text-xs'>Chưa có tin nhắn</p>
                 )}
               </div>
               {conversation.unread > 0 && (

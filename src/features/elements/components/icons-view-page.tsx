@@ -18,7 +18,7 @@ export default function IconsViewPage() {
 
   return (
     <PageContainer
-      pageTitle='Icons'
+      pageTitle='Biểu tượng'
       pageHeaderAction={
         <Link
           href={TABLER_ICONS_URL}
@@ -27,13 +27,13 @@ export default function IconsViewPage() {
           className={buttonVariants({ variant: 'outline' })}
         >
           <Icons.externalLink className='mr-2 h-4 w-4' />
-          <span className='hidden sm:inline'>Browse</span> Tabler Icons
+          <span className='hidden sm:inline'>Mở</span> Tabler Icons
         </Link>
       }
     >
       <div className='space-y-4'>
         <Input
-          placeholder='Search icons...'
+          placeholder='Tìm biểu tượng...'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className='max-w-sm'
@@ -51,7 +51,7 @@ export default function IconsViewPage() {
         </div>
         {iconEntries.length === 0 && (
           <p className='text-muted-foreground py-8 text-center'>
-            No icons found matching &quot;{search}&quot;
+            Không tìm thấy biểu tượng khớp với &quot;{search}&quot;
           </p>
         )}
       </div>

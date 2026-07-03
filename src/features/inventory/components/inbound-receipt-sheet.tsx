@@ -37,11 +37,11 @@ export function InboundReceiptSheet({ open, onOpenChange }: InboundReceiptSheetP
   const createMutation = useMutation({
     ...createInboundReceiptMutation,
     onSuccess: () => {
-      toast.success('Inbound receipt recorded');
+      toast.success('Đã ghi nhận nhập kho');
       onOpenChange(false);
       form.reset();
     },
-    onError: (err: Error) => toast.error(err.message ?? 'Failed to record inbound receipt')
+    onError: (err: Error) => toast.error(err.message ?? 'Không ghi nhận được nhập kho')
   });
 
   const form = useAppForm({
@@ -86,8 +86,8 @@ export function InboundReceiptSheet({ open, onOpenChange }: InboundReceiptSheetP
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='flex flex-col'>
         <SheetHeader>
-          <SheetTitle>Record Inbound Receipt</SheetTitle>
-          <SheetDescription>Create a new lot from a received shipment.</SheetDescription>
+          <SheetTitle>Ghi nhận nhập kho</SheetTitle>
+          <SheetDescription>Tạo lô mới từ phiếu hàng vừa nhận.</SheetDescription>
         </SheetHeader>
 
         <div className='flex-1 overflow-auto'>
@@ -95,10 +95,10 @@ export function InboundReceiptSheet({ open, onOpenChange }: InboundReceiptSheetP
             <form.Form id='inbound-receipt-form' className='space-y-4'>
               <FormSelectField
                 name='warehouseId'
-                label='Warehouse'
+                label='Kho'
                 required
                 options={warehouseOptions}
-                placeholder='Select warehouse'
+                placeholder='Chọn kho'
                 listeners={{
                   onChange: ({ fieldApi }) => {
                     fieldApi.form.setFieldValue('locationId', '');
@@ -110,50 +110,50 @@ export function InboundReceiptSheet({ open, onOpenChange }: InboundReceiptSheetP
                 label='SKU'
                 required
                 options={skuOptions}
-                placeholder='Select SKU'
+                placeholder='Chọn SKU'
               />
               <FormSelectField
                 name='locationId'
-                label='Location'
+                label='Vị trí'
                 required
                 options={locationOptions}
-                placeholder={selectedWarehouseId ? 'Select location' : 'Select a warehouse first'}
+                placeholder={selectedWarehouseId ? 'Chọn vị trí' : 'Chọn kho trước'}
               />
               <FormTextField
                 name='lotNo'
-                label='Lot Number'
+                label='Mã lô'
                 required
-                placeholder='e.g. LOT-2026-0142'
+                placeholder='Ví dụ: LOT-2026-0142'
               />
-              <FormTextField name='qty' label='Quantity' required type='number' min={0} step={1} />
+              <FormTextField name='qty' label='Số lượng' required type='number' min={0} step={1} />
               <FormTextField
                 name='receivedDate'
-                label='Received Date'
+                label='Ngày nhận'
                 required
                 placeholder='YYYY-MM-DD'
               />
               <FormTextField
                 name='expiryDate'
-                label='Expiry Date (optional)'
+                label='Hạn dùng (tùy chọn)'
                 placeholder='YYYY-MM-DD'
               />
               <FormSelectField
                 name='performedBy'
-                label='Received By (optional)'
+                label='Người nhận (tùy chọn)'
                 options={employeeOptions}
-                placeholder='Select employee'
+                placeholder='Chọn nhân viên'
               />
-              <FormTextField name='note' label='Note (optional)' />
+              <FormTextField name='note' label='Ghi chú (tùy chọn)' />
             </form.Form>
           </form.AppForm>
         </div>
 
         <SheetFooter>
           <Button type='button' variant='outline' onClick={() => onOpenChange(false)}>
-            Cancel
+            Hủy
           </Button>
           <Button type='submit' form='inbound-receipt-form' isLoading={createMutation.isPending}>
-            <Icons.check /> Record Receipt
+            <Icons.check /> Ghi nhận nhập
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -167,7 +167,7 @@ export function InboundReceiptSheetTrigger() {
   return (
     <>
       <Button variant='outline' onClick={() => setOpen(true)}>
-        <Icons.add className='mr-2 h-4 w-4' /> Inbound Receipt
+        <Icons.add className='mr-2 h-4 w-4' /> Nhập kho
       </Button>
       <InboundReceiptSheet open={open} onOpenChange={setOpen} />
     </>

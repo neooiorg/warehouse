@@ -1,6 +1,6 @@
 export const categoryOptions = [
-  { value: 'beauty', label: 'Beauty Products' },
-  { value: 'electronics', label: 'Electronics' },
-  { value: 'home', label: 'Home & Garden' },
-  { value: 'sports', label: 'Sports & Outdoors' }
+  { value: 'beauty', label: 'Mỹ phẩm' },
+  { value: 'electronics', label: 'Điện tử' },
+  { value: 'home', label: 'Nhà cửa và sân vườn' },
+  { value: 'sports', label: 'Thể thao và ngoài trời' }
 ];

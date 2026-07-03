@@ -130,7 +130,7 @@ export default function DockScheduler({ warehouseId, docks, avgMinutesPerPallet 
                 </Select>
               </div>
               <div className='space-y-1'>
-                <Label className='text-xs'>Deadline (h, tùy chọn)</Label>
+                <Label className='text-xs'>Hạn chót (giờ, tùy chọn)</Label>
                 <Input
                   type='number'
                   min={0}
