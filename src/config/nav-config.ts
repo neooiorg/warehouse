@@ -103,6 +103,49 @@ export const navGroups: NavGroup[] = [
     ]
   },
   {
+    label: 'Vận hành',
+    items: [
+      {
+        title: 'Nhân sự',
+        url: '#',
+        icon: 'teams',
+        isActive: false,
+        items: [
+          { title: 'Tổng quan HR', url: '/dashboard/hr/overview', icon: 'teams' },
+          { title: 'Định biên & Gantt', url: '/dashboard/hr/staffing', icon: 'gantt' },
+          { title: 'Đề xuất KPI', url: '/dashboard/hr/kpi', icon: 'kpi' }
+        ]
+      },
+      {
+        title: 'Năng suất',
+        url: '#',
+        icon: 'trendingUp',
+        isActive: false,
+        items: [
+          { title: 'Đầu việc & Năng suất', url: '/dashboard/productivity/tasks', icon: 'forms' },
+          { title: 'Lịch cửa Dock', url: '/dashboard/productivity/dock', icon: 'dock' }
+        ]
+      },
+      {
+        title: 'Tối ưu kho',
+        url: '/dashboard/inventory/optimize',
+        icon: 'warehouse',
+        isActive: false,
+        items: []
+      },
+      {
+        title: 'Vận chuyển',
+        url: '#',
+        icon: 'truck',
+        isActive: false,
+        items: [
+          { title: 'Tìm kho nguồn', url: '/dashboard/transport/optimizer', icon: 'truck' },
+          { title: 'Giá xăng dầu', url: '/dashboard/transport/fuel', icon: 'fuel' }
+        ]
+      }
+    ]
+  },
+  {
     label: 'Elements',
     items: [
       {

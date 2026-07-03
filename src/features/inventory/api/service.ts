@@ -349,3 +349,69 @@ export async function createTransfer(payload: TransferPayload): Promise<{ lotId:
     return { lotId: destinationLotId };
   });
 }
+
+// ─── Warehouse Optimization ──────────────────────────────────────────────────
+
+export async function getStorageOptimizationAdvice(warehouseId: string) {
+  const { orgId } = await requireOrgContext();
+  const { computeReslottingSuggestions } = await import('../utils/reslotting');
+
+  const lots = await db
+    .select({
+      id: inventoryLots.id,
+      lotNo: inventoryLots.lotNo,
+      skuId: inventoryLots.skuId,
+      locationId: inventoryLots.locationId,
+      locationCode: locations.code,
+      distanceToDock: locations.distanceToDock,
+      receivedDate: inventoryLots.receivedDate,
+      expiryDate: inventoryLots.expiryDate,
+      qty: inventoryLots.qty,
+      storageClass: productSkus.storageClassLabel,
+      allocationSortField: productSkus.allocationSortField,
+      allocationSortDirection: productSkus.allocationSortDirection
+    })
+    .from(inventoryLots)
+    .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
+    .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
+    .where(
+      and(
+        eq(inventoryLots.orgId, orgId),
+        eq(inventoryLots.warehouseId, warehouseId),
+        eq(inventoryLots.status, 'available')
+      )
+    );
+
+  return computeReslottingSuggestions(lots as Parameters<typeof computeReslottingSuggestions>[0]);
+}
+
+export async function searchLotHistory(query: string, warehouseId?: string) {
+  const { orgId } = await requireOrgContext();
+  const term = `%${query}%`;
+  const conditions = [
+    eq(inventoryLots.orgId, orgId),
+    or(ilike(inventoryLots.lotNo, term), ilike(productSkus.sku, term), ilike(productSkus.name, term))!
+  ];
+  if (warehouseId) conditions.push(eq(inventoryLots.warehouseId, warehouseId));
+
+  return db
+    .select({
+      id: inventoryLots.id,
+      lotNo: inventoryLots.lotNo,
+      sku: productSkus.sku,
+      skuName: productSkus.name,
+      warehouseCode: warehouses.code,
+      locationCode: locations.code,
+      qty: inventoryLots.qty,
+      receivedDate: inventoryLots.receivedDate,
+      expiryDate: inventoryLots.expiryDate,
+      status: inventoryLots.status
+    })
+    .from(inventoryLots)
+    .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
+    .innerJoin(warehouses, eq(inventoryLots.warehouseId, warehouses.id))
+    .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
+    .where(and(...conditions))
+    .orderBy(desc(inventoryLots.receivedDate))
+    .limit(50);
+}

@@ -23,9 +23,7 @@ export default function Header() {
           <SearchInput />
         </div>
         <ThemeModeToggle />
-        <div className='hidden sm:block'>
-          <ThemeSelector />
-        </div>
+        <ThemeSelector />
         <NotificationCenter />
       </div>
     </header>

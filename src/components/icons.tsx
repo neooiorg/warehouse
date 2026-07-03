@@ -5,6 +5,12 @@ import {
   IconArrowRight,
   IconArrowsExchange,
   IconBell,
+  IconBuildingWarehouse,
+  IconTimeline,
+  IconDroplet,
+  IconTruck,
+  IconTarget,
+  IconClockHour4,
   IconBold,
   IconBox,
   IconBrandGithub,
@@ -221,5 +227,13 @@ export const Icons = {
   slash: IconSlash,
   calendar: IconCalendar,
   galleryVerticalEnd: IconStack2,
-  moreHorizontal: IconDots
+  moreHorizontal: IconDots,
+
+  // New modules
+  warehouse: IconBuildingWarehouse,
+  gantt: IconTimeline,
+  fuel: IconDroplet,
+  truck: IconTruck,
+  kpi: IconTarget,
+  dock: IconClockHour4
 };
