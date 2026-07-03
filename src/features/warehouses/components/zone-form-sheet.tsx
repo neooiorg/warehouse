@@ -1,13 +1,12 @@
 'use client';
 
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useCreateZone, useUpdateZone } from '../api/mutations';
-import { zoneSchema } from '../schemas/warehouse';
+import { zoneSchema, type ZoneFormValues } from '../schemas/warehouse';
 import type { ZoneWithLocations } from '../api/types';
 
 type Props = { warehouseId: string; zone?: ZoneWithLocations; children: React.ReactNode };
@@ -16,9 +15,8 @@ export default function ZoneFormSheet({ warehouseId, zone, children }: Props) {
   const create = useCreateZone(warehouseId);
   const update = useUpdateZone(warehouseId);
   const form = useForm({
-    validatorAdapter: zodValidator(),
     validators: { onChange: zoneSchema },
-    defaultValues: { name: zone?.name ?? '', code: zone?.code ?? '' },
+    defaultValues: { name: zone?.name ?? '', code: zone?.code ?? '' } as ZoneFormValues,
     onSubmit: async ({ value }) => {
       if (zone) await update.mutateAsync({ id: zone.id, ...value });
       else await create.mutateAsync({ warehouseId, ...value });

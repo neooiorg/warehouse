@@ -1,7 +1,6 @@
 'use client';
 
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -14,7 +13,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { useCreateLocation, useUpdateLocation } from '../api/mutations';
-import { locationSchema } from '../schemas/warehouse';
+import { locationSchema, type LocationFormValues } from '../schemas/warehouse';
 import type { Location, ZoneWithLocations } from '../api/types';
 
 type Props = {
@@ -28,7 +27,6 @@ export default function LocationFormSheet({ warehouseId, zones, location, childr
   const create = useCreateLocation(warehouseId);
   const update = useUpdateLocation(warehouseId);
   const form = useForm({
-    validatorAdapter: zodValidator(),
     validators: { onChange: locationSchema },
     defaultValues: {
       code: location?.code ?? '',
@@ -38,7 +36,7 @@ export default function LocationFormSheet({ warehouseId, zones, location, childr
       capacityVolume: location?.capacityVolume ?? undefined,
       capacityWeight: location?.capacityWeight ?? undefined,
       distanceToDock: location?.distanceToDock ?? undefined
-    },
+    } as LocationFormValues,
     onSubmit: async ({ value }) => {
       if (location) await update.mutateAsync({ id: location.id, ...value });
       else await create.mutateAsync({ warehouseId, ...value });

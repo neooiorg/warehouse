@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useCreateWarehouse, useUpdateWarehouse } from '../api/mutations';
-import { warehouseSchema } from '../schemas/warehouse';
+import { warehouseSchema, type WarehouseFormValues } from '../schemas/warehouse';
 import type { WarehouseWithCounts } from '../api/types';
 
 type Props = {
@@ -22,7 +20,6 @@ export default function WarehouseFormSheet({ warehouse, children }: Props) {
   const isPending = create.isPending || update.isPending;
 
   const form = useForm({
-    validatorAdapter: zodValidator(),
     validators: { onChange: warehouseSchema },
     defaultValues: {
       name: warehouse?.name ?? '',
@@ -30,7 +27,7 @@ export default function WarehouseFormSheet({ warehouse, children }: Props) {
       address: warehouse?.address ?? '',
       lat: warehouse?.lat ?? undefined,
       lng: warehouse?.lng ?? undefined
-    },
+    } as WarehouseFormValues,
     onSubmit: async ({ value }) => {
       if (warehouse) {
         await update.mutateAsync({ id: warehouse.id, ...value });
@@ -64,8 +61,8 @@ export default function WarehouseFormSheet({ warehouse, children }: Props) {
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder='Kho Hà Nội'
                 />
-                {field.state.meta.errors[0] && (
-                  <p className='text-destructive text-sm'>{field.state.meta.errors[0]}</p>
+                {field.state.meta.errors[0]?.message && (
+                  <p className='text-destructive text-sm'>{field.state.meta.errors[0].message}</p>
                 )}
               </div>
             )}
@@ -80,8 +77,8 @@ export default function WarehouseFormSheet({ warehouse, children }: Props) {
                   onChange={(e) => field.handleChange(e.target.value.toUpperCase())}
                   placeholder='HN01'
                 />
-                {field.state.meta.errors[0] && (
-                  <p className='text-destructive text-sm'>{field.state.meta.errors[0]}</p>
+                {field.state.meta.errors[0]?.message && (
+                  <p className='text-destructive text-sm'>{field.state.meta.errors[0].message}</p>
                 )}
               </div>
             )}

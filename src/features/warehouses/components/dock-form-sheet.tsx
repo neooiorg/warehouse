@@ -1,7 +1,6 @@
 'use client';
 
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -14,7 +13,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { useCreateDock, useUpdateDock } from '../api/mutations';
-import { dockSchema } from '../schemas/warehouse';
+import { dockSchema, type DockFormValues } from '../schemas/warehouse';
 import type { Dock } from '../api/types';
 
 type Props = { warehouseId: string; dock?: Dock; children: React.ReactNode };
@@ -23,12 +22,11 @@ export default function DockFormSheet({ warehouseId, dock, children }: Props) {
   const create = useCreateDock(warehouseId);
   const update = useUpdateDock(warehouseId);
   const form = useForm({
-    validatorAdapter: zodValidator(),
     validators: { onChange: dockSchema },
     defaultValues: {
       code: dock?.code ?? '',
       direction: (dock?.direction ?? 'both') as 'inbound' | 'outbound' | 'both'
-    },
+    } as DockFormValues,
     onSubmit: async ({ value }) => {
       if (dock) await update.mutateAsync({ id: dock.id, ...value });
       else await create.mutateAsync({ warehouseId, ...value });
