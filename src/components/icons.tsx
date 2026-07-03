@@ -240,10 +240,8 @@ export const Icons = {
   moreHorizontal: IconDots,
 
   // New modules
-  warehouse: IconBuildingWarehouse,
   gantt: IconTimeline,
   fuel: IconDroplet,
-  truck: IconTruck,
   kpi: IconTarget,
   dock: IconClockHour4
 };
