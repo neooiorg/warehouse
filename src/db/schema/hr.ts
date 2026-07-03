@@ -5,6 +5,7 @@ import {
   date,
   integer,
   real,
+  boolean,
   jsonb,
   index,
   pgEnum
@@ -15,6 +16,41 @@ import { warehouses } from './warehouse';
 export const employeeStatusEnum = pgEnum('employee_status', ['active', 'terminated', 'on_leave']);
 
 export const staffingPlanStatusEnum = pgEnum('staffing_plan_status', ['draft', 'active']);
+
+export const kpiTemplates = pgTable(
+  'kpi_templates',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull(),
+    role: text('role').notNull(),
+    kpiName: text('kpi_name').notNull(),
+    formula: text('formula'),
+    target: real('target'),
+    unit: text('unit'),
+    weight: real('weight').notNull().default(1),
+    isActive: boolean('is_active').notNull().default(true),
+    ...timestamps
+  },
+  (table) => [
+    index('kpi_templates_org_id_idx').on(table.orgId),
+    index('kpi_templates_role_idx').on(table.role)
+  ]
+);
+
+export const workflowTasks = pgTable(
+  'workflow_tasks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    orgId: text('org_id').notNull(),
+    name: text('name').notNull(),
+    estimatedMinutes: integer('estimated_minutes').notNull().default(0),
+    requiredRole: text('required_role'),
+    dependencies: jsonb('dependencies').$type<string[]>().notNull().default([]),
+    sortOrder: integer('sort_order').notNull().default(0),
+    ...timestamps
+  },
+  (table) => [index('workflow_tasks_org_id_idx').on(table.orgId)]
+);
 
 export const employees = pgTable(
   'employees',
@@ -90,5 +126,3 @@ export const workTasks = pgTable(
     index('work_tasks_plan_id_idx').on(table.planId)
   ]
 );
-
-export { workTasks as workflowTasks };

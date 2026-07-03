@@ -1,56 +1,74 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import { cn } from '@/lib/utils';
 import type { AonNode } from '../api/types';
-
-import type { ViewMode as ViewModeType } from 'gantt-task-react';
-// gantt-task-react uses browser APIs — load client-only
-const GanttLib = dynamic(() => import('gantt-task-react').then((m) => m.Gantt), { ssr: false });
-
-type GanttTask = {
-  id: string;
-  name: string;
-  start: Date;
-  end: Date;
-  type: 'task';
-  progress: number;
-  styles?: { backgroundColor?: string; progressColor?: string };
-  isDisabled?: boolean;
-};
 
 export function GanttChart({ nodes, criticalPath }: { nodes: AonNode[]; criticalPath: string[] }) {
   if (nodes.length === 0) return null;
 
-  const base = new Date();
-  base.setHours(8, 0, 0, 0);
-
-  const tasks: GanttTask[] = nodes.map((n) => {
-    const start = new Date(base.getTime() + n.earliestStart * 60000);
-    const end = new Date(base.getTime() + n.earliestFinish * 60000);
-    const isCritical = criticalPath.includes(n.id);
-    return {
-      id: n.id,
-      name: `${n.name}${n.requiredRole ? ` (${n.requiredRole})` : ''}`,
-      start,
-      end,
-      type: 'task',
-      progress: 0,
-      styles: isCritical
-        ? { backgroundColor: 'var(--destructive)', progressColor: 'var(--destructive)' }
-        : undefined
-    };
-  });
+  const totalMinutes = Math.max(...nodes.map((node) => node.earliestFinish), 1);
+  const tickCount = Math.min(Math.ceil(totalMinutes / 60), 12);
+  const ticks = Array.from({ length: tickCount + 1 }, (_, index) =>
+    Math.round((index * totalMinutes) / tickCount)
+  );
 
   return (
     <div className='w-full overflow-x-auto rounded-lg border'>
-      <GanttLib
-        tasks={tasks}
-        viewMode={'Hour' as ViewModeType}
-        listCellWidth='200px'
-        columnWidth={60}
-        barCornerRadius={4}
-        todayColor='transparent'
-      />
+      <div className='min-w-[720px]'>
+        <div className='grid grid-cols-[220px_1fr] border-b bg-muted/40 text-xs text-muted-foreground'>
+          <div className='border-r px-3 py-2 font-medium'>Dau viec</div>
+          <div className='relative flex h-9 items-end px-3 pb-2'>
+            {ticks.map((tick) => (
+              <span
+                key={tick}
+                className='absolute -translate-x-1/2'
+                style={{ left: `${(tick / totalMinutes) * 100}%` }}
+              >
+                {tick}p
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className='divide-y'>
+          {nodes.map((node) => {
+            const isCritical = criticalPath.includes(node.id);
+            const left = (node.earliestStart / totalMinutes) * 100;
+            const width = Math.max(
+              ((node.earliestFinish - node.earliestStart) / totalMinutes) * 100,
+              2
+            );
+
+            return (
+              <div key={node.id} className='grid min-h-14 grid-cols-[220px_1fr]'>
+                <div className='flex flex-col justify-center border-r px-3 py-2'>
+                  <span className='truncate text-sm font-medium'>{node.name}</span>
+                  {node.requiredRole && (
+                    <span className='truncate text-xs text-muted-foreground'>
+                      {node.requiredRole}
+                    </span>
+                  )}
+                </div>
+                <div className='relative px-3 py-3'>
+                  <div
+                    className={cn(
+                      'absolute top-1/2 h-6 -translate-y-1/2 rounded-sm',
+                      isCritical ? 'bg-destructive' : 'bg-primary'
+                    )}
+                    style={{ left: `${left}%`, width: `${width}%` }}
+                  />
+                  <span
+                    className='absolute top-1/2 -translate-y-1/2 px-2 text-xs font-medium text-primary-foreground'
+                    style={{ left: `${left}%` }}
+                  >
+                    {node.earliestFinish - node.earliestStart}p
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

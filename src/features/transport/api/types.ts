@@ -21,9 +21,34 @@ export type DeliveryOrder = {
 
 export type CreateDeliveryOrderPayload = {
   warehouseId?: string | null;
-  destination: string;
+  destination?: string;
   destinationLat?: number | null;
   destinationLng?: number | null;
   requiredSkus?: string[];
   preferredDate?: string | null;
+  skuId?: string;
+  qtyRequired?: number;
+  destinationAddress?: string;
+  requestDate?: string;
+};
+
+export type FindSourcePayload = {
+  skuId?: string;
+  qtyRequired?: number;
+  destinationLat?: number;
+  destinationLng?: number;
+  destinationAddress?: string;
+};
+
+export type FulfillShipmentPayload = {
+  id: string;
+};
+
+export type RouteOption = {
+  warehouseId: string;
+  warehouseCode: string;
+  warehouseName: string;
+  availableQty: number;
+  distanceKm: number;
+  estimatedHours: number;
 };

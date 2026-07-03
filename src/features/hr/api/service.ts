@@ -2,15 +2,22 @@
 
 import { and, asc, desc, eq, isNotNull, isNull, sql } from 'drizzle-orm';
 import { db } from '@/db';
-import { employees, staffingPlans, workTasks } from '@/db/schema';
+import { employees, staffingPlans, workTasks, workflowTasks, kpiTemplates } from '@/db/schema';
 import { requireOrgContext } from '@/lib/auth-context';
 import { runAonScheduler } from '../utils/aon-scheduler';
+import { computeAon } from '../utils/aon';
 import type {
   HrKpiMetrics,
   StaffingPlan,
   WorkTask,
   CreatePlanPayload,
-  CreateTaskPayload
+  CreateTaskPayload,
+  WorkflowTask,
+  KpiTemplate,
+  CreateWorkflowTaskPayload,
+  ComputeStaffingPayload,
+  StaffingResult,
+  UpsertKpiTemplatePayload
 } from './types';
 
 // ─── HR KPI ──────────────────────────────────────────────────────────────────
@@ -62,12 +69,16 @@ export async function getHrKpiMetrics(): Promise<HrKpiMetrics> {
   const avgHeadcount = active.length + terminatedLast12 / 2 || 1;
   const turnoverRate = (terminatedLast12 / avgHeadcount) * 100;
 
+  const roundedTurnoverRate = Math.round(turnoverRate * 10) / 10;
+
   return {
     totalActive: active.length,
     totalTerminated: terminated.length,
     avgTenureMonths: Math.round(avgTenure * 10) / 10,
-    turnoverRatePercent: Math.round(turnoverRate * 10) / 10,
-    headcountTimeline: months
+    turnoverRate: roundedTurnoverRate,
+    turnoverRatePercent: roundedTurnoverRate,
+    headcountTimeline: months,
+    monthlyTrend: months
   };
 }
 
@@ -99,6 +110,117 @@ export async function deleteStaffingPlan(id: string): Promise<void> {
 }
 
 // ─── Work Tasks ───────────────────────────────────────────────────────────────
+
+export async function listWorkflowTasks(): Promise<WorkflowTask[]> {
+  const { orgId } = await requireOrgContext();
+  return db
+    .select()
+    .from(workflowTasks)
+    .where(eq(workflowTasks.orgId, orgId))
+    .orderBy(asc(workflowTasks.sortOrder), asc(workflowTasks.createdAt));
+}
+
+export async function createWorkflowTask(
+  payload: CreateWorkflowTaskPayload
+): Promise<{ id: string }> {
+  const { orgId } = await requireOrgContext();
+  const [row] = await db
+    .insert(workflowTasks)
+    .values({
+      orgId,
+      name: payload.name,
+      estimatedMinutes: payload.estimatedMinutes,
+      requiredRole: payload.requiredRole ?? null,
+      dependencies: payload.dependencies ?? [],
+      sortOrder: payload.sortOrder ?? 0
+    })
+    .returning({ id: workflowTasks.id });
+  return row;
+}
+
+export async function updateWorkflowTask(
+  id: string,
+  payload: Partial<CreateWorkflowTaskPayload>
+): Promise<void> {
+  const { orgId } = await requireOrgContext();
+  await db
+    .update(workflowTasks)
+    .set({ ...payload, updatedAt: new Date() })
+    .where(and(eq(workflowTasks.id, id), eq(workflowTasks.orgId, orgId)));
+}
+
+export async function deleteWorkflowTask(id: string): Promise<void> {
+  const { orgId } = await requireOrgContext();
+  await db
+    .delete(workflowTasks)
+    .where(and(eq(workflowTasks.id, id), eq(workflowTasks.orgId, orgId)));
+}
+
+export async function computeAndSaveStaffingPlan(
+  payload: ComputeStaffingPayload
+): Promise<{ id: string; result: StaffingResult }> {
+  const { orgId } = await requireOrgContext();
+  const tasks = await listWorkflowTasks();
+  const result = computeAon(tasks, payload.dailyVolume, payload.workHoursPerShift);
+  const availableHeadcount = Object.values(result.headcountByRole).reduce(
+    (total, count) => total + count,
+    0
+  );
+  const [row] = await db
+    .insert(staffingPlans)
+    .values({
+      orgId,
+      name: `Staffing ${payload.planDate}`,
+      availableHeadcount: Math.max(availableHeadcount, 1),
+      criticalPathHours: result.totalDurationMinutes / 60
+    })
+    .returning({ id: staffingPlans.id });
+
+  return { id: row.id, result };
+}
+
+export async function listKpiTemplates(): Promise<KpiTemplate[]> {
+  const { orgId } = await requireOrgContext();
+  return db
+    .select()
+    .from(kpiTemplates)
+    .where(eq(kpiTemplates.orgId, orgId))
+    .orderBy(asc(kpiTemplates.role), asc(kpiTemplates.kpiName));
+}
+
+export async function upsertKpiTemplate(
+  payload: UpsertKpiTemplatePayload
+): Promise<{ id: string }> {
+  const { orgId } = await requireOrgContext();
+  const values = {
+    role: payload.role,
+    kpiName: payload.kpiName,
+    formula: payload.formula ?? null,
+    target: payload.target ?? null,
+    unit: payload.unit ?? null,
+    weight: payload.weight ?? 1,
+    updatedAt: new Date()
+  };
+
+  if (payload.id) {
+    await db
+      .update(kpiTemplates)
+      .set(values)
+      .where(and(eq(kpiTemplates.id, payload.id), eq(kpiTemplates.orgId, orgId)));
+    return { id: payload.id };
+  }
+
+  const [row] = await db
+    .insert(kpiTemplates)
+    .values({ ...values, orgId })
+    .returning({ id: kpiTemplates.id });
+  return row;
+}
+
+export async function deleteKpiTemplate(id: string): Promise<void> {
+  const { orgId } = await requireOrgContext();
+  await db.delete(kpiTemplates).where(and(eq(kpiTemplates.id, id), eq(kpiTemplates.orgId, orgId)));
+}
 
 export async function getWorkTasks(planId: string): Promise<WorkTask[]> {
   const { orgId } = await requireOrgContext();

@@ -1,5 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getProductivitySummary, listDockAppointments, listDocks } from './service';
+import {
+  getProductivitySummary,
+  getProductivityScores,
+  listDockAppointments,
+  listDocks
+} from './service';
 
 export const productivityKeys = {
   all: ['productivity'] as const,
@@ -7,7 +12,8 @@ export const productivityKeys = {
   dockAppointments: (wId: string) => [...productivityKeys.all, 'dock-appointments', wId] as const,
   docks: (wId: string) => [...productivityKeys.all, 'docks', wId] as const,
   dockSchedules: () => [...productivityKeys.all, 'dock-schedules'] as const,
-  scores: () => [...productivityKeys.all, 'scores'] as const
+  scores: (warehouseId?: string) =>
+    [...productivityKeys.all, 'scores', warehouseId ?? 'all'] as const
 };
 
 export const productivitySummaryOptions = (periodDays = 30) =>
@@ -28,5 +34,9 @@ export const docksOptions = (warehouseId: string) =>
     queryFn: () => listDocks(warehouseId)
   });
 
-export const productivityScoresQueryOptions = productivitySummaryOptions;
+export const productivityScoresQueryOptions = (warehouseId?: string) =>
+  queryOptions({
+    queryKey: productivityKeys.scores(warehouseId),
+    queryFn: () => getProductivityScores(warehouseId)
+  });
 export const dockSchedulesQueryOptions = dockAppointmentsOptions;

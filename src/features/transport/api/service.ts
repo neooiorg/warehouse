@@ -5,18 +5,24 @@ import { db } from '@/db';
 import { fuelPrices, deliveryOrders, shipmentPlans, vehicles, warehouses } from '@/db/schema';
 import { requireOrgContext } from '@/lib/auth-context';
 import { optimizeRoute } from '../utils/route-optimizer';
-import type { CreateDeliveryOrderPayload } from './types';
+import type { CreateDeliveryOrderPayload, FindSourcePayload, RouteOption } from './types';
 
 // ─── Fuel Prices ─────────────────────────────────────────────────────────────
 
 export async function listFuelPrices(limit = 60) {
   const { orgId } = await requireOrgContext();
-  return db
+  const rows = await db
     .select()
     .from(fuelPrices)
     .where(or(isNull(fuelPrices.orgId), eq(fuelPrices.orgId, orgId)))
     .orderBy(desc(fuelPrices.effectiveDate), desc(fuelPrices.createdAt))
     .limit(limit);
+
+  return rows.map((row) => ({
+    ...row,
+    priceVnd: Number(row.pricePerLiter),
+    region: row.orgId ? 'org' : 'national'
+  }));
 }
 
 export async function getLatestFuelPrice(fuelType: 'ron95' | 'ron92' | 'diesel' | 'e5') {
@@ -60,11 +66,14 @@ export async function createDeliveryOrder(payload: CreateDeliveryOrderPayload) {
     .values({
       orgId,
       warehouseId: payload.warehouseId ?? null,
-      destination: payload.destination,
+      destination: payload.destination ?? payload.destinationAddress ?? '',
       destinationLat: payload.destinationLat ?? null,
       destinationLng: payload.destinationLng ?? null,
-      requiredSkus: (payload.requiredSkus ?? []).map((sku) => ({ skuId: sku, qty: 1 })),
-      preferredDate: payload.preferredDate ?? null
+      requiredSkus: (payload.requiredSkus ?? (payload.skuId ? [payload.skuId] : [])).map((sku) => ({
+        skuId: sku,
+        qty: payload.qtyRequired ?? 1
+      })),
+      preferredDate: payload.preferredDate ?? payload.requestDate ?? null
     })
     .returning({ id: deliveryOrders.id });
   return row;
@@ -145,26 +154,25 @@ export async function fulfillShipmentRequest(data: { id: string }) {
   return updateDeliveryOrderStatus(data.id, 'dispatched');
 }
 
-export async function findOptimalSourceWarehouses(data: {
-  skuId?: string;
-  qtyRequired?: number;
-  destinationLat?: number;
-  destinationLng?: number;
-  destinationAddress?: string;
-}) {
+export async function findOptimalSourceWarehouses(data: FindSourcePayload): Promise<RouteOption[]> {
   const { orgId } = await requireOrgContext();
   const allWarehouses = await db.select().from(warehouses).where(eq(warehouses.orgId, orgId));
   const { haversineKm, estimateHours } = await import('../utils/route');
-  return allWarehouses.map((w, i) => ({
-    warehouseId: w.id,
-    warehouseCode: w.code ?? `WH${i + 1}`,
-    warehouseName: w.name,
-    availableQty: 0,
-    distanceKm: data.destinationLat && data.destinationLng && w.lat && w.lng
-      ? Math.round(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng) * 10) / 10
-      : 0,
-    estimatedHours: data.destinationLat && data.destinationLng && w.lat && w.lng
-      ? estimateHours(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng))
-      : 0
-  })).sort((a, b) => a.distanceKm - b.distanceKm);
+  return allWarehouses
+    .map((w, i) => ({
+      warehouseId: w.id,
+      warehouseCode: w.code ?? `WH${i + 1}`,
+      warehouseName: w.name,
+      availableQty: 0,
+      distanceKm:
+        data.destinationLat && data.destinationLng && w.lat && w.lng
+          ? Math.round(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng) * 10) /
+            10
+          : 0,
+      estimatedHours:
+        data.destinationLat && data.destinationLng && w.lat && w.lng
+          ? estimateHours(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng))
+          : 0
+    }))
+    .sort((a, b) => a.distanceKm - b.distanceKm);
 }
