@@ -136,3 +136,35 @@ export async function planRoute(orderId: string) {
 
   return { planId: plan.id, ...result };
 }
+
+export async function createShipmentRequest(payload: CreateDeliveryOrderPayload) {
+  return createDeliveryOrder(payload);
+}
+
+export async function fulfillShipmentRequest(data: { id: string }) {
+  return updateDeliveryOrderStatus(data.id, 'dispatched');
+}
+
+export async function findOptimalSourceWarehouses(data: {
+  skuId?: string;
+  qtyRequired?: number;
+  destinationLat?: number;
+  destinationLng?: number;
+  destinationAddress?: string;
+}) {
+  const { orgId } = await requireOrgContext();
+  const allWarehouses = await db.select().from(warehouses).where(eq(warehouses.orgId, orgId));
+  const { haversineKm, estimateHours } = await import('../utils/route');
+  return allWarehouses.map((w, i) => ({
+    warehouseId: w.id,
+    warehouseCode: w.code ?? `WH${i + 1}`,
+    warehouseName: w.name,
+    availableQty: 0,
+    distanceKm: data.destinationLat && data.destinationLng && w.lat && w.lng
+      ? Math.round(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng) * 10) / 10
+      : 0,
+    estimatedHours: data.destinationLat && data.destinationLng && w.lat && w.lng
+      ? estimateHours(haversineKm(w.lat, w.lng, data.destinationLat, data.destinationLng))
+      : 0
+  })).sort((a, b) => a.distanceKm - b.distanceKm);
+}

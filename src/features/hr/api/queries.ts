@@ -16,3 +16,6 @@ export const staffingPlanListOptions = () =>
 
 export const workTaskListOptions = (planId: string) =>
   queryOptions({ queryKey: hrKeys.tasks(planId), queryFn: () => getWorkTasks(planId) });
+
+export const turnoverMetricsQueryOptions = hrKpiOptions;
+export const workflowTasksQueryOptions = staffingPlanListOptions;

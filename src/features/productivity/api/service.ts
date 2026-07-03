@@ -83,3 +83,11 @@ export async function listDocks(warehouseId: string) {
     .from(docks)
     .where(and(eq(docks.orgId, orgId), eq(docks.warehouseId, warehouseId)));
 }
+
+export async function logTask(payload: Record<string, unknown>) {
+  return createDockAppointment(payload as DockAppointmentInput);
+}
+
+export async function computeDockSchedule(data: Record<string, unknown>) {
+  return createDockAppointment(data as DockAppointmentInput);
+}

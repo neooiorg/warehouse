@@ -12,3 +12,6 @@ export const fuelPricesOptions = () =>
 
 export const deliveryOrdersOptions = () =>
   queryOptions({ queryKey: transportKeys.orders(), queryFn: listDeliveryOrders });
+
+export const fuelPricesQueryOptions = fuelPricesOptions;
+export const shipmentRequestsQueryOptions = deliveryOrdersOptions;

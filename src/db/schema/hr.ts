@@ -90,3 +90,5 @@ export const workTasks = pgTable(
     index('work_tasks_plan_id_idx').on(table.planId)
   ]
 );
+
+export { workTasks as workflowTasks };

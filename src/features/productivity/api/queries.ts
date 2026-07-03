@@ -5,7 +5,9 @@ export const productivityKeys = {
   all: ['productivity'] as const,
   summary: (days: number) => [...productivityKeys.all, 'summary', days] as const,
   dockAppointments: (wId: string) => [...productivityKeys.all, 'dock-appointments', wId] as const,
-  docks: (wId: string) => [...productivityKeys.all, 'docks', wId] as const
+  docks: (wId: string) => [...productivityKeys.all, 'docks', wId] as const,
+  dockSchedules: () => [...productivityKeys.all, 'dock-schedules'] as const,
+  scores: () => [...productivityKeys.all, 'scores'] as const
 };
 
 export const productivitySummaryOptions = (periodDays = 30) =>
@@ -25,3 +27,6 @@ export const docksOptions = (warehouseId: string) =>
     queryKey: productivityKeys.docks(warehouseId),
     queryFn: () => listDocks(warehouseId)
   });
+
+export const productivityScoresQueryOptions = productivitySummaryOptions;
+export const dockSchedulesQueryOptions = dockAppointmentsOptions;
