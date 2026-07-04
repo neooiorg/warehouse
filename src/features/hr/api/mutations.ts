@@ -6,10 +6,16 @@ import {
   deleteWorkflowTask,
   computeAndSaveStaffingPlan,
   upsertKpiTemplate,
-  deleteKpiTemplate
+  deleteKpiTemplate,
+  acceptKpiProposals
 } from './service';
 import { hrKeys } from './queries';
-import type { CreateWorkflowTaskPayload, ComputeStaffingPayload, UpsertKpiTemplatePayload } from './types';
+import type {
+  CreateWorkflowTaskPayload,
+  ComputeStaffingPayload,
+  UpsertKpiTemplatePayload,
+  AcceptKpiProposalsPayload
+} from './types';
 
 export const createWorkflowTaskMutation = mutationOptions({
   mutationFn: (data: CreateWorkflowTaskPayload) => createWorkflowTask(data),
@@ -39,5 +45,10 @@ export const upsertKpiTemplateMutation = mutationOptions({
 
 export const deleteKpiTemplateMutation = mutationOptions({
   mutationFn: (id: string) => deleteKpiTemplate(id),
+  onSuccess: () => getQueryClient().invalidateQueries({ queryKey: hrKeys.kpiTemplates() })
+});
+
+export const acceptKpiProposalsMutation = mutationOptions({
+  mutationFn: (data: AcceptKpiProposalsPayload) => acceptKpiProposals(data),
   onSuccess: () => getQueryClient().invalidateQueries({ queryKey: hrKeys.kpiTemplates() })
 });

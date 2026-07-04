@@ -17,7 +17,8 @@ import type {
   CreateWorkflowTaskPayload,
   ComputeStaffingPayload,
   StaffingResult,
-  UpsertKpiTemplatePayload
+  UpsertKpiTemplatePayload,
+  AcceptKpiProposalsPayload
 } from './types';
 
 // ─── HR KPI ──────────────────────────────────────────────────────────────────
@@ -131,6 +132,9 @@ export async function createWorkflowTask(
       name: payload.name,
       estimatedMinutes: payload.estimatedMinutes,
       requiredRole: payload.requiredRole ?? null,
+      outputUnit: payload.outputUnit ?? 'qty',
+      standardRatePerHour: payload.standardRatePerHour ?? 1,
+      kpiCategory: payload.kpiCategory ?? 'throughput',
       dependencies: payload.dependencies ?? [],
       sortOrder: payload.sortOrder ?? 0
     })
@@ -222,6 +226,29 @@ export async function deleteKpiTemplate(id: string): Promise<void> {
   await db.delete(kpiTemplates).where(and(eq(kpiTemplates.id, id), eq(kpiTemplates.orgId, orgId)));
 }
 
+export async function acceptKpiProposals(
+  payload: AcceptKpiProposalsPayload
+): Promise<{ created: number }> {
+  const { orgId } = await requireOrgContext();
+  if (payload.proposals.length === 0) {
+    return { created: 0 };
+  }
+
+  await db.insert(kpiTemplates).values(
+    payload.proposals.map((proposal) => ({
+      orgId,
+      role: proposal.role,
+      kpiName: proposal.kpiName,
+      formula: proposal.formula,
+      target: proposal.target,
+      unit: proposal.unit,
+      weight: proposal.weight
+    }))
+  );
+
+  return { created: payload.proposals.length };
+}
+
 export async function getWorkTasks(planId: string): Promise<WorkTask[]> {
   const { orgId } = await requireOrgContext();
   return db
@@ -268,6 +295,11 @@ export async function runAndSavePlan(planId: string): Promise<void> {
   ]);
   if (!plan) return;
 
+  const activeEmployees = await db
+    .select({ id: employees.id, role: employees.role })
+    .from(employees)
+    .where(and(eq(employees.orgId, orgId), eq(employees.status, 'active')));
+
   const result = runAonScheduler(
     tasks.map((t) => ({
       id: t.id,
@@ -279,6 +311,13 @@ export async function runAndSavePlan(planId: string): Promise<void> {
     })),
     plan.availableHeadcount
   );
+
+  const employeePool = [...activeEmployees];
+  const assignmentMap = new Map<string, string[]>();
+  for (const task of result.tasks) {
+    const assigned = employeePool.slice(0, task.requiredHeadcount).map((employee) => employee.id);
+    assignmentMap.set(task.id, assigned);
+  }
 
   // Persist computed values back
   await Promise.all([
@@ -292,6 +331,7 @@ export async function runAndSavePlan(planId: string): Promise<void> {
           lateFinish: rt.lateFinish,
           totalFloat: rt.totalFloat,
           isCritical: rt.isCritical ? 1 : 0,
+          assignedEmployeeIds: assignmentMap.get(rt.id) ?? [],
           updatedAt: new Date()
         })
         .where(eq(workTasks.id, rt.id))

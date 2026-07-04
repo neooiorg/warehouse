@@ -67,6 +67,27 @@ export type TransferPayload = {
   note?: string | null;
 };
 
+export type InventoryImportKind = 'inbound' | 'outbound' | 'transfer';
+
+export type InventoryImportRow = {
+  line: number;
+  warehouseCode: string;
+  sku: string;
+  qty: number;
+  note?: string | null;
+  lotNo?: string;
+  locationCode?: string;
+  toLocationCode?: string;
+  receivedDate?: string;
+  expiryDate?: string | null;
+  performedByName?: string | null;
+};
+
+export type InventoryImportResult = {
+  importedCount: number;
+  errors: Array<{ line: number; message: string }>;
+};
+
 export type LotOption = {
   id: string;
   lotNo: string;

@@ -45,6 +45,9 @@ export const workflowTasks = pgTable(
     name: text('name').notNull(),
     estimatedMinutes: integer('estimated_minutes').notNull().default(0),
     requiredRole: text('required_role'),
+    outputUnit: text('output_unit').notNull().default('qty'),
+    standardRatePerHour: real('standard_rate_per_hour').notNull().default(1),
+    kpiCategory: text('kpi_category').notNull().default('throughput'),
     dependencies: jsonb('dependencies').$type<string[]>().notNull().default([]),
     sortOrder: integer('sort_order').notNull().default(0),
     ...timestamps

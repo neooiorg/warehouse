@@ -16,17 +16,28 @@ export function WorkflowTaskSheet({ mode, task }: Props) {
   const [estimatedMinutes, setEstimatedMinutes] = useState(task?.estimatedMinutes ?? 30);
   const [requiredRole, setRequiredRole] = useState(task?.requiredRole ?? '');
   const [sortOrder, setSortOrder] = useState(task?.sortOrder ?? 0);
+  const [outputUnit, setOutputUnit] = useState(task?.outputUnit ?? 'qty');
+  const [standardRatePerHour, setStandardRatePerHour] = useState(task?.standardRatePerHour ?? 1);
+  const [kpiCategory, setKpiCategory] = useState(task?.kpiCategory ?? 'throughput');
 
-  const createMut = useMutation(createWorkflowTaskMutation);
-  const updateMut = useMutation(updateWorkflowTaskMutation);
+  const createMutation = useMutation(createWorkflowTaskMutation);
+  const updateMutation = useMutation(updateWorkflowTaskMutation);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const payload = { name, estimatedMinutes, requiredRole: requiredRole || null, sortOrder };
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    const payload = {
+      name,
+      estimatedMinutes,
+      requiredRole: requiredRole || null,
+      sortOrder,
+      outputUnit,
+      standardRatePerHour,
+      kpiCategory
+    };
     if (mode === 'edit') {
-      await updateMut.mutateAsync({ id: task.id, ...payload });
+      await updateMutation.mutateAsync({ id: task.id, ...payload });
     } else {
-      await createMut.mutateAsync(payload);
+      await createMutation.mutateAsync(payload);
     }
     setOpen(false);
   }
@@ -36,7 +47,8 @@ export function WorkflowTaskSheet({ mode, task }: Props) {
       <SheetTrigger asChild>
         {mode === 'create' ? (
           <Button size='sm'>
-            <Icons.add className='mr-1 h-4 w-4' /> Thêm đầu việc
+            <Icons.add className='mr-1 h-4 w-4' />
+            Them dau viec
           </Button>
         ) : (
           <Button variant='ghost' size='icon' className='h-7 w-7'>
@@ -46,54 +58,108 @@ export function WorkflowTaskSheet({ mode, task }: Props) {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{mode === 'create' ? 'Thêm đầu việc' : 'Sửa đầu việc'}</SheetTitle>
+          <SheetTitle>{mode === 'create' ? 'Them dau viec' : 'Sua dau viec'}</SheetTitle>
         </SheetHeader>
         <form onSubmit={handleSubmit} className='mt-4 space-y-4'>
           <div className='flex flex-col gap-1'>
-            <label className='text-sm font-medium'>Tên đầu việc</label>
+            <label htmlFor='workflow-name' className='text-sm font-medium'>
+              Ten dau viec
+            </label>
             <input
+              id='workflow-name'
               className='rounded-md border px-3 py-2 text-sm'
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(event) => setName(event.target.value)}
             />
           </div>
-          <div className='flex flex-col gap-1'>
-            <label className='text-sm font-medium'>Thời gian ước tính (phút)</label>
-            <input
-              type='number'
-              min={1}
-              className='rounded-md border px-3 py-2 text-sm'
-              required
-              value={estimatedMinutes}
-              onChange={(e) => setEstimatedMinutes(Number(e.target.value))}
-            />
+          <div className='grid grid-cols-2 gap-3'>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-minutes' className='text-sm font-medium'>
+                Thoi gian tieu chuan (phut)
+              </label>
+              <input
+                id='workflow-minutes'
+                type='number'
+                min={1}
+                className='rounded-md border px-3 py-2 text-sm'
+                required
+                value={estimatedMinutes}
+                onChange={(event) => setEstimatedMinutes(Number(event.target.value))}
+              />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-rate' className='text-sm font-medium'>
+                Toc do tieu chuan / gio
+              </label>
+              <input
+                id='workflow-rate'
+                type='number'
+                min={0.1}
+                step={0.1}
+                className='rounded-md border px-3 py-2 text-sm'
+                required
+                value={standardRatePerHour}
+                onChange={(event) => setStandardRatePerHour(Number(event.target.value))}
+              />
+            </div>
           </div>
-          <div className='flex flex-col gap-1'>
-            <label className='text-sm font-medium'>Vai trò yêu cầu</label>
-            <input
-              className='rounded-md border px-3 py-2 text-sm'
-              placeholder='Nhân viên pick, lái xe nâng...'
-              value={requiredRole}
-              onChange={(e) => setRequiredRole(e.target.value)}
-            />
+          <div className='grid grid-cols-2 gap-3'>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-role' className='text-sm font-medium'>
+                Vai tro
+              </label>
+              <input
+                id='workflow-role'
+                className='rounded-md border px-3 py-2 text-sm'
+                value={requiredRole}
+                onChange={(event) => setRequiredRole(event.target.value)}
+              />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-unit' className='text-sm font-medium'>
+                Don vi dau ra
+              </label>
+              <input
+                id='workflow-unit'
+                className='rounded-md border px-3 py-2 text-sm'
+                value={outputUnit}
+                onChange={(event) => setOutputUnit(event.target.value)}
+              />
+            </div>
           </div>
-          <div className='flex flex-col gap-1'>
-            <label className='text-sm font-medium'>Thứ tự hiển thị</label>
-            <input
-              type='number'
-              min={0}
-              className='rounded-md border px-3 py-2 text-sm'
-              value={sortOrder}
-              onChange={(e) => setSortOrder(Number(e.target.value))}
-            />
+          <div className='grid grid-cols-2 gap-3'>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-kpi' className='text-sm font-medium'>
+                Nhom KPI
+              </label>
+              <input
+                id='workflow-kpi'
+                className='rounded-md border px-3 py-2 text-sm'
+                value={kpiCategory}
+                onChange={(event) => setKpiCategory(event.target.value)}
+              />
+            </div>
+            <div className='flex flex-col gap-1'>
+              <label htmlFor='workflow-sort' className='text-sm font-medium'>
+                Thu tu
+              </label>
+              <input
+                id='workflow-sort'
+                type='number'
+                min={0}
+                className='rounded-md border px-3 py-2 text-sm'
+                value={sortOrder}
+                onChange={(event) => setSortOrder(Number(event.target.value))}
+              />
+            </div>
           </div>
           <Button
             type='submit'
             className='w-full'
-            disabled={createMut.isPending || updateMut.isPending}
+            disabled={createMutation.isPending || updateMutation.isPending}
           >
-            {mode === 'create' ? 'Tạo' : 'Lưu'}
+            {mode === 'create' ? 'Tao' : 'Luu'}
           </Button>
         </form>
       </SheetContent>

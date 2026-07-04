@@ -31,6 +31,8 @@ export async function getProductSkuOptions(): Promise<ProductSkuOption[]> {
       id: productSkus.id,
       sku: productSkus.sku,
       name: productSkus.name,
+      unit: productSkus.unit,
+      weight: productSkus.weight,
       allocationSortField: productSkus.allocationSortField,
       allocationSortDirection: productSkus.allocationSortDirection
     })

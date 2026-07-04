@@ -14,6 +14,8 @@ export type ProductSkuOption = {
   id: string;
   sku: string;
   name: string;
+  unit: string;
+  weight: number | null;
   allocationSortField: 'received_date' | 'expiry_date';
   allocationSortDirection: 'asc' | 'desc';
 };

@@ -1,71 +1,66 @@
-// KPI proposal engine: derives KPI suggestions from staffing plan output
+import type { KpiProposal } from '../api/types';
 import type { ScheduleResult } from './aon-scheduler';
 
-export type KpiProposal = {
-  id: string;
-  name: string;
-  formula: string;
-  target: string;
-  unit: string;
-  rationale: string;
-};
-
 export function proposeKpis(schedule: ScheduleResult, availableHeadcount: number): KpiProposal[] {
-  const utilization =
+  const utilizationPercent =
     schedule.requiredHeadcount > 0
-      ? Math.min(100, Math.round((schedule.requiredHeadcount / availableHeadcount) * 100))
+      ? Math.min(
+          100,
+          Math.round((schedule.requiredHeadcount / Math.max(availableHeadcount, 1)) * 100)
+        )
       : 0;
+  const criticalTasks = schedule.tasks.filter((task) => task.isCritical).length;
+  const throughputTarget = Number(
+    (
+      schedule.tasks.reduce((sum, task) => sum + task.requiredHeadcount, 0) /
+      Math.max(availableHeadcount, 1)
+    ).toFixed(1)
+  );
 
-  const proposals: KpiProposal[] = [
+  return [
     {
-      id: 'throughput_per_person',
-      name: 'Năng suất/người',
-      formula: 'Tổng đầu việc hoàn thành ÷ Số nhân sự × Giờ làm việc',
-      target: `≥ ${(schedule.tasks.length / Math.max(availableHeadcount, 1)).toFixed(1)} đầu việc/người`,
-      unit: 'đầu việc/người/ca',
-      rationale: `Dựa trên ${schedule.tasks.length} tasks và ${availableHeadcount} nhân sự.`
+      id: 'throughput-per-head',
+      role: 'warehouse_operator',
+      kpiName: 'Nang suat theo nguoi',
+      formula: 'Tong san luong thuc hien / tong gio cong',
+      target: throughputTarget,
+      unit: 'don vi/gio-cong',
+      weight: 0.35,
+      mechanism: 'Cham 100 diem khi dat target, vuot target tinh toi da 120 diem.',
+      rationale: `Ke hoach co ${schedule.tasks.length} dau viec va can ${schedule.requiredHeadcount} suat nhan luc o dinh.`
     },
     {
-      id: 'utilization_rate',
-      name: 'Tỷ lệ sử dụng nhân lực',
-      formula: 'Số nhân sự cần thiết ÷ Số nhân sự hiện có × 100%',
-      target: '75% – 90%',
+      id: 'critical-path-adherence',
+      role: 'team_lead',
+      kpiName: 'Bam duong gang',
+      formula: 'Thoi gian thuc te duong gang / thoi gian ke hoach duong gang * 100',
+      target: 105,
       unit: '%',
-      rationale: `Hiện tại ước tính ${utilization}% theo kế hoạch định biên.`
+      weight: 0.3,
+      mechanism: 'Duoi 100% dat toi da, 100-105% dat, vuot 105% tru diem theo bac.',
+      rationale: `${criticalTasks} dau viec nam tren duong gang, tong thoi luong ${schedule.criticalPathHours.toFixed(1)} gio.`
     },
     {
-      id: 'on_time_completion',
-      name: 'Tỷ lệ hoàn thành đúng hạn',
-      formula: 'Số tasks hoàn thành trước deadline ÷ Tổng tasks × 100%',
-      target: '≥ 95%',
+      id: 'labor-utilization',
+      role: 'warehouse_manager',
+      kpiName: 'Su dung nhan luc',
+      formula: 'Nhu cau dinh bien / nhan su san sang * 100',
+      target: Math.max(utilizationPercent, 75),
       unit: '%',
-      rationale: 'Tiêu chuẩn vận hành kho xuất/nhập.'
+      weight: 0.2,
+      mechanism: 'Khoang 75-90% dat muc tot, thap hon hoac cao hon deu tru diem.',
+      rationale: `Ty le su dung nhan luc hien tai la ${utilizationPercent}%.`
     },
     {
-      id: 'critical_path_adherence',
-      name: 'Tuân thủ đường găng',
-      formula: 'Thời gian thực tế hoàn thành đường găng ÷ Kế hoạch × 100%',
-      target: '≤ 105%',
+      id: 'on-time-task-completion',
+      role: 'supervisor',
+      kpiName: 'Hoan thanh dung han',
+      formula: 'So dau viec ket thuc trong cua so ke hoach / tong dau viec * 100',
+      target: 95,
       unit: '%',
-      rationale: `Đường găng kế hoạch: ${schedule.criticalPathHours.toFixed(1)} giờ. Cho phép trễ tối đa 5%.`
-    },
-    {
-      id: 'turnover_rate',
-      name: 'Tỷ lệ nghỉ việc',
-      formula: 'Số nhân viên nghỉ trong kỳ ÷ Bình quân nhân sự trong kỳ × 100%',
-      target: '≤ 5%/tháng',
-      unit: '%/tháng',
-      rationale: 'KPI ổn định nhân sự — tỷ lệ cao ảnh hưởng năng suất đường găng.'
-    },
-    {
-      id: 'avg_tenure',
-      name: 'Thời gian gắn bó trung bình',
-      formula: 'Tổng số tháng làm việc ÷ Số nhân viên (kể cả đã nghỉ)',
-      target: '≥ 12 tháng',
-      unit: 'tháng',
-      rationale: 'Nhân viên gắn bó lâu → giảm chi phí đào tạo lại.'
+      weight: 0.15,
+      mechanism: 'Moi dau viec tre tren 30 phut se bi tru 2 diem.',
+      rationale: 'Chi so nay giu Gantt va staffing plan gan voi van hanh thuc te.'
     }
   ];
-
-  return proposals;
 }

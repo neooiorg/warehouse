@@ -8,6 +8,9 @@ export type EmployeeProductivity = {
   totalQty: number;
   avgDailyPallets: number;
   qtyPerHour: number;
+  normalizedScore: number;
+  standardRatePerHour: number;
+  productivityRatePercent: number;
   rankScore: number;
 };
 
@@ -30,7 +33,7 @@ export type DockAppointmentInput = {
 export type LogTaskPayload = {
   warehouseId?: string | null;
   employeeId: string;
-  taskTypeId?: string | null;
+  taskTypeId: string;
   startedAt: string | Date;
   completedAt?: string | Date | null;
   qty: number;
@@ -53,6 +56,7 @@ export type DockAssignment = {
   endTime: string;
   direction: 'inbound' | 'outbound';
   palletCount: number;
+  waitMinutes: number;
 };
 
 export type DockScheduleInput = {
@@ -67,4 +71,25 @@ export type DockScheduleResult = {
   id: string;
   assignments: DockAssignment[];
   docks: Array<{ id: string; code: string }>;
+  avgWaitMinutes: number;
+  totalCompletionMinutes: number;
+  utilizationByDock: Record<string, number>;
+  overloadWarnings: string[];
+};
+
+export type TaskLogImportRow = {
+  line: number;
+  employeeName: string;
+  taskName: string;
+  startedAt: string;
+  completedAt: string;
+  qty: number;
+  unit?: string | null;
+  warehouseCode?: string | null;
+  note?: string | null;
+};
+
+export type TaskLogImportResult = {
+  importedCount: number;
+  errors: Array<{ line: number; message: string }>;
 };

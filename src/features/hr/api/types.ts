@@ -35,6 +35,9 @@ export type CreateWorkflowTaskPayload = {
   name: string;
   estimatedMinutes: number;
   requiredRole?: string | null;
+  outputUnit?: string;
+  standardRatePerHour?: number;
+  kpiCategory?: string;
   dependencies?: string[];
   sortOrder?: number;
 };
@@ -53,6 +56,22 @@ export type UpsertKpiTemplatePayload = {
   target?: number | null;
   unit?: string | null;
   weight?: number;
+};
+
+export type KpiProposal = {
+  id: string;
+  role: string;
+  kpiName: string;
+  formula: string;
+  target: number;
+  unit: string;
+  weight: number;
+  mechanism: string;
+  rationale: string;
+};
+
+export type AcceptKpiProposalsPayload = {
+  proposals: KpiProposal[];
 };
 
 export type AonNode = {

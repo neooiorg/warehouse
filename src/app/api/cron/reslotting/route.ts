@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { and, eq, isNotNull } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { warehouses, locations, inventoryLots, slottingRuns } from '@/db/schema';
+import { inventoryLots, locations, productSkus, slottingRuns, warehouses } from '@/db/schema';
 import { createNotification } from '@/features/notifications/api/service';
+import {
+  computeReslottingSuggestions,
+  type ReslottingLocation,
+  type ReslottingLot
+} from '@/features/inventory/utils/reslotting';
 import { verifyCronRequest } from '@/lib/cron-auth';
-import { runStorageOptimizer } from '@/features/warehouses/utils/storage-optimizer';
 
 export async function GET(request: NextRequest) {
   const authError = verifyCronRequest(request);
@@ -14,67 +18,89 @@ export async function GET(request: NextRequest) {
     .select({ id: warehouses.id, orgId: warehouses.orgId })
     .from(warehouses);
 
-  let totalMoved = 0;
+  let totalRecommendations = 0;
 
   for (const warehouse of allWarehouses) {
-    const [locs, lots] = await Promise.all([
-      db.select().from(locations).where(eq(locations.warehouseId, warehouse.id)),
+    const [lotRows, locationRows] = await Promise.all([
       db
-        .select()
+        .select({
+          id: inventoryLots.id,
+          lotNo: inventoryLots.lotNo,
+          skuId: inventoryLots.skuId,
+          locationId: inventoryLots.locationId,
+          locationCode: locations.code,
+          locationType: locations.type,
+          distanceToDock: locations.distanceToDock,
+          receivedDate: inventoryLots.receivedDate,
+          expiryDate: inventoryLots.expiryDate,
+          qty: inventoryLots.qty,
+          storageClass: productSkus.storageClassLabel,
+          weight: productSkus.weight,
+          allocationSortField: productSkus.allocationSortField,
+          allocationSortDirection: productSkus.allocationSortDirection
+        })
         .from(inventoryLots)
+        .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
+        .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
         .where(
-          and(eq(inventoryLots.warehouseId, warehouse.id), isNotNull(inventoryLots.locationId))
-        )
+          and(
+            eq(inventoryLots.orgId, warehouse.orgId),
+            eq(inventoryLots.warehouseId, warehouse.id),
+            eq(inventoryLots.status, 'available')
+          )
+        ),
+      db
+        .select({
+          id: locations.id,
+          code: locations.code,
+          type: locations.type,
+          distanceToDock: locations.distanceToDock,
+          capacityVolume: locations.capacityVolume,
+          capacityWeight: locations.capacityWeight
+        })
+        .from(locations)
+        .where(and(eq(locations.orgId, warehouse.orgId), eq(locations.warehouseId, warehouse.id)))
     ]);
 
-    if (lots.length === 0) continue;
-
-    const recommendations = runStorageOptimizer(
-      lots.map((l) => ({
-        id: l.id,
-        skuId: l.skuId,
-        qty: l.qty,
-        expiryDate: l.expiryDate ?? null,
-        receiveDate: l.createdAt?.toISOString() ?? new Date().toISOString(),
-        currentLocationId: l.locationId ?? null,
-        strategy: 'FEFO' as const
-      })),
-      locs.map((l) => ({
-        id: l.id,
-        level: l.level ?? null,
-        distanceToDock: l.distanceToDock ?? null,
-        capacityPallets: null,
-        zoneId: l.zoneId ?? null
-      }))
+    const recommendations = computeReslottingSuggestions(
+      lotRows as ReslottingLot[],
+      locationRows as ReslottingLocation[]
     );
+    if (recommendations.length === 0) continue;
 
-    const highPriorityCount = recommendations.filter((r) => r.priority === 'high').length;
+    await db.insert(slottingRuns).values({
+      orgId: warehouse.orgId,
+      warehouseId: warehouse.id,
+      runAt: new Date(),
+      movedCount: recommendations.length,
+      recommendations: recommendations.map((item) => ({
+        lotId: item.lotId,
+        fromLocationId: item.currentLocationId,
+        toLocationId: item.recommendedLocationId ?? '',
+        reason: item.reason
+      }))
+    });
 
-    if (recommendations.length > 0) {
-      await db.insert(slottingRuns).values({
-        orgId: warehouse.orgId,
-        warehouseId: warehouse.id,
-        runAt: new Date(),
-        movedCount: recommendations.length,
-        recommendations: recommendations as any
-      });
+    const highPriorityCount = recommendations.filter((item) => item.priority === 'high').length;
+    await createNotification(warehouse.orgId, {
+      warehouseId: warehouse.id,
+      sourceType: 'reslotting',
+      title:
+        highPriorityCount > 0
+          ? `Co ${highPriorityCount} de xuat reslotting uu tien cao`
+          : `Co ${recommendations.length} de xuat reslotting moi`,
+      body:
+        highPriorityCount > 0
+          ? 'He thong phat hien cac lot can dua gan dock hoac doi vi tri theo quy tac xuat hang.'
+          : 'He thong da tao de xuat sap xep lai vi tri luu tru tu du lieu inbound/outbound moi nhat.'
+    });
 
-      if (highPriorityCount > 0) {
-        await createNotification(warehouse.orgId, {
-          warehouseId: warehouse.id,
-          sourceType: 'reslotting',
-          title: `Cần di chuyển ${highPriorityCount} lô hàng sắp hết hạn`,
-          body: `Hệ thống phát hiện ${highPriorityCount} lô hàng ưu tiên cao cần tái sắp xếp vị trí kho.`
-        });
-      }
-
-      totalMoved += recommendations.length;
-    }
+    totalRecommendations += recommendations.length;
   }
 
   return NextResponse.json({
     status: 'ok',
-    totalMoves: totalMoved,
+    totalRecommendations,
     warehouses: allWarehouses.length
   });
 }

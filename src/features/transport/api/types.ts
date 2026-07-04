@@ -51,4 +51,9 @@ export type RouteOption = {
   availableQty: number;
   distanceKm: number;
   estimatedHours: number;
+  fuelCostEstimate: number;
+  freightCostEstimate: number;
+  coverageMode: 'single' | 'multi';
+  coveredQty: number;
+  routeWarehouseIds: string[];
 };

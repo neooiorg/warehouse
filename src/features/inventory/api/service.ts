@@ -22,7 +22,10 @@ import type {
   InboundReceiptPayload,
   OutboundShipmentPayload,
   TransferPayload,
-  LotOption
+  LotOption,
+  InventoryImportKind,
+  InventoryImportResult,
+  InventoryImportRow
 } from './types';
 
 const fromLocations = alias(locations, 'from_locations');
@@ -356,33 +359,203 @@ export async function getStorageOptimizationAdvice(warehouseId: string) {
   const { orgId } = await requireOrgContext();
   const { computeReslottingSuggestions } = await import('../utils/reslotting');
 
-  const lots = await db
-    .select({
-      id: inventoryLots.id,
-      lotNo: inventoryLots.lotNo,
-      skuId: inventoryLots.skuId,
-      locationId: inventoryLots.locationId,
-      locationCode: locations.code,
-      distanceToDock: locations.distanceToDock,
-      receivedDate: inventoryLots.receivedDate,
-      expiryDate: inventoryLots.expiryDate,
-      qty: inventoryLots.qty,
-      storageClass: productSkus.storageClassLabel,
-      allocationSortField: productSkus.allocationSortField,
-      allocationSortDirection: productSkus.allocationSortDirection
-    })
-    .from(inventoryLots)
-    .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
-    .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
-    .where(
-      and(
-        eq(inventoryLots.orgId, orgId),
-        eq(inventoryLots.warehouseId, warehouseId),
-        eq(inventoryLots.status, 'available')
-      )
+  const [lotRows, locationRows] = await Promise.all([
+    db
+      .select({
+        id: inventoryLots.id,
+        lotNo: inventoryLots.lotNo,
+        skuId: inventoryLots.skuId,
+        locationId: inventoryLots.locationId,
+        locationCode: locations.code,
+        locationType: locations.type,
+        distanceToDock: locations.distanceToDock,
+        receivedDate: inventoryLots.receivedDate,
+        expiryDate: inventoryLots.expiryDate,
+        qty: inventoryLots.qty,
+        storageClass: productSkus.storageClassLabel,
+        weight: productSkus.weight,
+        allocationSortField: productSkus.allocationSortField,
+        allocationSortDirection: productSkus.allocationSortDirection
+      })
+      .from(inventoryLots)
+      .innerJoin(productSkus, eq(inventoryLots.skuId, productSkus.id))
+      .leftJoin(locations, eq(inventoryLots.locationId, locations.id))
+      .where(
+        and(
+          eq(inventoryLots.orgId, orgId),
+          eq(inventoryLots.warehouseId, warehouseId),
+          eq(inventoryLots.status, 'available')
+        )
+      ),
+    db
+      .select({
+        id: locations.id,
+        code: locations.code,
+        type: locations.type,
+        distanceToDock: locations.distanceToDock,
+        capacityVolume: locations.capacityVolume,
+        capacityWeight: locations.capacityWeight
+      })
+      .from(locations)
+      .where(and(eq(locations.orgId, orgId), eq(locations.warehouseId, warehouseId)))
+  ]);
+
+  return computeReslottingSuggestions(
+    lotRows as Parameters<typeof computeReslottingSuggestions>[0],
+    locationRows as Parameters<typeof computeReslottingSuggestions>[1]
+  );
+}
+
+export async function importInventoryRows(
+  kind: InventoryImportKind,
+  rows: InventoryImportRow[]
+): Promise<InventoryImportResult> {
+  const { orgId } = await requireOrgContext();
+  const errors: InventoryImportResult['errors'] = [];
+
+  if (rows.length === 0) {
+    return { importedCount: 0, errors: [{ line: 1, message: 'File khong co du lieu.' }] };
+  }
+
+  const [warehouseRows, skuRows, locationRows, employeeRows, lotRows] = await Promise.all([
+    db.select().from(warehouses).where(eq(warehouses.orgId, orgId)),
+    db.select().from(productSkus).where(eq(productSkus.orgId, orgId)),
+    db.select().from(locations).where(eq(locations.orgId, orgId)),
+    db.select().from(employees).where(eq(employees.orgId, orgId)),
+    db.select().from(inventoryLots).where(eq(inventoryLots.orgId, orgId))
+  ]);
+
+  const warehouseMap = new Map(warehouseRows.map((row) => [row.code.trim().toLowerCase(), row]));
+  const skuMap = new Map(skuRows.map((row) => [row.sku.trim().toLowerCase(), row]));
+  const locationMap = new Map(
+    locationRows.map((row) => [`${row.warehouseId}:${row.code.trim().toLowerCase()}`, row])
+  );
+  const employeeMap = new Map(employeeRows.map((row) => [row.fullName.trim().toLowerCase(), row]));
+  const lotMap = new Map(
+    lotRows.map((row) => [`${row.warehouseId}:${row.skuId}:${row.lotNo.trim().toLowerCase()}`, row])
+  );
+
+  const operations: Array<() => Promise<void>> = [];
+
+  for (const row of rows) {
+    const warehouse = warehouseMap.get(row.warehouseCode.trim().toLowerCase());
+    const sku = skuMap.get(row.sku.trim().toLowerCase());
+    const employee = row.performedByName
+      ? employeeMap.get(row.performedByName.trim().toLowerCase())
+      : null;
+
+    if (!warehouse) {
+      errors.push({ line: row.line, message: `Khong tim thay kho "${row.warehouseCode}".` });
+      continue;
+    }
+    if (!sku) {
+      errors.push({ line: row.line, message: `Khong tim thay SKU "${row.sku}".` });
+      continue;
+    }
+    if (!(row.qty > 0)) {
+      errors.push({ line: row.line, message: 'So luong phai lon hon 0.' });
+      continue;
+    }
+    if (row.performedByName && !employee) {
+      errors.push({
+        line: row.line,
+        message: `Khong tim thay nhan vien "${row.performedByName}".`
+      });
+      continue;
+    }
+
+    if (kind === 'inbound') {
+      if (!row.lotNo || !row.locationCode || !row.receivedDate) {
+        errors.push({ line: row.line, message: 'Inbound can lotNo, locationCode, receivedDate.' });
+        continue;
+      }
+      const lotKey = `${warehouse.id}:${sku.id}:${row.lotNo.trim().toLowerCase()}`;
+      if (lotMap.has(lotKey)) {
+        errors.push({ line: row.line, message: `Lot "${row.lotNo}" da ton tai trong kho nay.` });
+        continue;
+      }
+      const location = locationMap.get(`${warehouse.id}:${row.locationCode.trim().toLowerCase()}`);
+      if (!location) {
+        errors.push({ line: row.line, message: `Khong tim thay vi tri "${row.locationCode}".` });
+        continue;
+      }
+
+      operations.push(async () => {
+        await createInboundReceipt({
+          warehouseId: warehouse.id,
+          skuId: sku.id,
+          locationId: location.id,
+          lotNo: row.lotNo!,
+          qty: row.qty,
+          receivedDate: row.receivedDate!,
+          expiryDate: row.expiryDate ?? null,
+          performedBy: employee?.id ?? null,
+          note: row.note ?? null
+        });
+      });
+      continue;
+    }
+
+    if (kind === 'outbound') {
+      operations.push(async () => {
+        await createOutboundShipment({
+          warehouseId: warehouse.id,
+          skuId: sku.id,
+          qty: row.qty,
+          performedBy: employee?.id ?? null,
+          note: row.note ?? null
+        });
+      });
+      continue;
+    }
+
+    if (!row.lotNo || !row.toLocationCode) {
+      errors.push({ line: row.line, message: 'Transfer can lotNo va toLocationCode.' });
+      continue;
+    }
+
+    const lot = lotRows.find(
+      (candidate) =>
+        candidate.warehouseId === warehouse.id &&
+        candidate.skuId === sku.id &&
+        candidate.lotNo.toLowerCase() === row.lotNo!.trim().toLowerCase()
+    );
+    const toLocation = locationMap.get(
+      `${warehouse.id}:${row.toLocationCode.trim().toLowerCase()}`
     );
 
-  return computeReslottingSuggestions(lots as Parameters<typeof computeReslottingSuggestions>[0]);
+    if (!lot) {
+      errors.push({ line: row.line, message: `Khong tim thay lot "${row.lotNo}".` });
+      continue;
+    }
+    if (!toLocation) {
+      errors.push({
+        line: row.line,
+        message: `Khong tim thay vi tri dich "${row.toLocationCode}".`
+      });
+      continue;
+    }
+
+    operations.push(async () => {
+      await createTransfer({
+        lotId: lot.id,
+        toLocationId: toLocation.id,
+        qty: row.qty,
+        performedBy: employee?.id ?? null,
+        note: row.note ?? null
+      });
+    });
+  }
+
+  if (errors.length > 0) {
+    return { importedCount: 0, errors };
+  }
+
+  for (const operation of operations) {
+    await operation();
+  }
+
+  return { importedCount: operations.length, errors: [] };
 }
 
 export async function searchLotHistory(query: string, warehouseId?: string) {

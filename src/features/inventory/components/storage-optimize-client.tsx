@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
-import { useSuspenseQuery, useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { queryOptions } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,19 +28,18 @@ export function StorageOptimizeClient() {
     ReturnType<typeof searchLotHistory>
   > | null>(null);
   const [searching, setSearching] = useState(false);
-
   const { data: suggestions = [], isLoading } = useQuery(optimizeQueryOptions(warehouseId));
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSearch(event: React.FormEvent) {
+    event.preventDefault();
     if (!search.trim()) return;
     setSearching(true);
-    const res = await searchLotHistory(search, warehouseId || undefined);
-    setSearchResults(res);
+    const results = await searchLotHistory(search, warehouseId || undefined);
+    setSearchResults(results);
     setSearching(false);
   }
 
-  const priorityColor: Record<string, string> = {
+  const priorityVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
     high: 'destructive',
     medium: 'default',
     low: 'secondary'
@@ -51,72 +51,67 @@ export function StorageOptimizeClient() {
         <select
           className='rounded-md border px-3 py-2 text-sm'
           value={warehouseId}
-          onChange={(e) => setWarehouseId(e.target.value)}
+          onChange={(event) => setWarehouseId(event.target.value)}
         >
-          <option value=''>-- Chọn kho --</option>
-          {warehouses.map((w) => (
-            <option key={w.id} value={w.id}>
-              {w.code} — {w.name}
+          <option value=''>-- Chon kho --</option>
+          {warehouses.map((warehouse) => (
+            <option key={warehouse.id} value={warehouse.id}>
+              {warehouse.code} - {warehouse.name}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Reslotting suggestions */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-sm'>Đề xuất đảo vị trí lưu trữ</CardTitle>
+          <CardTitle className='text-sm'>De xuat dao vi tri luu tru</CardTitle>
         </CardHeader>
         <CardContent>
           {!warehouseId && (
-            <p className='text-sm text-muted-foreground'>Chọn kho để xem đề xuất.</p>
+            <p className='text-sm text-muted-foreground'>Chon kho de xem de xuat.</p>
           )}
           {warehouseId && isLoading && (
-            <p className='text-sm text-muted-foreground'>Đang phân tích...</p>
+            <p className='text-sm text-muted-foreground'>Dang phan tich...</p>
           )}
           {warehouseId && !isLoading && suggestions.length === 0 && (
-            <p className='text-sm text-muted-foreground'>
-              Không có đề xuất nào. Tất cả hàng hóa đang ở vị trí tối ưu.
-            </p>
+            <p className='text-sm text-muted-foreground'>Chua co de xuat moi cho kho nay.</p>
           )}
           <div className='space-y-2'>
-            {suggestions.map((s: ReslottingSuggestion) => (
-              <div key={s.lotId} className='flex items-start justify-between rounded-md border p-3'>
-                <div className='space-y-1'>
-                  <div className='flex items-center gap-2'>
-                    <span className='text-sm font-medium'>{s.lotNo}</span>
-                    <Badge variant={priorityColor[s.priority] as any} className='text-xs'>
-                      {s.priority === 'high'
-                        ? 'Cao'
-                        : s.priority === 'medium'
-                          ? 'Trung bình'
-                          : 'Thấp'}
-                    </Badge>
-                  </div>
-                  <p className='text-xs text-muted-foreground'>
-                    Vị trí hiện tại: {s.currentLocationCode ?? 'N/A'} (cách dock{' '}
-                    {s.currentDistanceToDock ?? '?'} m)
-                  </p>
-                  <p className='text-xs'>{s.reason}</p>
+            {suggestions.map((suggestion: ReslottingSuggestion) => (
+              <div key={suggestion.lotId} className='rounded-md border p-3'>
+                <div className='mb-2 flex items-center gap-2'>
+                  <span className='text-sm font-medium'>{suggestion.lotNo}</span>
+                  <Badge variant={priorityVariant[suggestion.priority]}>
+                    {suggestion.priority}
+                  </Badge>
+                  <Badge variant='outline'>{suggestion.ruleApplied}</Badge>
                 </div>
+                <p className='text-xs text-muted-foreground'>
+                  Hien tai: {suggestion.currentLocationCode ?? 'N/A'} | De xuat:{' '}
+                  {suggestion.recommendedLocationCode ?? 'N/A'}
+                </p>
+                <p className='text-xs text-muted-foreground'>
+                  Khoang cach dock hien tai: {suggestion.currentDistanceToDock ?? '?'} m
+                </p>
+                <p className='mt-1 text-xs'>{suggestion.reason}</p>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* Lot history search */}
       <Card>
         <CardHeader>
-          <CardTitle className='text-sm'>Tìm kiếm lịch sử kiện hàng</CardTitle>
+          <CardTitle className='text-sm'>Tim lich su kien hang</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSearch} className='flex gap-3'>
             <input
+              aria-label='Tim lot SKU hoac ten hang'
               className='flex-1 rounded-md border px-3 py-2 text-sm'
-              placeholder='Nhập mã lô, SKU hoặc tên hàng...'
+              placeholder='Nhap lot, SKU hoac ten hang'
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(event) => setSearch(event.target.value)}
             />
             <Button type='submit' disabled={searching}>
               {searching ? (
@@ -131,37 +126,36 @@ export function StorageOptimizeClient() {
               <table className='w-full text-sm'>
                 <thead className='bg-muted/50'>
                   <tr>
-                    <th className='px-3 py-2 text-left font-medium'>Mã lô</th>
+                    <th className='px-3 py-2 text-left font-medium'>Lot</th>
                     <th className='px-3 py-2 text-left font-medium'>SKU</th>
                     <th className='px-3 py-2 text-left font-medium'>Kho</th>
-                    <th className='px-3 py-2 text-left font-medium'>Vị trí</th>
-                    <th className='px-3 py-2 text-right font-medium'>SL</th>
-                    <th className='px-3 py-2 text-left font-medium'>Ngày nhập</th>
-                    <th className='px-3 py-2 text-left font-medium'>HSD</th>
-                    <th className='px-3 py-2 text-left font-medium'>Trạng thái</th>
+                    <th className='px-3 py-2 text-left font-medium'>Vi tri</th>
+                    <th className='px-3 py-2 text-right font-medium'>So luong</th>
+                    <th className='px-3 py-2 text-left font-medium'>Trace</th>
                   </tr>
                 </thead>
                 <tbody>
                   {searchResults.length === 0 && (
                     <tr>
-                      <td colSpan={8} className='px-3 py-4 text-center text-muted-foreground'>
-                        Không tìm thấy kết quả.
+                      <td colSpan={6} className='px-3 py-4 text-center text-muted-foreground'>
+                        Khong tim thay ket qua.
                       </td>
                     </tr>
                   )}
-                  {searchResults.map((r) => (
-                    <tr key={r.id} className='border-t'>
-                      <td className='px-3 py-2 font-mono text-xs'>{r.lotNo}</td>
-                      <td className='px-3 py-2'>{r.sku}</td>
-                      <td className='px-3 py-2'>{r.warehouseCode}</td>
-                      <td className='px-3 py-2'>{r.locationCode ?? '—'}</td>
-                      <td className='px-3 py-2 text-right'>{r.qty}</td>
-                      <td className='px-3 py-2 text-xs'>{r.receivedDate}</td>
-                      <td className='px-3 py-2 text-xs'>{r.expiryDate ?? '—'}</td>
+                  {searchResults.map((row) => (
+                    <tr key={row.id} className='border-t'>
+                      <td className='px-3 py-2 font-mono text-xs'>{row.lotNo}</td>
+                      <td className='px-3 py-2'>{row.sku}</td>
+                      <td className='px-3 py-2'>{row.warehouseCode}</td>
+                      <td className='px-3 py-2'>{row.locationCode ?? '-'}</td>
+                      <td className='px-3 py-2 text-right'>{row.qty}</td>
                       <td className='px-3 py-2'>
-                        <Badge variant='outline' className='text-xs'>
-                          {r.status}
-                        </Badge>
+                        <Link
+                          href={`/dashboard/inventory/traceability`}
+                          className='text-xs text-primary underline'
+                        >
+                          Mo traceability
+                        </Link>
                       </td>
                     </tr>
                   ))}
