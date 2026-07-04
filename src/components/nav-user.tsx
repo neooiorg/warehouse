@@ -85,10 +85,6 @@ export function NavUser({
                 <Icons.creditCard className='mr-2 h-4 w-4' />
                 Thanh toán
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Icons.notification className='mr-2 h-4 w-4' />
-                Thông báo
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

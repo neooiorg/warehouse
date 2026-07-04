@@ -166,12 +166,6 @@ export const navGroups: NavGroup[] = [
             shortcut: ['m', 'm']
           },
           {
-            title: 'Thông báo',
-            url: '/dashboard/notifications',
-            icon: 'notification',
-            shortcut: ['n', 'n']
-          },
-          {
             title: 'Thanh toán',
             url: '/dashboard/billing',
             icon: 'billing',
