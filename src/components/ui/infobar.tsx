@@ -235,7 +235,7 @@ function Infobar({
       <div
         data-slot='infobar'
         className={cn(
-          'bg-sidebar text-sidebar-foreground flex h-full w-(--infobar-width) flex-col',
+          'bg-sidebar text-sidebar-foreground flex h-full w-[var(--infobar-width)] flex-col',
           className
         )}
         {...props}
@@ -259,7 +259,7 @@ function Infobar({
           data-infobar='infobar'
           data-slot='infobar'
           data-mobile='true'
-          className='bg-sidebar text-sidebar-foreground w-(--infobar-width) p-0 [&>button]:hidden'
+          className='bg-sidebar text-sidebar-foreground w-[var(--infobar-width)] p-0 [&>button]:hidden'
           style={
             {
               '--infobar-width': INFOBAR_WIDTH_MOBILE
@@ -294,7 +294,7 @@ function Infobar({
       <div
         data-slot='infobar-container'
         className={cn(
-          'sticky top-0 z-30 hidden h-[calc(100dvh-3.5rem)] w-(--infobar-width) shrink-0 overflow-hidden rounded-tl-xl border-l border-t transition-[width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:flex',
+          'sticky top-0 z-30 hidden h-[calc(100dvh-3.5rem)] w-[var(--infobar-width)] shrink-0 overflow-hidden rounded-tl-xl border-l border-t transition-[width,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:flex',
           'group-data-[collapsible=offcanvas]:w-0 group-data-[collapsible=offcanvas]:overflow-hidden group-data-[collapsible=offcanvas]:border-0 group-data-[collapsible=offcanvas]:opacity-0',
           className
         )}
@@ -364,7 +364,7 @@ function InfobarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot='infobar-inset'
       className={cn(
-        'bg-background relative flex w-full flex-1 flex-col',
+        'bg-background relative flex min-w-0 flex-1 flex-col overflow-x-hidden',
         'md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className
       )}
@@ -663,7 +663,7 @@ function InfobarMenuSkeleton({
     >
       {showIcon && <Skeleton className='size-4 rounded-md' data-infobar='menu-skeleton-icon' />}
       <Skeleton
-        className='h-4 max-w-(--skeleton-width) flex-1'
+        className='h-4 max-w-[var(--skeleton-width)] flex-1'
         data-infobar='menu-skeleton-text'
         style={
           {
